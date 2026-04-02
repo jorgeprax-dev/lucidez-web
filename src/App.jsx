@@ -60,11 +60,18 @@ export default function App() {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<Home />} />
-        <Route path="/indice" element={<Indice />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* Rutas privadas — requieren sesión */}
+        <Route
+          path="/indice"
+          element={
+            <PrivateRoute>
+              <Indice />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={
