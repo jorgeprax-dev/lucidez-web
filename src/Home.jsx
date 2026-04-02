@@ -23,13 +23,16 @@ export default function Home() {
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: #d0c8bc; border-radius: 2px; }
         a { text-decoration: none; color: inherit; }
+        @media (max-width: 768px) {
+          nav a[href^="#"] { display: none; }
+        }
       `}</style>
 
       <nav style={{ position: "sticky", top: 0, zIndex: 100, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 48px", background: "#f7f4f0", borderBottom: "1px solid #e8e2d9" }}>
         <div style={{ fontSize: 17, fontWeight: 600, color: "#1a1a1a", letterSpacing: 0.5 }}>
           lucidez<span style={{ color: "#5BA08A", fontStyle: "italic" }}>.app</span>
         </div>
-        <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
           {[["El Índice","#indice"],["El Programa","#programa"],["Base Científica","#ciencia"]].map(([label,href],i) => (
             <a key={i} href={href} style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#888" }}>{label}</a>
           ))}
@@ -39,7 +42,7 @@ export default function Home() {
         </div>
       </nav>
 
-      <section style={{ padding: "80px 48px 64px", maxWidth: 900, margin: "0 auto" }}>
+      <section style={{ padding: "48px 20px 64px", maxWidth: 900, margin: "0 auto" }}>
         <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: 4, color: "#aaa", textTransform: "uppercase", marginBottom: 24 }}>
           América Latina · IOP Digital · Basado en Evidencia
         </div>
@@ -64,11 +67,11 @@ export default function Home() {
 
       <hr style={{ border: "none", borderTop: "1px solid #e8e2d9", margin: "0 48px" }} />
 
-      <section id="indice" style={{ padding: "72px 48px", maxWidth: 1100, margin: "0 auto" }}>
+      <section id="indice" style={{ padding: "48px 20px", maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: 4, color: "#5BA08A", textTransform: "uppercase", marginBottom: 40, fontWeight: 600 }}>
           Assessment · El instrumento
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 72 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 72 }}>
           <div>
             <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(28px, 3.5vw, 42px)", fontWeight: 300, lineHeight: 1.15, marginBottom: 18, color: "#1a1a1a" }}>
               El Índice de <em style={{ color: "#5BA08A" }}>Lucidez</em>
@@ -105,7 +108,7 @@ export default function Home() {
 
       <hr style={{ border: "none", borderTop: "1px solid #e8e2d9", margin: "0 48px" }} />
 
-      <section id="programa" style={{ background: "#faf8f5", borderTop: "1px solid #e8e2d9", borderBottom: "1px solid #e8e2d9", padding: "72px 48px" }}>
+      <section id="programa" style={{ background: "#faf8f5", borderTop: "1px solid #e8e2d9", borderBottom: "1px solid #e8e2d9", padding: "48px 20px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: 4, color: "#5BA08A", textTransform: "uppercase", marginBottom: 40, fontWeight: 600 }}>
             Estructura del IOP
@@ -116,7 +119,7 @@ export default function Home() {
           <p style={{ fontSize: 15, color: "#666", lineHeight: 1.8, maxWidth: 780, marginBottom: 30, fontStyle: "italic" }}>
             Los programas de salud mental más efectivos del mundo combinan evaluación, plan personalizado, tratamiento activo y seguimiento. Lucidez integra esa estructura en un sistema digital accesible desde cualquier lugar.
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 2 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 2 }}>
             {[
               { num: "01", title: "Assessment", desc: "Índice de Lucidez. 6 escalas psicométricas validadas." },
               { num: "02", title: "Treatment Plan", desc: "IA genera un plan personalizado con justificación clínica visible." },
@@ -136,11 +139,11 @@ export default function Home() {
 
       <hr style={{ border: "none", borderTop: "1px solid #e8e2d9", margin: "0 48px" }} />
 
-      <section id="ciencia" style={{ padding: "72px 48px", maxWidth: 1100, margin: "0 auto" }}>
+      <section id="ciencia" style={{ padding: "48px 20px", maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: 4, color: "#5BA08A", textTransform: "uppercase", marginBottom: 40, fontWeight: 600 }}>
           Marcos teóricos integrados
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 72 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 72 }}>
           <div>
             <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 300, lineHeight: 1.2, marginBottom: 18, color: "#1a1a1a" }}>
               Lo mejor de la psicología clínica <em style={{ color: "#5BA08A" }}>en un solo sistema.</em>
@@ -172,7 +175,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section style={{ background: "#5BA08A", padding: "72px 48px", textAlign: "center" }}>
+      <section style={{ background: "#5BA08A", padding: "48px 20px", textAlign: "center" }}>
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(30px, 4vw, 48px)", fontWeight: 300, color: "#fff", marginBottom: 14, lineHeight: 1.2 }}>
           Empieza con tu mapa de bienestar.
         </h2>
