@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
+import { ESCALAS } from "./escalas";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -487,155 +488,635 @@ export default function Dashboard() {
 
         {/* ── TAB: HOY ── */}
         {tab === "hoy" && (
-          <>
-            {/* Sección 1 — Score general */}
-            <p style={S.sectionLabel}>Score general</p>
-            <div style={S.heroCard}>
+          <div style={{ maxWidth: "860px", padding: "28px 32px" }}>
+            {/* Hero Score */}
+            <div style={{ background: "#EDEAE4", borderRadius: "14px", padding: "24px 28px", marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div>
-                <p style={S.heroLabel}>Índice de Lucidez</p>
-                <p style={S.heroNumber}>{overall}</p>
-                <p style={S.heroSub}>
+                <p style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", marginBottom: "8px" }}>Score general</p>
+                <p style={{ fontSize: "64px", fontWeight: "300", color: "#1A1A1A", margin: "0 0 4px 0", fontFamily: "Georgia, serif" }}>{overall}</p>
+                <p style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", margin: 0 }}>
                   {labelZona(zona(overall))} · {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
                 </p>
               </div>
-              <div>
-                <p style={S.heroGoalLabel}>Objetivo</p>
-                <p style={S.heroGoal}>80</p>
+              <div style={{ textAlign: "right" }}>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", marginBottom: "8px" }}>Objetivo</p>
+                <p style={{ fontSize: "28px", fontWeight: "400", color: "#B0A89E", margin: 0, fontFamily: "Georgia, serif" }}>80</p>
               </div>
             </div>
-            <button style={S.btnPrimary} onClick={() => navigate("/indice")}>
-              Re-aplicar el Índice
+
+            {/* Re-aplicar Button */}
+            <button
+              onClick={() => navigate("/indice")}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                background: "transparent",
+                border: "1px solid #E8E2D9",
+                borderRadius: "8px",
+                color: "#8A7F74",
+                fontFamily: "Georgia, serif",
+                fontSize: "13px",
+                cursor: "pointer",
+                marginBottom: "28px",
+              }}
+            >
+              Re-aplicar el Índice →
             </button>
 
-            <div style={S.divider} />
+            {/* Dimensiones Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "28px" }}>
+              {DIMENSIONES.map(d => {
+                const s = scores[d.key] ?? 0;
+                const z = zona(s);
+                const c = colorZona(z);
+                const deepScore = evaluacionesProfundas[d.key];
+                const hasDeepEval = deepScore !== undefined;
 
-            {/* Sección 2 — Por dimensión */}
-            <p style={S.sectionLabel}>Por dimensión</p>
-            {DIMENSIONES.map(d => {
-              const s = scores[d.key] ?? 0;
-              const z = zona(s);
-              const c = colorZona(z);
-              const objetivo = 80;
-              const deepScore = evaluacionesProfundas[d.key];
-              return (
-                <div key={d.key} style={{ ...S.ctaCard, marginBottom: "12px", padding: "16px 18px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                    <span style={{ fontSize: "14px", fontWeight: 600, color: "#1A1A1A", fontFamily: "Georgia, serif" }}>
-                      {d.label}
-                    </span>
-                    <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif" }}>
-                      {s}
-                    </span>
-                  </div>
-                  <div style={S.dimBarWrap}>
-                    <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: "3px", position: "relative" }} />
-                    <div style={{ position: "absolute", left: `calc(${objetivo}% - 1px)`, top: "-4px", width: "2px", height: "14px", backgroundColor: "#8A7F74", borderRadius: "1px", opacity: 0.4, marginTop: "-5px" }} />
-                  </div>
-                  {deepScore !== undefined ? (
-                    <div style={{ marginTop: "12px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                        <span style={{ fontSize: "12px", color: "#639922", fontFamily: "Georgia, serif" }}>
-                          Evaluación profunda
-                        </span>
-                        <span style={{ fontSize: "12px", color: "#639922", fontFamily: "Georgia, serif" }}>
-                          {deepScore}
-                        </span>
-                      </div>
-                      <div style={{ ...S.dimBarWrap, height: "4px" }}>
-                        <div style={{ height: "100%", width: `${deepScore}%`, backgroundColor: "#639922", borderRadius: "2px" }} />
-                      </div>
+                const badgeColor = z === "verde" ? "#639922" : z === "ambar" ? "#EF9F27" : "#E24B4A";
+                const badgeBg = z === "verde" ? "#F0F7F4" : z === "ambar" ? "#FEF5E8" : "#FCE9E8";
+
+                return (
+                  <div
+                    key={d.key}
+                    style={{
+                      background: "#FAFAF7",
+                      border: hasDeepEval ? "1px solid #5BA08A33" : "1px solid #E8E2D9",
+                      borderRadius: "12px",
+                      padding: "16px 18px",
+                    }}
+                  >
+                    {/* Header */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                      <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                        {d.label}
+                      </span>
+                      <span style={{ fontSize: "18px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                        {s}
+                      </span>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => navigate(`/evaluacion/${d.key}`)}
-                      style={{
-                        marginTop: "12px",
-                        padding: "6px 12px",
-                        background: "transparent",
-                        border: "1px solid #639922",
-                        borderRadius: "4px",
-                        color: "#639922",
-                        fontSize: "11px",
-                        fontFamily: "Georgia, serif",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Evaluar en profundidad →
-                    </button>
-                  )}
-                  <div style={{ marginTop: "12px", padding: "8px", background: "#F7F4F0", borderRadius: "4px", border: "0.5px solid #E8E2D9" }}>
-                    <span style={{ fontSize: "11px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>
-                      Treatment plan · Disponible próximamente · IA
-                    </span>
+
+                    {/* Main Bar */}
+                    <div style={{ height: "5px", background: "#E8E2D9", borderRadius: "2px", marginBottom: "12px", overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: "2px" }} />
+                    </div>
+
+                    {/* Deep Evaluation Section (if exists) */}
+                    {hasDeepEval && (
+                      <div style={{ marginBottom: "12px", paddingBottom: "12px", borderBottom: "1px solid #F0EBE3" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                          <span style={{ fontSize: "10px", color: "#3C3489", fontFamily: "Georgia, serif" }}>
+                            Evaluación profunda
+                          </span>
+                          <span style={{ fontSize: "14px", color: "#3C3489", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                            {deepScore}
+                          </span>
+                        </div>
+                        <div style={{ height: "4px", background: "#E8E2D9", borderRadius: "2px", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${deepScore}%`, backgroundColor: "#7F77DD", borderRadius: "2px" }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      {/* Badge */}
+                      <div style={{ background: badgeBg, color: badgeColor, fontSize: "10px", fontFamily: "Georgia, serif", padding: "4px 10px", borderRadius: "12px" }}>
+                        {hasDeepEval ? "Evaluado" : labelZona(z)}
+                      </div>
+
+                      {/* Eval Button or Empty */}
+                      {!hasDeepEval && (
+                        <button
+                          onClick={() => navigate(`/evaluacion/${d.key}`)}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "#5BA08A",
+                            fontSize: "10px",
+                            fontFamily: "Georgia, serif",
+                            cursor: "pointer",
+                            padding: 0,
+                          }}
+                        >
+                          Evaluar →
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Treatment Plan Placeholder */}
+                    <div style={{ borderTop: "1px solid #F0EBE3", marginTop: "8px", paddingTop: "8px" }}>
+                      <span style={{ fontSize: "11px", color: "#C0B8B0", fontFamily: "Georgia, serif", fontStyle: "italic" }}>
+                        Treatment plan · disponible próximamente
+                      </span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
 
-            <div style={S.divider} />
-
-            {/* Sección 3 — Acompañante */}
-            <p style={S.sectionLabel}>Acompañante</p>
-            <button style={S.chatBtn} onClick={() => navigate("/chat")}>
-              <div style={S.chatDot} />
-              <div>
-                <p style={S.chatText}>Hablar con tu acompañante</p>
-                <p style={S.chatSub}>Disponible 24/7 · Conoce tu perfil</p>
+            {/* Acompañante Button */}
+            <button
+              onClick={() => navigate("/chat")}
+              style={{
+                width: "100%",
+                border: "1px solid #E8E2D9",
+                borderRadius: "12px",
+                padding: "16px 20px",
+                background: "#FAFAF7",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#5BA08A", flexShrink: 0 }} />
+              <div style={{ textAlign: "left" }}>
+                <p style={{ fontSize: "14px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", margin: 0, marginBottom: "2px" }}>
+                  Hablar con tu acompañante
+                </p>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: 0 }}>
+                  Disponible 24/7 · Conoce tu perfil
+                </p>
               </div>
             </button>
-          </>
+          </div>
         )}
 
         {/* ── TAB: PROGRESO ── */}
         {tab === "progreso" && (
-          <>
-            <p style={S.sectionLabel}>Dimensión</p>
-            <div style={S.chipWrap}>
+          <div style={{ maxWidth: "860px", padding: "28px 32px" }}>
+            {/* Score General */}
+            <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "28px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2px" }}>
+                <div>
+                  <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "0 0 6px 0" }}>Score actual</p>
+                  <p style={{ fontSize: "32px", fontWeight: "400", color: colorZona(zona(overall)), fontFamily: "Georgia, serif", margin: 0 }}>
+                    {overall}
+                  </p>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", marginBottom: "4px" }}>Objetivo</p>
+                  <p style={{ fontSize: "20px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: 0 }}>80</p>
+                </div>
+              </div>
+              {mediciones.length > 1 && (
+                <p style={{ fontSize: "12px", color: "#639922", fontFamily: "Georgia, serif", margin: "8px 0 0 0" }}>
+                  ↑ +{overall - (mediciones[0].overall ?? 0)} desde el baseline
+                </p>
+              )}
+              {/* Gráfica General */}
+              <svg width="100%" height="200" viewBox="0 0 640 200" style={{ marginTop: "16px" }}>
+                <defs>
+                  <pattern id="lines" patternUnits="userSpaceOnUse" width="30" height="30">
+                    <line x1="0" y1="0" x2="30" y2="0" stroke="#F0EBE3" strokeWidth="1" />
+                  </pattern>
+                </defs>
+                {/* Grid */}
+                <line x1="40" y1="10" x2="40" y2="160" stroke="#E8E2D9" strokeWidth="1" />
+                <line x1="40" y1="160" x2="630" y2="160" stroke="#E8E2D9" strokeWidth="1" />
+
+                {/* Y-axis labels */}
+                {[0, 50, 100].map((v, i) => {
+                  const y = 160 - (v / 100) * 150;
+                  return (
+                    <g key={i}>
+                      <text x="25" y={y + 4} fontSize="9" fill="#B0A89E" textAnchor="end">
+                        {v}
+                      </text>
+                      {v !== 0 && <line x1="35" y1={y} x2="630" y2={y} stroke="#F0EBE3" strokeWidth="1" strokeDasharray="4,2" />}
+                    </g>
+                  );
+                })}
+
+                {/* Objetivo line */}
+                <line x1="40" y1={160 - (80 / 100) * 150} x2="630" y2={160 - (80 / 100) * 150} stroke="#EF9F27" strokeWidth="2" strokeDasharray="5,3" />
+
+                {/* Data points */}
+                {mediciones.length > 0 && (
+                  <>
+                    {mediciones.map((m, idx) => {
+                      const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                      const y = 160 - ((m.overall ?? 0) / 100) * 150;
+                      return (
+                        <circle key={idx} cx={x} cy={y} r="4" fill={colorZona(zona(m.overall ?? 0))} />
+                      );
+                    })}
+
+                    {/* Bezier curve */}
+                    {mediciones.length > 1 && (
+                      <polyline
+                        points={mediciones
+                          .map((m, idx) => {
+                            const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                            const y = 160 - ((m.overall ?? 0) / 100) * 150;
+                            return `${x},${y}`;
+                          })
+                          .join(" ")}
+                        fill="none"
+                        stroke="#EF9F27"
+                        strokeWidth="2"
+                      />
+                    )}
+
+                    {/* X-axis labels (fechas) */}
+                    {mediciones.length > 0 && (
+                      <>
+                        <text x="40" y="178" fontSize="9" fill="#B0A89E" textAnchor="middle">
+                          {new Date(mediciones[0].fecha).toLocaleDateString("es-MX", { month: "short", day: "numeric" })}
+                        </text>
+                        {mediciones.length > 1 && (
+                          <text x="630" y="178" fontSize="9" fill="#B0A89E" textAnchor="middle">
+                            {new Date(mediciones[mediciones.length - 1].fecha).toLocaleDateString("es-MX", { month: "short", day: "numeric" })}
+                          </text>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </svg>
+            </div>
+
+            {/* Por Dimensión */}
+            <p style={{ fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0A89E", marginBottom: "14px", fontWeight: 600 }}>
+              Por dimensión
+            </p>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "20px" }}>
               {DIMENSIONES.map(d => (
-                <button key={d.key} style={S.chip(dimActiva === d.key)} onClick={() => setDimActiva(d.key)}>
+                <button
+                  key={d.key}
+                  onClick={() => setDimActiva(d.key)}
+                  style={{
+                    fontSize: "11px",
+                    fontFamily: "Georgia, serif",
+                    padding: "6px 14px",
+                    borderRadius: "20px",
+                    border: dimActiva === d.key ? "1px solid #1A1A1A" : "1px solid #E8E2D9",
+                    backgroundColor: dimActiva === d.key ? "#1A1A1A" : "#FFFFFF",
+                    color: dimActiva === d.key ? "#FFFFFF" : "#8A7F74",
+                    cursor: "pointer",
+                  }}
+                >
                   {d.label}
                 </button>
               ))}
             </div>
 
-            <div style={S.chartWrap}>
-              <GraficaProgreso historial={historialDim} dimLabel={DIMENSIONES.find(d => d.key === dimActiva)?.label} />
+            {/* Gráfica Dimensión Activa */}
+            <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                <div>
+                  <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "0 0 6px 0" }}>Score actual</p>
+                  <p style={{ fontSize: "28px", fontWeight: "400", color: colorZona(zona(scores[dimActiva] ?? 0)), fontFamily: "Georgia, serif", margin: 0 }}>
+                    {scores[dimActiva] ?? 0}
+                  </p>
+                </div>
+                {mediciones.length > 1 && (
+                  <p style={{ fontSize: "12px", color: "#639922", fontFamily: "Georgia, serif" }}>
+                    ↑ +{(scores[dimActiva] ?? 0) - (mediciones[0].scores?.[dimActiva] ?? 0)}
+                  </p>
+                )}
+              </div>
+
+              {/* Leyenda */}
+              <div style={{ display: "flex", gap: "16px", fontSize: "11px", color: "#8A7F74", fontFamily: "Georgia, serif", marginBottom: "14px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="20" height="12" style={{ display: "block", flexShrink: 0 }}>
+                    <line x1="2" y1="6" x2="18" y2="6" stroke="#EF9F27" strokeWidth="2" />
+                  </svg>
+                  Índice
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="16" height="12" style={{ display: "block", flexShrink: 0 }}>
+                    <circle cx="8" cy="6" r="4" fill="none" stroke="#7F77DD" strokeWidth="1.5" />
+                  </svg>
+                  Eval. profunda
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="20" height="12" style={{ display: "block", flexShrink: 0 }}>
+                    <line x1="2" y1="6" x2="18" y2="6" stroke="#E8E2D9" strokeWidth="2" strokeDasharray="4,2" />
+                  </svg>
+                  Objetivo
+                </div>
+              </div>
+
+              {/* Gráfica Dimensión */}
+              <svg width="100%" height="220" viewBox="0 0 640 220">
+                {/* Grid */}
+                <line x1="40" y1="10" x2="40" y2="170" stroke="#E8E2D9" strokeWidth="1" />
+                <line x1="40" y1="170" x2="630" y2="170" stroke="#E8E2D9" strokeWidth="1" />
+
+                {/* Y-axis labels */}
+                {[0, 50, 100].map((v, i) => {
+                  const y = 170 - (v / 100) * 160;
+                  return (
+                    <g key={i}>
+                      <text x="25" y={y + 4} fontSize="9" fill="#B0A89E" textAnchor="end">
+                        {v}
+                      </text>
+                      {v !== 0 && <line x1="35" y1={y} x2="630" y2={y} stroke="#F0EBE3" strokeWidth="1" />}
+                    </g>
+                  );
+                })}
+
+                {/* Objetivo line */}
+                <line x1="40" y1={170 - (80 / 100) * 160} x2="630" y2={170 - (80 / 100) * 160} stroke="#E8E2D9" strokeWidth="2" strokeDasharray="5,3" />
+
+                {/* Índice line and points */}
+                {mediciones.length > 0 && (
+                  <>
+                    {mediciones.length > 1 && (
+                      <polyline
+                        points={mediciones
+                          .map((m, idx) => {
+                            const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                            const y = 170 - ((m.scores?.[dimActiva] ?? 0) / 100) * 160;
+                            return `${x},${y}`;
+                          })
+                          .join(" ")}
+                        fill="none"
+                        stroke="#EF9F27"
+                        strokeWidth="2"
+                      />
+                    )}
+
+                    {mediciones.map((m, idx) => {
+                      const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                      const y = 170 - ((m.scores?.[dimActiva] ?? 0) / 100) * 160;
+                      return (
+                        <circle key={`index-${idx}`} cx={x} cy={y} r="3" fill="#EF9F27" />
+                      );
+                    })}
+
+                    {/* Evaluaciones Profundas */}
+                    {evaluacionesProfundas[dimActiva] !== undefined && (
+                      mediciones.map((m, idx) => {
+                        const deepEval = evaluacionesProfundas[dimActiva];
+                        if (!deepEval) return null;
+
+                        const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                        const y = 170 - (deepEval / 100) * 160;
+
+                        return (
+                          <g key={`deep-${idx}`}>
+                            {/* Tooltip */}
+                            <rect x={x - 45} y={y - 38} width="90" height="24" rx="4" fill="#EEEDFE" />
+                            <text x={x} y={y - 20} fontSize="10" fill="#3C3489" textAnchor="middle" fontWeight="600">
+                              Eval. profunda
+                            </text>
+                            <text x={x} y={y - 10} fontSize="11" fill="#3C3489" textAnchor="middle" fontWeight="700">
+                              {deepEval}
+                            </text>
+
+                            {/* Circle */}
+                            <circle cx={x} cy={y} r="7" fill="#FFFFFF" stroke="#7F77DD" strokeWidth="2" />
+                            <circle cx={x} cy={y} r="3" fill="#7F77DD" />
+                          </g>
+                        );
+                      })
+                    )}
+
+                    {/* X-axis labels */}
+                    <text x="40" y="190" fontSize="9" fill="#B0A89E" textAnchor="middle">
+                      {new Date(mediciones[0].fecha).toLocaleDateString("es-MX", { month: "short", day: "numeric" })}
+                    </text>
+                    {mediciones.length > 1 && (
+                      <text x="630" y="190" fontSize="9" fill="#B0A89E" textAnchor="middle">
+                        {new Date(mediciones[mediciones.length - 1].fecha).toLocaleDateString("es-MX", { month: "short", day: "numeric" })}
+                      </text>
+                    )}
+                  </>
+                )}
+              </svg>
             </div>
-            <p style={S.chartNote}>Línea punteada = objetivo (80) · Punto = medición</p>
 
             {mediciones.length === 1 && (
-              <p style={{ ...S.chartNote, marginTop: "16px", color: "#8A7F74" }}>
+              <p style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", marginTop: "16px", textAlign: "center" }}>
                 Aplica el Índice nuevamente para ver tu evolución en el tiempo.
               </p>
             )}
-          </>
+          </div>
         )}
 
         {/* ── TAB: REPORTE ── */}
         {tab === "reporte" && (
-          <>
-            <p style={S.fechaLabel}>
-              Última medición · {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
-            </p>
-            <div style={S.reporteBox}>
-              {ultima.reporte ?? "No hay reporte disponible para esta medición."}
+          <div style={{ maxWidth: "860px", padding: "28px 32px" }}>
+            {/* Header */}
+            <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "20px", display: "flex", justifyContent: "space-between" }}>
+              <div>
+                <h2 style={{ fontSize: "20px", color: "#1A1A1A", fontFamily: "Georgia, serif", margin: "0 0 12px 0" }}>
+                  Reporte de Lucidez
+                </h2>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "2px 0" }}>
+                  {nombre}
+                </p>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "2px 0" }}>
+                  {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                </p>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "2px 0" }}>
+                  Día {diasDesdeInicio} del programa
+                </p>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "2px 0" }}>
+                  {mediciones.length} {mediciones.length === 1 ? "medición" : "mediciones"} · {Object.keys(evaluacionesProfundas).length} evaluaciones profundas
+                </p>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <p style={{ fontSize: "52px", fontWeight: "400", color: colorZona(zona(overall)), fontFamily: "Georgia, serif", margin: "0 0 4px 0" }}>
+                  {overall}
+                </p>
+                <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: 0 }}>
+                  Score general · {labelZona(zona(overall))}
+                </p>
+              </div>
             </div>
 
+            {/* Dimensiones */}
+            <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "20px" }}>
+              {DIMENSIONES.map(d => {
+                const s = scores[d.key] ?? 0;
+                const z = zona(s);
+                const c = colorZona(z);
+                const deepScore = evaluacionesProfundas[d.key];
+                const hasDeepEval = deepScore !== undefined;
+
+                const badgeColor = z === "verde" ? "#639922" : z === "ambar" ? "#EF9F27" : "#E24B4A";
+                const badgeBg = z === "verde" ? "#F0F7F4" : z === "ambar" ? "#FEF5E8" : "#FCE9E8";
+
+                return (
+                  <div key={d.key} style={{ display: "flex", alignItems: "center", gap: "16px", paddingBottom: "12px", marginBottom: "12px", borderBottom: "1px solid #F0EBE3", alignItems: "center" }}>
+                    {/* Nombre */}
+                    <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", minWidth: "160px" }}>
+                      {d.label}
+                    </span>
+
+                    {/* Barra */}
+                    <div style={{ flex: 1, height: "5px", background: "#E8E2D9", borderRadius: "2px", overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: "2px" }} />
+                    </div>
+
+                    {/* Score */}
+                    <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", minWidth: "30px", textAlign: "right" }}>
+                      {s}
+                    </span>
+
+                    {/* Badge */}
+                    <div style={{ background: hasDeepEval ? "#EEEDFE" : badgeBg, color: hasDeepEval ? "#7F77DD" : badgeColor, fontSize: "10px", fontFamily: "Georgia, serif", padding: "4px 10px", borderRadius: "12px", minWidth: "60px", textAlign: "center" }}>
+                      {hasDeepEval ? "Evaluado" : labelZona(s)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Evaluaciones Profundas */}
+            {Object.keys(evaluacionesProfundas).length > 0 && (
+              <div style={{ marginBottom: "20px" }}>
+                <p style={{ fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0A89E", marginBottom: "12px", fontWeight: 600 }}>
+                  Evaluaciones profundas
+                </p>
+                {DIMENSIONES.map(d => {
+                  const deepScore = evaluacionesProfundas[d.key];
+                  if (deepScore === undefined) return null;
+
+                  const escala = ESCALAS[d.key];
+                  const nivel = deepScore >= 70 ? "alto" : deepScore >= 40 ? "medio" : "bajo";
+                  const interpretacion = escala?.interpretacion?.[nivel] || "";
+
+                  return (
+                    <div key={d.key} style={{ background: "#FFFFFF", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "16px 20px", marginBottom: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                        <div>
+                          <p style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", margin: 0 }}>
+                            {d.label}
+                          </p>
+                          <p style={{ fontSize: "11px", color: "#B0A89E", fontFamily: "Georgia, serif", margin: "4px 0 0 0" }}>
+                            {escala?.escala}
+                          </p>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <p style={{ fontSize: "20px", color: "#7F77DD", fontFamily: "Georgia, serif", fontWeight: "600", margin: 0 }}>
+                            {deepScore}
+                          </p>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: "12px", color: "#4A4540", fontFamily: "Georgia, serif", fontStyle: "italic", lineHeight: "1.6", margin: "8px 0 0 0" }}>
+                        {interpretacion}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Evolución */}
             {mediciones.length > 1 && (
-              <>
-                <div style={S.divider} />
-                <p style={S.sectionLabel}>Mediciones anteriores</p>
-                {[...mediciones].reverse().slice(1).map((m, i) => (
-                  <div key={m.id} style={{ ...S.ctaCard, cursor: "default" }}>
-                    <p style={S.ctaTitle}>
+              <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "20px" }}>
+                <p style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", marginBottom: "12px" }}>Evolución</p>
+                
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "12px", marginBottom: "12px", borderBottom: "1px solid #F0EBE3" }}>
+                  <span style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>Score general</span>
+                  <span style={{ fontSize: "13px", color: "#639922", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                    ↑ +{overall - (mediciones[0].overall ?? 0)}
+                  </span>
+                </div>
+
+                {(() => {
+                  const deltas = DIMENSIONES.map(d => ({
+                    key: d.key,
+                    label: d.label,
+                    delta: (scores[d.key] ?? 0) - (mediciones[0].scores?.[d.key] ?? 0),
+                  }));
+                  const maxDelta = deltas.reduce((a, b) => a.delta > b.delta ? a : b);
+                  return (
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "12px", marginBottom: "12px", borderBottom: "1px solid #F0EBE3" }}>
+                      <span style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>Mayor mejora</span>
+                      <span style={{ fontSize: "13px", color: "#639922", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                        {maxDelta.label} (↑ +{maxDelta.delta})
+                      </span>
+                    </div>
+                  );
+                })()}
+
+                {(() => {
+                  const gaps = DIMENSIONES.map(d => ({
+                    key: d.key,
+                    label: d.label,
+                    gap: 80 - (scores[d.key] ?? 0),
+                  }));
+                  const maxGap = gaps.reduce((a, b) => a.gap > b.gap ? a : b);
+                  return (
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "12px", marginBottom: "12px", borderBottom: "1px solid #F0EBE3" }}>
+                      <span style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>Mayor trabajo pendiente</span>
+                      <span style={{ fontSize: "13px", color: "#E24B4A", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                        {maxGap.label}
+                      </span>
+                    </div>
+                  );
+                })()}
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>Días en el programa</span>
+                  <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                    {diasDesdeInicio} {diasDesdeInicio === 1 ? "día" : "días"}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Reporte Narrativo */}
+            <div style={{ background: "#FFFFFF", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "20px" }}>
+              <p style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", marginBottom: "12px" }}>
+                Análisis personalizado
+              </p>
+              <div style={{ fontSize: "14px", color: "#4A4540", fontFamily: "Georgia, serif", fontStyle: "italic", lineHeight: "1.9" }}>
+                {(ultima.reporte ?? "No hay reporte disponible para esta medición.").split("\n\n").map((p, i) => (
+                  <p key={i} style={{ margin: "0 0 12px 0" }}>
+                    {p}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            {/* Historial */}
+            {mediciones.length > 1 && (
+              <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "20px" }}>
+                <p style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600", marginBottom: "12px" }}>
+                  Historial de mediciones
+                </p>
+                {[...mediciones].reverse().map((m, i) => (
+                  <div key={m.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "10px", marginBottom: "10px", borderBottom: i < mediciones.length - 1 ? "1px solid #F0EBE3" : "none" }}>
+                    <span style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>
                       {new Date(m.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
-                    </p>
-                    <p style={S.ctaDesc}>Score general: {m.overall} · {m.nivel}</p>
+                    </span>
+                    <span style={{ fontSize: "12px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "600" }}>
+                      {m.overall} · {m.nivel}
+                    </span>
                   </div>
                 ))}
-              </>
+              </div>
             )}
-          </>
+
+            {/* Botón Compartir */}
+            <button
+              onClick={() => {
+                const reportText = `Mi reporte de Lucidez:\n\nScore general: ${overall}\nDía ${diasDesdeInicio} del programa\n\n${ultima.reporte}`;
+                navigator.clipboard?.writeText(reportText);
+                alert("Reporte copiado al portapapeles");
+              }}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                background: "transparent",
+                border: "1px solid #E8E2D9",
+                borderRadius: "8px",
+                color: "#8A7F74",
+                fontFamily: "Georgia, serif",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              Compartir con mi terapeuta →
+            </button>
+          </div>
         )}
 
       </div>
