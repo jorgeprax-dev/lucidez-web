@@ -59,6 +59,12 @@ export default function Login() {
           style={{ width: "100%", padding: 14, background: "transparent", color: "#8A7F74", border: "0.5px solid rgba(0,0,0,0.1)", borderRadius: 6, fontFamily: "Georgia, serif", fontSize: 13, cursor: "pointer" }}>
           {mode === "login" ? "¿No tienes cuenta? Crear una" : "¿Ya tienes cuenta? Entrar"}
         </button>
+
+        <div style={{ marginTop: 20, textAlign: "center" }}>
+          <button onClick={() => navigate("/", { replace: true })} style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#8A7F74", background: "none", border: "none", cursor: "pointer", textDecoration: "none" }}>
+            ← Regresar
+          </button>
+        </div>
       </div>
     </div>
   );
