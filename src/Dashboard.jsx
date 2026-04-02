@@ -348,6 +348,7 @@ export default function Dashboard() {
   const [tab, setTab]             = useState("hoy");
   const [session, setSession]     = useState(null);
   const [mediciones, setMediciones] = useState([]);
+  const [evaluacionesProfundas, setEvaluacionesProfundas] = useState({});
   const [loading, setLoading]     = useState(true);
   const [dimActiva, setDimActiva] = useState("presencia");
 
@@ -362,6 +363,7 @@ export default function Dashboard() {
   const cargarMediciones = useCallback(async () => {
     if (!session?.user?.email) return;
     setLoading(true);
+
     const { data, error } = await supabase
       .from("indice_lucidez")
       .select("id, fecha, scores, overall, nivel, reporte, nombre")
@@ -369,6 +371,29 @@ export default function Dashboard() {
       .order("fecha", { ascending: true });
 
     if (!error && data) setMediciones(data);
+
+    // Carga evaluaciones profundas y las indexa por dimensión
+    const { data: deepData, error: deepError } = await supabase
+      .from("evaluacion_profunda")
+      .select("dimension, overall, fecha")
+      .eq("user_id", session.user.id)
+      .order("fecha", { ascending: true });
+
+    if (!deepError && deepData) {
+      const deepMap = {};
+      deepData.forEach((row) => {
+        if (!row.dimension) return;
+        const existing = deepMap[row.dimension];
+        if (!existing || new Date(row.fecha) > new Date(existing.fecha)) {
+          deepMap[row.dimension] = row;
+        }
+      });
+      const deepScores = Object.fromEntries(
+        Object.entries(deepMap).map(([dimension, item]) => [dimension, item.overall ?? 0])
+      );
+      setEvaluacionesProfundas(deepScores);
+    }
+
     setLoading(false);
   }, [session]);
 
@@ -383,7 +408,8 @@ export default function Dashboard() {
 
   // Datos derivados
   const ultima       = mediciones[mediciones.length - 1] ?? null;
-  const scores       = ultima?.scores ?? {};
+  const indexScores  = ultima?.scores ?? {};
+  const scores       = indexScores;
   const overall      = ultima?.overall ?? 0;
   const nombre       = ultima?.nombre?.split(" ")[0] ?? session?.user?.email?.split("@")[0] ?? "tú";
   const diasDesdeInicio = mediciones.length > 0
@@ -462,77 +488,94 @@ export default function Dashboard() {
         {/* ── TAB: HOY ── */}
         {tab === "hoy" && (
           <>
-            <p style={S.sectionLabel}>Índice de Lucidez</p>
-
-            {/* Hero score */}
+            {/* Sección 1 — Score general */}
+            <p style={S.sectionLabel}>Score general</p>
             <div style={S.heroCard}>
               <div>
-                <p style={S.heroLabel}>Score general</p>
+                <p style={S.heroLabel}>Índice de Lucidez</p>
                 <p style={S.heroNumber}>{overall}</p>
-                <p style={S.heroSub}>{labelZona(zona(overall))} · {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}</p>
+                <p style={S.heroSub}>
+                  {labelZona(zona(overall))} · {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                </p>
               </div>
               <div>
                 <p style={S.heroGoalLabel}>Objetivo</p>
                 <p style={S.heroGoal}>80</p>
               </div>
             </div>
+            <button style={S.btnPrimary} onClick={() => navigate("/indice")}>
+              Re-aplicar el Índice
+            </button>
 
-            {/* Leyenda */}
-            <div style={S.legend}>
-              {[["#E24B4A", "Crítico (< 60)"], ["#EF9F27", "Trabajando (60–79)"], ["#639922", "Funcional (≥ 80)"]].map(([c, l]) => (
-                <div key={l} style={S.legendItem}>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: c }} />
-                  {l}
-                </div>
-              ))}
-            </div>
+            <div style={S.divider} />
 
-            {/* Barras por dimensión */}
+            {/* Sección 2 — Por dimensión */}
             <p style={S.sectionLabel}>Por dimensión</p>
             {DIMENSIONES.map(d => {
-              const s  = scores[d.key] ?? 0;
-              const z  = zona(s);
-              const c  = colorZona(z);
+              const s = scores[d.key] ?? 0;
+              const z = zona(s);
+              const c = colorZona(z);
               const objetivo = 80;
+              const deepScore = evaluacionesProfundas[d.key];
               return (
-                <div key={d.key} style={S.dimRow}>
-                  <span style={S.dimName}>{d.label}</span>
+                <div key={d.key} style={{ ...S.ctaCard, marginBottom: "12px", padding: "16px 18px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "14px", fontWeight: 600, color: "#1A1A1A", fontFamily: "Georgia, serif" }}>
+                      {d.label}
+                    </span>
+                    <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif" }}>
+                      {s}
+                    </span>
+                  </div>
                   <div style={S.dimBarWrap}>
                     <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: "3px", position: "relative" }} />
-                    {/* Marcador objetivo */}
                     <div style={{ position: "absolute", left: `calc(${objetivo}% - 1px)`, top: "-4px", width: "2px", height: "14px", backgroundColor: "#8A7F74", borderRadius: "1px", opacity: 0.4, marginTop: "-5px" }} />
                   </div>
-                  <span style={S.dimVal}>{s}</span>
+                  {deepScore !== undefined ? (
+                    <div style={{ marginTop: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                        <span style={{ fontSize: "12px", color: "#639922", fontFamily: "Georgia, serif" }}>
+                          Evaluación profunda
+                        </span>
+                        <span style={{ fontSize: "12px", color: "#639922", fontFamily: "Georgia, serif" }}>
+                          {deepScore}
+                        </span>
+                      </div>
+                      <div style={{ ...S.dimBarWrap, height: "4px" }}>
+                        <div style={{ height: "100%", width: `${deepScore}%`, backgroundColor: "#639922", borderRadius: "2px" }} />
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => navigate(`/evaluacion/${d.key}`)}
+                      style={{
+                        marginTop: "12px",
+                        padding: "6px 12px",
+                        background: "transparent",
+                        border: "1px solid #639922",
+                        borderRadius: "4px",
+                        color: "#639922",
+                        fontSize: "11px",
+                        fontFamily: "Georgia, serif",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Evaluar en profundidad →
+                    </button>
+                  )}
+                  <div style={{ marginTop: "12px", padding: "8px", background: "#F7F4F0", borderRadius: "4px", border: "0.5px solid #E8E2D9" }}>
+                    <span style={{ fontSize: "11px", color: "#8A7F74", fontFamily: "Georgia, serif" }}>
+                      Treatment plan · Disponible próximamente · IA
+                    </span>
+                  </div>
                 </div>
               );
             })}
 
             <div style={S.divider} />
 
-            {/* Próximos pasos */}
-            <p style={S.sectionLabel}>Próximos pasos</p>
-
-            {dimsRojas.length > 0 && (
-              <div style={S.ctaCard}>
-                <p style={S.ctaTitle}>Dimensiones críticas</p>
-                <p style={S.ctaDesc}>
-                  {dimsRojas.map(d => d.label).join(" y ")} {dimsRojas.length === 1 ? "está" : "están"} en zona crítica. Enfoca tu trabajo aquí esta semana.
-                </p>
-                <span style={S.pill("#A32D2D", "#FCEBEB")}>
-                  {dimsRojas.length} {dimsRojas.length === 1 ? "dimensión" : "dimensiones"} bajo 60
-                </span>
-              </div>
-            )}
-
-            <div style={S.ctaCard} onClick={() => navigate("/indice")}>
-              <p style={S.ctaTitle}>Re-aplicar el Índice</p>
-              <p style={S.ctaDesc}>Mide tu progreso con una nueva medición para ver el delta vs. tu baseline.</p>
-              <span style={S.pill("#854F0B", "#FAEEDA")}>
-                {mediciones.length === 1 ? "Primera medición completada" : `${mediciones.length} mediciones`}
-              </span>
-            </div>
-
-            {/* Botón chat */}
+            {/* Sección 3 — Acompañante */}
+            <p style={S.sectionLabel}>Acompañante</p>
             <button style={S.chatBtn} onClick={() => navigate("/chat")}>
               <div style={S.chatDot} />
               <div>
