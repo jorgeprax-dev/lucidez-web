@@ -44,23 +44,21 @@ export default function Home() {
           América Latina · IOP Digital · Basado en Evidencia
         </div>
         <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(40px, 6vw, 68px)", fontWeight: 300, lineHeight: 1.12, marginBottom: 22, color: "#1a1a1a" }}>
-          El primer programa de tratamiento ambulatorio intensivo{" "}
-          <em style={{ color: "#5BA08A", fontStyle: "italic" }}>digital</em>{" "}
-          en América Latina.
+          Tu primer mapa de bienestar mental. Basado en ciencia, medido con datos.
         </h1>
         <p style={{ fontSize: 17, color: "#666", lineHeight: 1.8, maxWidth: 560, marginBottom: 36, fontStyle: "italic" }}>
-          Evaluación psicométrica validada, plan de tratamiento personalizado con IA y acompañamiento continuo — integrados en un solo sistema coherente y medible.
+          Lucidez mide 6 dimensiones de tu bienestar con escalas psicométricas validadas, identifica dónde está el trabajo, y te da un camino claro para mejorar — sin etiquetas, sin diagnósticos, con datos reales.
         </p>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
           <a href="/login" style={{ padding: "13px 28px", background: "#5BA08A", color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "Georgia, serif" }}>
-            Crear cuenta gratis →
+            Hacer mi mapa de bienestar →
           </a>
           <a href="/login" style={{ fontSize: 14, fontFamily: "Georgia, serif", color: "#5BA08A" }}>
             ¿Ya tienes cuenta? Entrar →
           </a>
         </div>
         <p style={{ marginTop: 16, fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: 2, color: "#bbb", textTransform: "uppercase" }}>
-          Gratis · Sin tarjeta · 5 minutos
+          Gratis · Sin tarjeta · 8 minutos
         </p>
       </section>
 
@@ -76,10 +74,10 @@ export default function Home() {
               El Índice de <em style={{ color: "#5BA08A" }}>Lucidez</em>
             </h2>
             <p style={{ fontSize: 15, color: "#666", lineHeight: 1.8, marginBottom: 14, fontStyle: "italic" }}>
-              Un instrumento compuesto de seis escalas psicométricas validadas que mide el estado funcional en seis dimensiones clínicas.
+              Un instrumento compuesto de seis escalas psicométricas validadas que mide tu estado funcional en seis dimensiones clave de bienestar mental.
             </p>
             <p style={{ fontSize: 15, color: "#666", lineHeight: 1.8, marginBottom: 28, fontStyle: "italic" }}>
-              Es el punto de entrada al programa y el instrumento de seguimiento longitudinal.
+              Es el punto de entrada al programa y tu instrumento de seguimiento longitudinal. Cada vez que lo repites, ves el delta — prueba real de que algo está cambiando.
             </p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -113,9 +111,11 @@ export default function Home() {
             Estructura del IOP
           </div>
           <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(26px, 3vw, 38px)", fontWeight: 300, lineHeight: 1.2, marginBottom: 14, color: "#1a1a1a" }}>
-            La estructura de un IOP clínico —{" "}
-            <em style={{ color: "#5BA08A" }}>diseñada para la vida cotidiana.</em>
+            La estructura de un programa clínico — diseñada para la vida cotidiana.
           </h2>
+          <p style={{ fontSize: 15, color: "#666", lineHeight: 1.8, maxWidth: 780, marginBottom: 30, fontStyle: "italic" }}>
+            Los programas de salud mental más efectivos del mundo combinan evaluación, plan personalizado, tratamiento activo y seguimiento. Lucidez integra esa estructura en un sistema digital accesible desde cualquier lugar.
+          </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 2 }}>
             {[
               { num: "01", title: "Assessment", desc: "Índice de Lucidez. 6 escalas psicométricas validadas." },
@@ -149,7 +149,7 @@ export default function Home() {
               Lucidez integra cuatro marcos terapéuticos con evidencia sólida: CBT para reestructurar pensamientos automáticos, DBT para regular emociones de alta intensidad, ACT para alinear conducta con valores, y Mindfulness para entrenar la atención al momento presente.
             </p>
             <p style={{ fontSize: 15, color: "#666", lineHeight: 1.8, fontStyle: "italic" }}>
-              No es una app de bienestar. Es un IOP digital construido sobre los mismos marcos que usan los programas clínicos más validados del mundo — diseñado para hispanohablantes en recuperación activa.
+              Efectivo para ansiedad, estrés, burnout, depresión leve-moderada, crisis de identidad y recuperación de adicciones. No reemplaza a un psiquiatra ni diagnostica — complementa y mide.
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
@@ -174,19 +174,19 @@ export default function Home() {
 
       <section style={{ background: "#5BA08A", padding: "72px 48px", textAlign: "center" }}>
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(30px, 4vw, 48px)", fontWeight: 300, color: "#fff", marginBottom: 14, lineHeight: 1.2 }}>
-          Empieza con el Índice.
+          Empieza con tu mapa de bienestar.
         </h2>
+        <p style={{ color: "#fff", fontSize: 16, marginBottom: 24, fontFamily: "Georgia, serif" }}>
+          18 preguntas. 6 dimensiones. Reporte personalizado. Gratis.
+        </p>
         <a href="/login" style={{ display: "inline-block", padding: "14px 36px", background: "#1a1814", color: "#f4f0ea", fontFamily: "Georgia, serif", fontSize: 14, fontWeight: 600 }}>
-          Crear cuenta gratis →
+          Hacer mi mapa de bienestar →
         </a>
       </section>
 
-      <footer style={{ padding: "20px 48px", borderTop: "1px solid #e8e2d9", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f7f4f0" }}>
+      <footer style={{ padding: "20px 48px", borderTop: "1px solid #e8e2d9", display: "flex", justifyContent: "center", alignItems: "center", background: "#f7f4f0" }}>
         <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: 2, color: "#bbb", textTransform: "uppercase" }}>
-          © 2026 Lucidez · Tampico, México
-        </p>
-        <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: 2, color: "#bbb", textTransform: "uppercase" }}>
-          Programa de Desarrollo Personal Basado en Evidencia
+          © 2026 Lucidez · Tampico, México · Programa de bienestar mental basado en evidencia
         </p>
       </footer>
     </div>
