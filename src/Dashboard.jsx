@@ -413,9 +413,9 @@ export default function Dashboard() {
     return (
       <div style={S.page}>
         <nav style={S.nav}>
-          <a href="/" style={{ ...S.navLogo, textDecoration: "none" }}>LUCIDEZ</a>
+          <span onClick={() => navigate("/")} style={{ ...S.navLogo, cursor: "pointer" }}>LUCIDEZ</span>
           <div style={S.navRight}>
-            <a href="/" style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", textDecoration: "none" }}>Inicio</a>
+            <button onClick={() => navigate("/")} style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", background: "none", border: "none", cursor: "pointer" }}>Inicio</button>
             <span style={S.navUser}>{nombre}</span>
             <button style={S.signOut} onClick={handleSignOut}>Salir</button>
           </div>
@@ -442,9 +442,9 @@ export default function Dashboard() {
     <div style={S.page}>
       {/* Nav */}
       <nav style={S.nav}>
-        <a href="/" style={{ ...S.navLogo, textDecoration: "none" }}>LUCIDEZ</a>
+        <span onClick={() => navigate("/")} style={{ ...S.navLogo, cursor: "pointer" }}>LUCIDEZ</span>
         <div style={S.navRight}>
-          <a href="/" style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", textDecoration: "none" }}>Inicio</a>
+          <button onClick={() => navigate("/")} style={{ fontSize: "12px", color: "#8A7F74", fontFamily: "Georgia, serif", background: "none", border: "none", cursor: "pointer" }}>Inicio</button>
           <span style={S.navUser}>{nombre} · día {diasDesdeInicio}</span>
           <button style={S.signOut} onClick={handleSignOut}>Salir</button>
         </div>
