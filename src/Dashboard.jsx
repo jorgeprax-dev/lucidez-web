@@ -603,11 +603,22 @@ export default function Dashboard() {
                       )}
                     </div>
 
-                    {/* Treatment Plan Placeholder */}
+                    {/* Ver Curso Button */}
                     <div style={{ borderTop: "1px solid #F0EBE3", marginTop: "8px", paddingTop: "8px" }}>
-                      <span style={{ fontSize: "11px", color: "#C0B8B0", fontFamily: "Georgia, serif", fontStyle: "italic" }}>
-                        Treatment plan · disponible próximamente
-                      </span>
+                      <button
+                        onClick={() => navigate(`/curso/${d.key}`)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          color: "#5BA08A",
+                          fontSize: "10px",
+                          fontFamily: "Georgia, serif",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        Ver curso →
+                      </button>
                     </div>
                   </div>
                 );

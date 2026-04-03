@@ -9,6 +9,7 @@ import Roadmap from "./Roadmap.jsx";
 import Chat from "./Chat.jsx";
 import Login from "./Login.jsx";
 import Evaluacion from "./Evaluacion.jsx";
+import Curso from "./Curso.jsx";
 
 // Maneja el callback de magic link — procesa el token y redirige al dashboard
 function AuthCallback() {
@@ -101,6 +102,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <Evaluacion />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/curso/:dimension"
+          element={
+            <PrivateRoute>
+              <Curso />
             </PrivateRoute>
           }
         />
