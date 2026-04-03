@@ -7,6 +7,7 @@ export default function Curso() {
   const navigate = useNavigate();
   const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [leccionesCompletadas, setLeccionesCompletadas] = useState(new Set());
 
   useEffect(() => {
     const cargarScore = async () => {
@@ -27,17 +28,29 @@ export default function Curso() {
     cargarScore();
   }, [dimension]);
 
+  useEffect(() => {
+    const completadas = new Set();
+    for (let i = 1; i <= 5; i++) {
+      if (localStorage.getItem(`leccion_${dimension}_1_${i}`)) {
+        completadas.add(i);
+      }
+    }
+    setLeccionesCompletadas(completadas);
+  }, [dimension]);
+
   // Contenido hardcoded para regulacion
+  const primeraPendiente = Array.from({ length: 5 }, (_, i) => i + 1).find(num => !leccionesCompletadas.has(num));
+
   const niveles = [
     {
       nivel: 1,
       titulo: "Fundamentos de Regulación Emocional",
       lecciones: [
-        { numero: 1, titulo: "Identificación de Emociones", estado: "completada" },
-        { numero: 2, titulo: "Técnicas de Respiración", estado: "completada" },
-        { numero: 3, titulo: "Mindfulness Básico", estado: "activa" },
-        { numero: 4, titulo: "Gestión de Estrés", estado: "pendiente" },
-        { numero: 5, titulo: "Autocompasión", estado: "pendiente" },
+        { numero: 1, titulo: "Las emociones no son el problema", estado: leccionesCompletadas.has(1) ? "completada" : (1 === primeraPendiente ? "activa" : "pendiente") },
+        { numero: 2, titulo: "El ciclo de desbordamiento", estado: leccionesCompletadas.has(2) ? "completada" : (2 === primeraPendiente ? "activa" : "pendiente") },
+        { numero: 3, titulo: "Tu termómetro emocional", estado: leccionesCompletadas.has(3) ? "completada" : (3 === primeraPendiente ? "activa" : "pendiente") },
+        { numero: 4, titulo: "TIPP — el freno de emergencia", estado: leccionesCompletadas.has(4) ? "completada" : (4 === primeraPendiente ? "activa" : "pendiente") },
+        { numero: 5, titulo: "Surfear la ola", estado: leccionesCompletadas.has(5) ? "completada" : (5 === primeraPendiente ? "activa" : "pendiente") },
       ],
     },
     {
@@ -94,14 +107,33 @@ export default function Curso() {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {nivel.lecciones.map((leccion) => (
-                    <div key={leccion.numero} style={{ display: "flex", alignItems: "center", padding: "12px", border: "0.5px solid #e8e2d9", borderRadius: 6, background: leccion.estado === "completada" ? "#f0f0f0" : "#fff" }}>
-                      <div style={{ width: 24, height: 24, borderRadius: "50%", background: leccion.estado === "completada" ? "#5BA08A" : leccion.estado === "activa" ? "#FFA500" : "#ccc", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff", marginRight: 12 }}>
-                        {leccion.estado === "completada" ? "✓" : leccion.numero}
+                    <div key={leccion.numero} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px", border: "0.5px solid #e8e2d9", borderRadius: 6, background: leccion.estado === "completada" ? "#f0f0f0" : "#fff" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ width: 24, height: 24, borderRadius: "50%", background: leccion.estado === "completada" ? "#5BA08A" : leccion.estado === "activa" ? "#FFA500" : "#ccc", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#fff", marginRight: 12 }}>
+                          {leccion.estado === "completada" ? "✓" : leccion.numero}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 16, fontWeight: 500 }}>{leccion.titulo}</div>
+                          <div style={{ fontSize: 12, color: "#888" }}>{leccion.estado === "completada" ? "Completada" : leccion.estado === "activa" ? "Activa" : "Pendiente"}</div>
+                        </div>
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 500 }}>{leccion.titulo}</div>
-                        <div style={{ fontSize: 12, color: "#888" }}>{leccion.estado === "completada" ? "Completada" : leccion.estado === "activa" ? "Activa" : "Pendiente"}</div>
-                      </div>
+                      {(leccion.estado === "completada" || leccion.estado === "activa") && (
+                        <button
+                          onClick={() => navigate(`/leccion/${dimension}/1/${leccion.numero}`)}
+                          style={{
+                            padding: "6px 12px",
+                            background: "#5BA08A",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 4,
+                            fontSize: 12,
+                            cursor: "pointer",
+                            fontFamily: "Georgia, serif"
+                          }}
+                        >
+                          {leccion.estado === "completada" ? "Repasar →" : "Continuar →"}
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
