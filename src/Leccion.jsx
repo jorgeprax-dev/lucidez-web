@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const CONTENIDO = {
@@ -46,6 +47,12 @@ export default function Leccion() {
   const current = Number(numero) || 1;
   const siguienteNum = current < total ? current + 1 : null;
 
+  const [emocion, setEmocion] = useState('');
+  const [intensidad, setIntensidad] = useState(1);
+  const [respuesta, setRespuesta] = useState('');
+  const [seccionAbierta, setSeccionAbierta] = useState('lectura');
+  const [journaling, setJournaling] = useState('');
+
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#FAF7F2", color: "#1a1a1a", minHeight: "100vh" }}>
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "40px 20px" }}>
@@ -67,48 +74,183 @@ export default function Leccion() {
         </div>
 
         {contenido ? (
-          <div style={{ display: "grid", gap: 14 }}>
-            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8, padding: 16 }}>
-              <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Lectura</h2>
-              <p style={{ margin: 0, color: "#666", lineHeight: 1.6 }}>{contenido.lectura}</p>
+          <div style={{ marginTop: 24, display: "grid", gap: 8 }}>
+            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8 }}>
+              <div
+                onClick={() => setSeccionAbierta(seccionAbierta === 'lectura' ? '' : 'lectura')}
+                style={{ padding: 16, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <h2 style={{ margin: 0, fontSize: 18 }}>Lectura</h2>
+                <span style={{ fontSize: 18, color: "#5BA08A" }}>{seccionAbierta === 'lectura' ? '−' : '+'}</span>
+              </div>
+              {seccionAbierta === 'lectura' && (
+                <div style={{ padding: "0 16px 16px" }}>
+                  <p style={{ margin: 0, color: "#4A4540", lineHeight: 1.8, fontSize: 15, fontFamily: "Georgia, serif" }}>{contenido.lectura}</p>
+                  <div style={{ marginTop: 20, textAlign: "right" }}>
+                    <button
+                      onClick={() => setSeccionAbierta('ejercicio')}
+                      style={{ padding: "12px 20px", background: "#5BA08A", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+                    >
+                      Listo, vamos al ejercicio →
+                    </button>
+                  </div>
+                </div>
+              )}
             </section>
 
-            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8, padding: 16 }}>
-              <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Ejercicio</h2>
-              <p style={{ margin: 0, color: "#666", lineHeight: 1.6 }}>{contenido.ejercicio}</p>
+            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8 }}>
+              <div
+                onClick={() => setSeccionAbierta(seccionAbierta === 'ejercicio' ? '' : 'ejercicio')}
+                style={{ padding: 16, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <h2 style={{ margin: 0, fontSize: 18 }}>Ejercicio</h2>
+                <span style={{ fontSize: 18, color: "#5BA08A" }}>{seccionAbierta === 'ejercicio' ? '−' : '+'}</span>
+              </div>
+              {seccionAbierta === 'ejercicio' && (
+                <div style={{ padding: "0 16px 16px" }}>
+                  <p style={{ margin: 0, color: "#4A4540", lineHeight: 1.8, fontSize: 15, fontFamily: "Georgia, serif" }}>{contenido.ejercicio}</p>
+                  <div style={{ marginTop: 20, textAlign: "right" }}>
+                    <button
+                      onClick={() => setSeccionAbierta('journaling')}
+                      style={{ padding: "12px 20px", background: "#5BA08A", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+                    >
+                      Ejercicio hecho →
+                    </button>
+                  </div>
+                </div>
+              )}
             </section>
 
-            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8, padding: 16 }}>
-              <h2 style={{ margin: "0 0 8px", fontSize: 18 }}>Journaling</h2>
-              <p style={{ margin: 0, color: "#666", lineHeight: 1.6 }}>{contenido.journaling}</p>
+            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8 }}>
+              <div
+                onClick={() => setSeccionAbierta(seccionAbierta === 'journaling' ? '' : 'journaling')}
+                style={{ padding: 16, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <h2 style={{ margin: 0, fontSize: 18 }}>Journaling</h2>
+                <span style={{ fontSize: 18, color: "#5BA08A" }}>{seccionAbierta === 'journaling' ? '−' : '+'}</span>
+              </div>
+              {seccionAbierta === 'journaling' && (
+                <div style={{ padding: "0 16px 16px" }}>
+                  <p style={{ margin: 0, color: "#4A4540", lineHeight: 1.8, fontSize: 15, fontFamily: "Georgia, serif" }}>{contenido.journaling}</p>
+                  <textarea
+                    value={journaling}
+                    onChange={(e) => setJournaling(e.target.value)}
+                    placeholder="Escribe aquí tu reflexión…"
+                    rows={4}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "0.5px solid #e8e2d9",
+                      borderRadius: "8px",
+                      fontFamily: "Georgia, serif",
+                      fontSize: 14,
+                      color: "#1a1a1a",
+                      marginTop: 12,
+                      resize: "vertical"
+                    }}
+                  />
+                  <div style={{ marginTop: 20, textAlign: "right" }}>
+                    <button
+                      onClick={() => {
+                        localStorage.setItem(`journaling_${dimension}_${nivel}_${numero}`, JSON.stringify({
+                          contenido: journaling,
+                          fecha: new Date().toISOString()
+                        }));
+                        setSeccionAbierta('tracker');
+                      }}
+                      style={{ padding: "12px 20px", background: "#5BA08A", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+                    >
+                      Listo →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            <section style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8 }}>
+              <div
+                onClick={() => setSeccionAbierta(seccionAbierta === 'tracker' ? '' : 'tracker')}
+                style={{ padding: 16, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <h2 style={{ margin: 0, fontSize: 18 }}>Tu tracker de hoy</h2>
+                <span style={{ fontSize: 18, color: "#5BA08A" }}>{seccionAbierta === 'tracker' ? '−' : '+'}</span>
+              </div>
+              {seccionAbierta === 'tracker' && (
+                <div style={{ padding: "0 16px 16px" }}>
+                  <div style={{ display: "grid", gap: 16 }}>
+                    <div>
+                      <label style={{ display: "block", marginBottom: 4, fontSize: 15, color: "#4A4540", fontFamily: "Georgia, serif", lineHeight: 1.8 }}>¿Qué emoción fue la más intensa hoy?</label>
+                      <input
+                        type="text"
+                        value={emocion}
+                        onChange={(e) => setEmocion(e.target.value)}
+                        style={{ width: "100%", padding: "8px", border: "0.5px solid #e8e2d9", borderRadius: 4, fontSize: 15, fontFamily: "Georgia, serif", color: "#4A4540", lineHeight: 1.8 }}
+                        placeholder="Ej: frustración, alegría, miedo..."
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: 4, fontSize: 15, color: "#4A4540", fontFamily: "Georgia, serif", lineHeight: 1.8 }}>Intensidad</label>
+                      <select
+                        value={intensidad}
+                        onChange={(e) => setIntensidad(Number(e.target.value))}
+                        style={{ width: "100%", padding: "8px", border: "0.5px solid #e8e2d9", borderRadius: 4, fontSize: 15, fontFamily: "Georgia, serif", color: "#4A4540", lineHeight: 1.8 }}
+                      >
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
+                          <option key={num} value={num}>{num}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: "block", marginBottom: 8, fontSize: 15, color: "#4A4540", fontFamily: "Georgia, serif", lineHeight: 1.8 }}>¿Cómo respondiste?</label>
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        {["La suprimí", "Actué en el pico", "La observé"].map((opcion) => (
+                          <button
+                            key={opcion}
+                            onClick={() => setRespuesta(opcion)}
+                            style={{
+                              padding: "8px 12px",
+                              border: respuesta === opcion ? "2px solid #5BA08A" : "0.5px solid #e8e2d9",
+                              background: respuesta === opcion ? "#f0f8f5" : "#fff",
+                              borderRadius: 4,
+                              fontSize: 15,
+                              fontFamily: "Georgia, serif",
+                              color: "#4A4540",
+                              lineHeight: 1.8,
+                              cursor: "pointer"
+                            }}
+                          >
+                            {opcion}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 20, textAlign: "right" }}>
+                    <button
+                      onClick={() => {
+                        localStorage.setItem(`tracker_${dimension}_${nivel}_${numero}`, JSON.stringify({
+                          emocion,
+                          intensidad,
+                          respuesta,
+                          fecha: new Date().toISOString()
+                        }));
+                        localStorage.setItem(`leccion_${dimension}_${nivel}_${numero}`, 'completada');
+                        navigate(`/leccion/${dimension}/${nivel}/${siguienteNum}`);
+                      }}
+                      style={{ padding: "12px 20px", background: "#5BA08A", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+                    >
+                      Guardar y continuar →
+                    </button>
+                  </div>
+                </div>
+              )}
             </section>
           </div>
         ) : (
-          <div style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8, padding: 16 }}>
+          <div style={{ border: "0.5px solid #e8e2d9", background: "#fff", borderRadius: 8, padding: 16, marginTop: 24 }}>
             <p style={{ margin: 0, color: "#666" }}>Lección no disponible</p>
           </div>
         )}
-
-        <div style={{ marginTop: 26, textAlign: "right" }}>
-          {siguienteNum ? (
-            <button
-              onClick={() => {
-                localStorage.setItem(`leccion_${dimension}_${nivel}_${numero}`, 'completada');
-                navigate(`/leccion/${dimension}/${nivel}/${siguienteNum}`);
-              }}
-              style={{ padding: "12px 20px", background: "#5BA08A", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
-            >
-              Siguiente lección →
-            </button>
-          ) : (
-            <button
-              disabled
-              style={{ padding: "12px 20px", background: "#ccc", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, cursor: "not-allowed" }}
-            >
-              Completado
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
