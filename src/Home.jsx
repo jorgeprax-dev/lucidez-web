@@ -36,8 +36,8 @@ export default function Home() {
           {[["El Índice","#indice"],["El Programa","#programa"],["Base Científica","#ciencia"]].map(([label,href],i) => (
             <a key={i} href={href} style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "#888" }}>{label}</a>
           ))}
-          <a href="/login" style={{ fontFamily: "Georgia, serif", fontSize: 13, fontWeight: 600, background: "#5BA08A", color: "#fff", padding: "8px 18px" }}>
-            Crear cuenta →
+          <a href="/login" style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#5BA08A" }}>
+            Entrar →
           </a>
         </div>
       </nav>
@@ -53,7 +53,7 @@ export default function Home() {
           Lucidez mide 6 dimensiones de tu bienestar con escalas psicométricas validadas, identifica dónde está el trabajo, y te da un camino claro para mejorar — sin etiquetas, sin diagnósticos, con datos reales.
         </p>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-          <a href="/login" style={{ padding: "13px 28px", background: "#5BA08A", color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "Georgia, serif" }}>
+          <a href="/indice" style={{ padding: "13px 28px", background: "#5BA08A", color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: "Georgia, serif" }}>
             Hacer mi mapa de bienestar →
           </a>
           <a href="/login" style={{ fontSize: 14, fontFamily: "Georgia, serif", color: "#5BA08A" }}>
@@ -182,7 +182,7 @@ export default function Home() {
         <p style={{ color: "#fff", fontSize: 16, marginBottom: 24, fontFamily: "Georgia, serif" }}>
           18 preguntas. 6 dimensiones. Reporte personalizado. Gratis.
         </p>
-        <a href="/login" style={{ display: "inline-block", padding: "14px 36px", background: "#1a1814", color: "#f4f0ea", fontFamily: "Georgia, serif", fontSize: 14, fontWeight: 600 }}>
+        <a href="/indice" style={{ display: "inline-block", padding: "14px 36px", background: "#1a1814", color: "#f4f0ea", fontFamily: "Georgia, serif", fontSize: 14, fontWeight: 600 }}>
           Hacer mi mapa de bienestar →
         </a>
       </section>

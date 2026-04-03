@@ -231,7 +231,18 @@ function ResultsScreen({ scores, user, session }) {
       reporte: report,
       fecha: new Date().toISOString(),
     };
-    if (session?.user?.id) payload.user_id = session.user.id;
+
+    if (!session?.user?.id) {
+      // Guardado temporal para usuarios anónimos
+      localStorage.setItem("indice_anonimo", JSON.stringify(payload));
+      setSaved(true); // no mostrar error
+      return;
+    }
+
+    if (session.user?.id) {
+      payload.user_id = session.user.id;
+    }
+
     const ok = await saveToSupabase(payload);
     setSaved(ok);
   };
@@ -293,24 +304,23 @@ function ResultsScreen({ scores, user, session }) {
           {report.split("\n\n").map((p, i) => (
             <p key={i} style={{ color: "#333", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.85, margin: "0 0 16px" }}>{p}</p>
           ))}
-          {saved !== null && (
-            <div style={{ padding: "10px 14px", borderRadius: 6, background: saved ? "#f0f7f4" : "#fdf5ef", border: `1px solid ${saved ? "#c8ddd7" : "#e8d0bc"}`, fontFamily: "'DM Mono', monospace", fontSize: 12, color: saved ? "#5BA08A" : "#C07A45", marginBottom: 16 }}>
-              {saved ? "✓ Medición guardada en tu perfil" : "⚠ Error al guardar"}
-            </div>
-          )}
           {session ? (
             <a href='/dashboard' style={{ display: 'inline-block', padding: '12px 24px', background: '#5BA08A', color: '#fff', fontFamily: 'Georgia, serif', fontSize: 14, fontWeight: 600, borderRadius: 8, textDecoration: 'none' }}>
               Ver mi dashboard →
             </a>
           ) : (
             <div style={{ paddingTop: 16, borderTop: "1px solid #e8e2d9", background: "#f0f7f4", borderRadius: 8, padding: 16 }}>
-              <div style={{ color: "#5BA08A", fontSize: 13, fontFamily: "Georgia, serif", fontWeight: 600, marginBottom: 8 }}>Guarda tu perfil y monitorea tu progreso</div>
-              <div style={{ color: "#666", fontSize: 13, fontFamily: "Georgia, serif", marginBottom: 16 }}>
-                Crea tu cuenta para ver cómo cambian tus dimensiones en el tiempo.
+              <div style={{ color: "#5BA08A", fontSize: 13, fontFamily: "Georgia, serif", fontWeight: 600, marginBottom: 16 }}>
+                Guarda tu progreso y monitorea cómo cambia tu Índice en el tiempo.
               </div>
               <a href='/login' style={{ display: 'inline-block', padding: '12px 24px', background: '#5BA08A', color: '#fff', fontFamily: 'Georgia, serif', fontSize: 14, fontWeight: 600, borderRadius: 8, textDecoration: 'none' }}>
-                Crear mi cuenta →
+                Crear mi cuenta gratuita →
               </a>
+              <div style={{ marginTop: 10 }}>
+                <a href='/login' style={{ fontSize: 12, fontFamily: 'Georgia, serif', color: '#5BA08A', textDecoration: 'none' }}>
+                  ¿Ya tienes cuenta? Entrar →
+                </a>
+              </div>
             </div>
           )}
         </div>

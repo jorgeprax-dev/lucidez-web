@@ -66,14 +66,7 @@ export default function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* Rutas privadas — requieren sesión */}
-        <Route
-          path="/indice"
-          element={
-            <PrivateRoute>
-              <Indice />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/indice" element={<Indice />} />
         <Route
           path="/dashboard"
           element={
