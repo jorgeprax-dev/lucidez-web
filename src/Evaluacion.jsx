@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { ESCALAS } from "./escalas";
@@ -88,6 +88,7 @@ export default function Evaluacion() {
   const [loading, setLoading] = useState(false);
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
+  const autoAdvanceTimeoutRef = useRef(null);
 
   const escalaLabels = {
     presencia: "Escala de Atención Consciente · versión breve",
@@ -117,7 +118,23 @@ export default function Evaluacion() {
   const overall = computeOverall(answers, questions, maxOption);
 
   const handleAnswer = (value) => {
-    setAnswers((prev) => ({ ...prev, [currentQ.id]: value }));
+    if (!currentQ) return;
+    const updatedAnswers = { ...answers, [currentQ.id]: value };
+    setAnswers(updatedAnswers);
+
+    if (autoAdvanceTimeoutRef.current) {
+      clearTimeout(autoAdvanceTimeoutRef.current);
+    }
+
+    autoAdvanceTimeoutRef.current = setTimeout(() => {
+      if (questionIndex < questions.length - 1) {
+        setQuestionIndex((p) => p + 1);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        // Última pregunta: guardar y mostrar reporte automáticamente
+        onSubmit(updatedAnswers);
+      }
+    }, 360);
   };
 
   const onNext = () => {
@@ -143,9 +160,10 @@ export default function Evaluacion() {
     }
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (answersOverride) => {
     setError("");
-    if (Object.keys(answers).length !== questions.length) {
+    const answersToUse = answersOverride || answers;
+    if (Object.keys(answersToUse).length !== questions.length) {
       setError("Completa todas las preguntas antes de guardar.");
       return;
     }
@@ -160,7 +178,7 @@ export default function Evaluacion() {
 
       const formattedScores = {};
       questions.forEach((q) => {
-        formattedScores[q.id] = getScaledScore(answers[q.id]);
+        formattedScores[q.id] = getScaledScore(answersToUse[q.id]);
       });
 
       await saveEvaluation({
@@ -182,6 +200,14 @@ export default function Evaluacion() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimeoutRef.current) {
+        clearTimeout(autoAdvanceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!escala) {
     return (
@@ -268,7 +294,19 @@ export default function Evaluacion() {
                   >
                     {val}
                   </button>
-                  <span style={{ marginTop: 4, fontSize: 10, color: "#aaa", textAlign: "center", maxWidth: 44 }}>{opt}</span>
+                  <span
+                    style={{
+                      marginTop: 4,
+                      visibility: idx === 0 || idx === escala.opciones.length - 1 ? "visible" : "hidden",
+                      fontSize: 9,
+                      fontFamily: "'DM Mono', monospace",
+                      color: "#8a7f74",
+                      textAlign: "center",
+                      width: 50,
+                    }}
+                  >
+                    {opt}
+                  </span>
                 </div>
               );
             })}
