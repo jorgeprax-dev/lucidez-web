@@ -83,7 +83,7 @@ Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`
 
 const DIMS = [
   {
-    id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003",
+    id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003", escalaLabel: "Escala de Atención Consciente",
     color: "#3d7a65",
     desc: "Tu capacidad de estar aquí, ahora",
     fortaleza: "Vives con atención genuina al momento presente. Tienes una capacidad natural de notar lo que está pasando — en tu cuerpo, en tus emociones, en el entorno — antes de que te rebase.",
@@ -95,7 +95,7 @@ const DIMS = [
     ],
   },
   {
-    id: "claridad", label: "Claridad Cognitiva", tool: "ATQ", autor: "Hollon & Kendall, 1980",
+    id: "claridad", label: "Claridad Cognitiva", tool: "ATQ", autor: "Hollon & Kendall, 1980", escalaLabel: "Cuestionario de Pensamientos Automáticos",
     color: "#9a5e2e",
     desc: "El ruido vs. la señal en tu mente",
     fortaleza: "Tu mente no te sabotea constantemente. Puedes pensar con relativa claridad incluso en momentos de estrés, y los pensamientos autocríticos no dominan tu narrativa interna.",
@@ -107,7 +107,7 @@ const DIMS = [
     ],
   },
   {
-    id: "regulacion", label: "Regulación Emocional", tool: "DERS", autor: "Gratz & Roemer, 2004",
+    id: "regulacion", label: "Regulación Emocional", tool: "DERS", autor: "Gratz & Roemer, 2004", escalaLabel: "Escala de Dificultades en Regulación Emocional",
     color: "#6a3d82",
     desc: "Tu relación con lo que sientes",
     fortaleza: "Puedes sentir emociones intensas sin que te desborden. Tienes recursos internos para volver a un estado funcional cuando algo te perturba — eso es una fortaleza clínica real.",
@@ -119,7 +119,7 @@ const DIMS = [
     ],
   },
   {
-    id: "valores", label: "Alineación de Valores", tool: "VQ", autor: "Wilson et al., 2010",
+    id: "valores", label: "Alineación de Valores", tool: "VQ", autor: "Wilson et al., 2010", escalaLabel: "Cuestionario de Valores",
     color: "#2d6382",
     desc: "Vivir lo que dices que importa",
     fortaleza: "Hay coherencia entre lo que dices que importa y cómo te comportas. Tomas decisiones desde tus valores reales, no solo desde la comodidad o el miedo. Eso da dirección y propósito.",
@@ -131,7 +131,7 @@ const DIMS = [
     ],
   },
   {
-    id: "autoconocimiento", label: "Autoconocimiento", tool: "SCS-Neff", autor: "Neff, 2003",
+    id: "autoconocimiento", label: "Autoconocimiento", tool: "SCS-Neff", autor: "Neff, 2003", escalaLabel: "Escala de Autocompasión",
     color: "#4d6d2a",
     desc: "Cómo te ves y te tratas a ti mismo",
     fortaleza: "Te tratas con una generosidad real cuando fallas. Puedes ver tus errores sin exagerarlos ni minimizarlos, y no te sientes completamente solo cuando sufres. Eso es autocompasión funcional.",
@@ -143,7 +143,7 @@ const DIMS = [
     ],
   },
   {
-    id: "agencia", label: "Agencia", tool: "SCS-Tangney", autor: "Tangney et al., 2004",
+    id: "agencia", label: "Agencia", tool: "SCS-Tangney", autor: "Tangney et al., 2004", escalaLabel: "Escala Breve de Autocontrol",
     color: "#7a6520",
     desc: "Tu capacidad de elegir conscientemente",
     fortaleza: "Puedes traducir tus intenciones en acciones con consistencia. Cuando decides algo, lo sostienes. Esa capacidad de autocontrol consciente es el músculo que hace posible cualquier cambio real.",
@@ -426,7 +426,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
               const active = d.id === dim.id;
               return (
                 <div key={d.id} style={{ fontFamily: mono, fontSize: 11, lineHeight: 2, color: active ? C.ink : C.inkFaint }}>
-                  {d.tool} · {d.autor}
+                  {d.escalaLabel}
                 </div>
               );
             })}
