@@ -95,6 +95,7 @@ export default function Evaluacion() {
   const [loading, setLoading] = useState(false);
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
+  const [reporteGuardado, setReporteGuardado] = useState(null);
   const autoAdvanceTimeoutRef = useRef(null);
   const modoReporte = searchParams.get("modo") === "reporte";
 
@@ -122,15 +123,17 @@ export default function Evaluacion() {
       if (!session || !isMounted) return;
       const { data } = await supabase
         .from("evaluacion_profunda")
-        .select("reporte, overall, fecha")
+        .select("overall, fecha, scores")
         .eq("user_id", session.user.id)
         .eq("dimension", dimension)
         .order("fecha", { ascending: false })
         .limit(1)
         .single();
 
-      if (data?.reporte && isMounted) {
-        setAiReport(data.reporte);
+      if (data && isMounted) {
+        const report = await generateDeepReport(dimension, escala, data.scores, data.overall);
+        setReporteGuardado(report);
+        setAiReport(report);
         setSavedOverall(data.overall ?? null);
         setSaved(true);
       }
@@ -139,7 +142,7 @@ export default function Evaluacion() {
     return () => {
       isMounted = false;
     };
-  }, [modoReporte, dimension]);
+  }, [modoReporte, dimension, escala]);
 
   const questions = escala?.preguntas || [];
   const currentQ = questions[questionIndex];
@@ -254,6 +257,16 @@ export default function Evaluacion() {
         <button onClick={() => navigate("/")} style={{ marginTop: 16, padding: "10px 16px", border: "none", background: "#5BA08A", color: "#fff", cursor: "pointer", borderRadius: 6 }}>
           Volver al home
         </button>
+      </div>
+    );
+  }
+
+  if (modoReporte && !reporteGuardado) {
+    return (
+      <div style={{ minHeight: "100vh", background: "#f7f4f0", fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
+          <p style={{ fontSize: 16, color: "#6b6460" }}>Cargando tu reporte...</p>
+        </div>
       </div>
     );
   }
