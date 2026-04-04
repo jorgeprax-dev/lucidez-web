@@ -735,8 +735,8 @@ export default function Indice() {
       if (session) {
         setSession(session);
         const meta = session.user.user_metadata;
-        setNombre(meta?.full_name || meta?.name || session.user.email.split("@")[0]);
-        setScreen("questions");
+        setNombre(meta?.full_name || meta?.name || "");
+        // No saltar la pantalla de nombre — el usuario confirma o edita
       }
     });
   }, []);
