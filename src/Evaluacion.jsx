@@ -172,22 +172,23 @@ export default function Evaluacion() {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData?.session?.user?.id;
-      if (!userId) {
-        throw new Error("No se encontró sesión activa.");
-      }
 
       const formattedScores = {};
       questions.forEach((q) => {
         formattedScores[q.id] = getScaledScore(answersToUse[q.id]);
       });
 
-      await saveEvaluation({
-        userId,
-        dimension,
-        scores: formattedScores,
-        overall,
-      });
+      // Guardar en Supabase solo si hay sesión activa
+      if (userId) {
+        await saveEvaluation({
+          userId,
+          dimension,
+          scores: formattedScores,
+          overall,
+        });
+      }
 
+      // Mostrar reporte aunque no haya sesión
       setSaved(true);
       setLoadingReport(true);
       const report = await generateDeepReport(dimension, escala, formattedScores, overall);
@@ -195,7 +196,7 @@ export default function Evaluacion() {
       setLoadingReport(false);
     } catch (err) {
       setSaved(false);
-      setError(err.message || "Error al guardar la evaluación.");
+      setError(err.message || "Error al generar el reporte.");
     } finally {
       setLoading(false);
     }
