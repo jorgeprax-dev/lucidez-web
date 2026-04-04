@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const colors = {
@@ -5,7 +6,7 @@ const colors = {
   creamDark: "#ede9e3",
   ink: "#1a1714",
   inkMuted: "#6b6460",
-  inkFaint: "#a09890",
+  inkFaint: "#6b6460",
   border: "rgba(26,23,20,0.12)",
 };
 
@@ -27,8 +28,17 @@ const steps = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const mono = "'Courier New', monospace";
   const serif = "Georgia, 'Times New Roman', serif";
+
+  useEffect(() => {
+    const onResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
 
   return (
     <div style={{ background: colors.cream, minHeight: "100vh", fontFamily: serif, color: colors.ink, fontSize: 15, lineHeight: 1.6 }}>
@@ -42,7 +52,7 @@ export default function Home() {
       </nav>
 
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 48px 60px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 56, alignItems: "center" }}>
           <div>
             <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 24 }}>
               Bienestar mental · Basado en ciencia · Medido con datos
@@ -65,14 +75,14 @@ export default function Home() {
             <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 14 }}>
               Lo que puede estar pasando
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 14 }}>
               {dims.map((d) => (
-                <div key={d.name} style={{ minWidth: 0 }}>
+                <div key={d.name} style={{ minWidth: 0, padding: 14 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
                     <div style={{ fontSize: 13, fontWeight: "normal", color: colors.ink }}>{d.name}</div>
                   </div>
-                  <p style={{ fontSize: 12, color: colors.inkMuted, lineHeight: 1.4 }}>{d.desc}</p>
+                  <p style={{ fontSize: 13, color: colors.inkMuted, lineHeight: 1.4 }}>{d.desc}</p>
                 </div>
               ))}
             </div>
@@ -86,7 +96,7 @@ export default function Home() {
         <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 24 }}>
           Cómo funciona
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", border: `0.5px solid ${colors.border}`, borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", border: `0.5px solid ${colors.border}`, borderRadius: 4, overflow: "hidden" }}>
           {steps.map((s, i) => (
             <div key={s.num} style={{ padding: "22px 18px", borderRight: i < steps.length - 1 ? `0.5px solid ${colors.border}` : "none" }}>
               <div style={{ fontFamily: mono, fontSize: 11, color: colors.inkFaint, letterSpacing: "0.06em", marginBottom: 10 }}>{s.num}</div>
