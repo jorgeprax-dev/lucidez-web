@@ -612,11 +612,27 @@ export default function Dashboard() {
                       <div style={{ background: badgeBg, color: badgeColor, fontSize: "10px", fontFamily: "'Courier New', monospace", padding: "4px 10px", borderRadius: "12px" }}>
                         {labelZona(z)}
                       </div>
-                      {hasDeepEval ? (
-                        <div style={{ color: "#5BA08A", fontFamily: "'Courier New', monospace", fontSize: "10px" }}>✓ Evaluado</div>
-                      ) : (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                        {hasDeepEval ? (
+                          <div style={{ color: "#5BA08A", fontFamily: "'Courier New', monospace", fontSize: "10px" }}>✓ Evaluado</div>
+                        ) : (
+                          <button
+                            onClick={() => navigate(`/evaluacion/${d.key}`)}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              color: "#5BA08A",
+                              fontSize: "10px",
+                              fontFamily: "'Courier New', monospace",
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                          >
+                            Evaluar →
+                          </button>
+                        )}
                         <button
-                          onClick={() => navigate(`/evaluacion/${d.key}`)}
+                          onClick={() => navigate(`/curso/${d.key}`)}
                           style={{
                             background: "transparent",
                             border: "none",
@@ -627,13 +643,29 @@ export default function Dashboard() {
                             padding: 0,
                           }}
                         >
-                          Evaluar →
+                          Ver curso →
                         </button>
-                      )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
+            </div>
+
+            <div style={{ height: 0.5, background: "#ede9e3", margin: "20px 0" }} />
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a09890", marginBottom: 12 }}>
+              LMS · Contenido por dimensión
+            </div>
+            <div style={{ background: "#FAFAF7", border: "0.5px solid #D3D1C7", borderRadius: "10px", padding: "20px 24px", marginBottom: 20 }}>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714", marginBottom: 6 }}>
+                El contenido por dimensión está en desarrollo.
+              </div>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890", lineHeight: 1.6 }}>
+                Disponible próximamente. Notificaremos por correo cuando esté listo.
+              </div>
+              <span style={{ display: "inline-block", marginTop: 12, fontFamily: "'Courier New', monospace", fontSize: 10, background: "#ede9e3", color: "#888780", padding: "3px 10px", borderRadius: "2px" }}>
+                Próximamente
+              </span>
             </div>
 
             <button
