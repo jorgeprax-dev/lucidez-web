@@ -481,24 +481,32 @@ function ResultsScreen({ scores, user, session }) {
     };
     if (!session?.user?.id) {
       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
-      await supabase.auth.signInWithOtp({
+      const { error: otpError } = await supabase.auth.signInWithOtp({
         email: resolvedEmailFinal,
         options: { emailRedirectTo: window.location.origin + '/dashboard' }
       });
+      if (otpError) {
+        console.error("OTP error:", otpError);
+      }
     } else {
       payload.user_id = session.user.id;
       await saveToSupabase(payload);
     }
 
-    await supabase.functions.invoke("send-welcome-email", {
-      body: {
-        nombre: user.nombre,
-        email: resolvedEmailFinal,
-        scores,
-        overall,
-        zona: zona.label,
-      },
-    });
+    try {
+      await supabase.functions.invoke("send-welcome-email", {
+        body: {
+          nombre: user.nombre,
+          email: resolvedEmailFinal,
+          scores,
+          overall,
+          zona: zona.label,
+        },
+      });
+    } catch (fnError) {
+      console.error("Edge Function error:", fnError);
+      // No romper el flujo si el email falla
+    }
 
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
@@ -586,11 +594,12 @@ function ResultsScreen({ scores, user, session }) {
               <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                 Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
               </p>
-              {session && (
-                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
-                  Ir al dashboard →
-                </a>
-              )}
+              <div style={{ marginTop: 16, padding: "16px 20px", background: "#f0f4f2", borderRadius: 4, borderLeft: "3px solid #5BA08A" }}>
+                <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5BA08A", marginBottom: 6 }}>Siguiente paso</div>
+                <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.6 }}>
+                  Revisa tu correo en <strong>{emailFinal}</strong> y haz clic en el enlace para acceder a tu dashboard — no necesitas contraseña.
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -673,11 +682,12 @@ function ResultsScreen({ scores, user, session }) {
                 <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                   Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
                 </p>
-                {session && (
-                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
-                    Ir al dashboard →
-                  </a>
-                )}
+                <div style={{ marginTop: 16, padding: "16px 20px", background: "#f0f4f2", borderRadius: 4, borderLeft: "3px solid #5BA08A" }}>
+                  <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5BA08A", marginBottom: 6 }}>Siguiente paso</div>
+                  <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.6 }}>
+                    Revisa tu correo en <strong>{emailFinal}</strong> y haz clic en el enlace para acceder a tu dashboard — no necesitas contraseña.
+                  </div>
+                </div>
               </div>
             )}
           </div>
