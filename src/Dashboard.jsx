@@ -492,8 +492,8 @@ export default function Dashboard() {
         </div>
         <div>
           <div style={{ fontFamily: "Georgia, serif", fontSize: 72, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
-          <div style={{ display: "inline-block", marginTop: 6, padding: "3px 10px", borderRadius: 2, fontFamily: "'Courier New', monospace", fontSize: 11, background: zona(overall) === "verde" ? "#edf4f0" : zona(overall) === "ambar" ? "#f5ede4" : "#FCE9E8", color: zona(overall) === "verde" ? "#3d7a65" : zona(overall) === "ambar" ? "#9a5e2e" : "#8A3030" }}>
-            {labelZona(zona(overall))}
+          <div style={{ height: 6, borderRadius: 3, background: "#ede9e3", marginTop: 12, width: "100%", overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${overall}%`, background: colorZona(zona(overall)), borderRadius: 3 }} />
           </div>
         </div>
       </div>
