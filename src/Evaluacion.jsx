@@ -35,11 +35,11 @@ async function generateDeepReport(dimension, escala, scores, overall) {
   const nivel = overall >= 70 ? "alto" : overall >= 40 ? "medio" : "bajo";
   const interpretacion = escala.interpretacion?.[nivel] || "";
 
-  const prompt = `Eres un clínico experto en psicología basada en evidencia. Escribe un reporte personalizado basado en la evaluación profunda de ${escala.label} usando la escala ${escala.escala}.
+  const prompt = `Eres un clínico experto en psicología basada en evidencia. 
+Escribe un reporte personalizado basado en la evaluación de ${escala.label}.
 
 Datos:
 - Dimensión: ${escala.label}
-- Escala: ${escala.escala} (${escala.referencia})
 - Score: ${overall}/100
 - Zona: ${zona}
 - Interpretación clínica base: ${interpretacion}
@@ -51,7 +51,12 @@ Párrafo 2 — El patrón: Cómo se manifiesta esto en la vida diaria de alguien
 Párrafo 3 — El recurso: Qué tiene esta persona que puede usar como punto de apoyo.
 Párrafo 4 — El siguiente paso: Una acción concreta y específica para esta semana. No genérica.
 
+Voz: segunda persona directa en todo el reporte. Nunca tercera persona. 
+No escribas "Su puntuación" ni "esta persona" — escribe "tu puntuación", "tu atención", "tienes".
+El reporte le habla directamente al usuario, no habla sobre él.
+
 Tono: directo, clínico, sin jerga terapéutica, sin frases de autoayuda. Como Epicteto escribiría un reporte clínico.
+No menciones nombres de escalas ni acrónimos (MAAS, DERS, ATQ, etc.) en el reporte.
 Longitud: máximo 180 palabras.
 Responde SOLO con los 4 párrafos. Sin títulos.`;
 
