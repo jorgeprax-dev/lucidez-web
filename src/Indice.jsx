@@ -478,9 +478,9 @@ function ResultsScreen({ scores, user, session }) {
       nivel: zona.label,
       reporte: generateLocalReport(scores, user),
       fecha: new Date().toISOString(),
+      // user_id se agrega solo si hay sesión activa
     };
     if (!session?.user?.id) {
-      delete payload.user_id;
       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email: resolvedEmailFinal,
@@ -604,6 +604,13 @@ function ResultsScreen({ scores, user, session }) {
                 <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.6 }}>
                   Revisa tu correo en <strong>{emailFinal}</strong> y haz clic en el enlace para acceder a tu dashboard — no necesitas contraseña.
                 </div>
+                <div style={{ marginTop: 12, fontSize: 12, color: C.inkMuted, fontFamily: mono, letterSpacing: "0.04em" }}>
+                  La próxima vez entra desde{" "}
+                  <a href="/login" style={{ color: C.teal, textDecoration: "none" }}>
+                    lucidez.app/login
+                  </a>
+                  {" "}con Google — sin esperar correo.
+                </div>
               </div>
             </div>
           )}
@@ -691,6 +698,13 @@ function ResultsScreen({ scores, user, session }) {
                   <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5BA08A", marginBottom: 6 }}>Siguiente paso</div>
                   <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.6 }}>
                     Revisa tu correo en <strong>{emailFinal}</strong> y haz clic en el enlace para acceder a tu dashboard — no necesitas contraseña.
+                  </div>
+                  <div style={{ marginTop: 12, fontSize: 12, color: C.inkMuted, fontFamily: mono, letterSpacing: "0.04em" }}>
+                    La próxima vez entra desde{" "}
+                    <a href="/login" style={{ color: C.teal, textDecoration: "none" }}>
+                      lucidez.app/login
+                    </a>
+                    {" "}con Google — sin esperar correo.
                   </div>
                 </div>
               </div>
