@@ -537,15 +537,8 @@ export default function Dashboard() {
                     {hasDeepEval ? `índice: ${s}` : "solo Índice"}
                   </span>
                 </div>
-                {!hasDeepEval ? (
-                  <button
-                    onClick={() => navigate(`/evaluacion/${d.key}`)}
-                    style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-                  >
-                    Realizar evaluación →
-                  </button>
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                {hasDeepEval ? (
+                  <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                     <button
                       onClick={() => navigate(`/evaluacion/${d.key}?modo=reporte`)}
                       style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
@@ -554,11 +547,18 @@ export default function Dashboard() {
                     </button>
                     <button
                       onClick={() => navigate(`/evaluacion/${d.key}`)}
-                      style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                     >
                       Repetir →
                     </button>
                   </div>
+                ) : (
+                  <button
+                    onClick={() => navigate(`/evaluacion/${d.key}`)}
+                    style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                  >
+                    Realizar evaluación →
+                  </button>
                 )}
               </div>
             </div>
