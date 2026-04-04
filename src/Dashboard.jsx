@@ -490,43 +490,12 @@ export default function Dashboard() {
         <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 8 }}>
           ÍNDICE DE LUCIDEZ · {fechaLabel}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div>
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 72, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
-            <div style={{ display: "inline-block", marginTop: 6, padding: "3px 10px", borderRadius: 2, fontFamily: "'Courier New', monospace", fontSize: 11, background: zona(overall) === "verde" ? "#edf4f0" : zona(overall) === "ambar" ? "#f5ede4" : "#FCE9E8", color: zona(overall) === "verde" ? "#3d7a65" : zona(overall) === "ambar" ? "#9a5e2e" : "#8A3030" }}>
-              {labelZona(zona(overall))}
-            </div>
-            {delta > 0 && (
-              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#639922", marginTop: 4 }}>↑ +{delta} desde que empezaste</div>
-            )}
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#D3D1C7", marginBottom: 2 }}>objetivo</div>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 32, color: "#D3D1C7" }}>80</div>
+        <div>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 72, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
+          <div style={{ display: "inline-block", marginTop: 6, padding: "3px 10px", borderRadius: 2, fontFamily: "'Courier New', monospace", fontSize: 11, background: zona(overall) === "verde" ? "#edf4f0" : zona(overall) === "ambar" ? "#f5ede4" : "#FCE9E8", color: zona(overall) === "verde" ? "#3d7a65" : zona(overall) === "ambar" ? "#9a5e2e" : "#8A3030" }}>
+            {labelZona(zona(overall))}
           </div>
         </div>
-        {mediciones.length > 1 && (() => {
-          const n = mediciones.length;
-          const xPos = (i) => 10 + (i / (n - 1)) * 300;
-          const yPos = (v) => 40 - ((v ?? 0) / 100) * 34;
-          const pts = mediciones.map((m, i) => `${xPos(i)},${yPos(m.overall ?? 0)}`).join(" ");
-          const first = mediciones[0];
-          const last = mediciones[n - 1];
-          const fmtFecha = (f) => new Date(f).toLocaleDateString("es-MX", { day: "numeric", month: "short" });
-          return (
-            <div style={{ marginTop: 12, background: "#f7f4f0", borderRadius: 6, padding: "10px 12px" }}>
-              <svg width="100%" height="44" viewBox="0 0 320 44" style={{ display: "block", overflow: "visible" }}>
-                <line x1="10" y1="6" x2="310" y2="6" stroke="#D3D1C7" strokeWidth="1" strokeDasharray="3,2" />
-                <polyline points={pts} fill="none" stroke="#3d7a65" strokeWidth="2" />
-                {mediciones.map((m, i) => (
-                  <circle key={i} cx={xPos(i)} cy={yPos(m.overall ?? 0)} r={i === n - 1 ? 4 : 3} fill={colorZona(zona(m.overall ?? 0))} />
-                ))}
-                <text x="10" y="44" fontFamily="'Courier New', monospace" fontSize="8" fill="#a09890">{fmtFecha(first.fecha)}</text>
-                <text x="310" y="44" fontFamily="'Courier New', monospace" fontSize="8" fill="#a09890" textAnchor="end">{fmtFecha(last.fecha)}</text>
-              </svg>
-            </div>
-          );
-        })()}
       </div>
 
       {/* 3 — Dimensiones */}
@@ -540,36 +509,34 @@ export default function Dashboard() {
           const hasDeepEval = deepScore !== undefined;
           const zDeep = hasDeepEval ? zona(deepScore) : null;
           const cDeep = hasDeepEval ? colorZona(zDeep) : null;
-          const badgeBg = zDeep === "verde" ? "#edf4f0" : zDeep === "ambar" ? "#FEF5E8" : "#FCE9E8";
-          const badgeColor = zDeep === "verde" ? "#3d7a65" : zDeep === "ambar" ? "#9a5e2e" : "#A32D2D";
-          const escalaLabel = ESCALAS[d.key]?.escala || "";
+          const escalaNombre = ESCALAS[d.key]?.escala || "";
+          const escalaRef = ESCALAS[d.key]?.referencia || "";
+          const escalaLinea = escalaRef ? `${escalaNombre} · ${escalaRef}` : escalaNombre;
           return (
-            <div key={d.key} style={{ background: hasDeepEval ? "#fff" : "#FAFAF7", borderRadius: 8, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "12px 14px", marginBottom: 8 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <span style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#1A1A1A" }}>{d.label}</span>
-                {hasDeepEval ? (
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890" }}>índice {s}</span>
-                    <span style={{ fontFamily: "'Courier New', monospace", fontSize: 14, color: cDeep, fontWeight: 500 }}>{deepScore}</span>
-                  </div>
-                ) : (
-                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 13, color: colorZona(zona(s)) }}>{s}</span>
-                )}
+            <div key={d.key} style={{ background: hasDeepEval ? "#fff" : "#FAFAF7", borderRadius: 10, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "14px 16px", marginBottom: 10 }}>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1A1A1A", marginBottom: 2 }}>
+                {d.label}
               </div>
-              <div style={{ height: 3, background: "#ede9e3", borderRadius: 2, marginBottom: 8, overflow: "hidden" }}>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 10 }}>
+                {escalaLinea}
+              </div>
+              <div style={{ height: 3, background: "#ede9e3", borderRadius: 2, marginBottom: 10, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${hasDeepEval ? deepScore : s}%`, background: hasDeepEval ? cDeep : colorZona(zona(s)), borderRadius: 2 }} />
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                {hasDeepEval ? (
-                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 9, padding: "2px 8px", borderRadius: 10, background: badgeBg, color: badgeColor }}>{labelZona(zDeep === "verde" ? 80 : zDeep === "ambar" ? 60 : 0)} · {escalaLabel}</span>
-                ) : (
-                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 9, color: "#a09890" }}>Screening · 3 ítems</span>
-                )}
+                <div style={{ display: "flex", alignItems: "baseline" }}>
+                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 20, color: hasDeepEval ? cDeep : colorZona(zona(s)) }}>
+                    {hasDeepEval ? deepScore : s}
+                  </span>
+                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginLeft: 6 }}>
+                    {hasDeepEval ? `índice: ${s}` : "solo Índice"}
+                  </span>
+                </div>
                 <button
                   onClick={() => navigate(`/evaluacion/${d.key}`)}
-                  style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                  style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                 >
-                  {hasDeepEval ? "Ver reporte →" : "Evaluar en profundidad →"}
+                  {hasDeepEval ? "Ver mi reporte →" : "Realizar evaluación →"}
                 </button>
               </div>
             </div>
