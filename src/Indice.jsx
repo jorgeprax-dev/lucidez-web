@@ -65,12 +65,13 @@ Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`
         "anthropic-dangerous-direct-browser-access": "true",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-haiku-4-5",
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
       }),
     });
     const data = await response.json();
+    console.log("Anthropic response:", JSON.stringify(data));
     return data.content?.[0]?.text || null;
   } catch (e) {
     console.error("Claude API error:", e);
