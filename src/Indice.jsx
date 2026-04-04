@@ -14,7 +14,7 @@ async function saveToSupabase(data) {
 const DIMS = [
   {
     id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003",
-    color: "#5BA08A",
+    color: "#3d7a65",
     desc: "Tu capacidad de estar aquí, ahora",
     fortaleza: "Vives con atención genuina al momento presente. Tienes una capacidad natural de notar lo que está pasando — en tu cuerpo, en tus emociones, en el entorno — antes de que te rebase.",
     crecimiento: "Tu mente tiende a estar en otro lado. El pasado o el futuro ocupan más espacio que el presente. Esto no es un defecto — es el punto de partida del trabajo de mindfulness.",
@@ -26,7 +26,7 @@ const DIMS = [
   },
   {
     id: "claridad", label: "Claridad Cognitiva", tool: "ATQ", autor: "Hollon & Kendall, 1980",
-    color: "#C07A45",
+    color: "#9a5e2e",
     desc: "El ruido vs. la señal en tu mente",
     fortaleza: "Tu mente no te sabotea constantemente. Puedes pensar con relativa claridad incluso en momentos de estrés, y los pensamientos autocríticos no dominan tu narrativa interna.",
     crecimiento: "Hay mucho ruido cognitivo — pensamientos automáticos negativos que aparecen solos y distorsionan cómo ves las situaciones y a ti mismo. El trabajo de CBT es exactamente para esto.",
@@ -38,7 +38,7 @@ const DIMS = [
   },
   {
     id: "regulacion", label: "Regulación Emocional", tool: "DERS", autor: "Gratz & Roemer, 2004",
-    color: "#8A5BA0",
+    color: "#6a3d82",
     desc: "Tu relación con lo que sientes",
     fortaleza: "Puedes sentir emociones intensas sin que te desborden. Tienes recursos internos para volver a un estado funcional cuando algo te perturba — eso es una fortaleza clínica real.",
     crecimiento: "Las emociones intensas te desbordan con frecuencia. Cuando algo te perturba, cuesta volver al centro. Esto es el área de trabajo más directa del programa — y la que más cambia la calidad de vida.",
@@ -50,7 +50,7 @@ const DIMS = [
   },
   {
     id: "valores", label: "Alineación de Valores", tool: "VQ", autor: "Wilson et al., 2010",
-    color: "#4A7FA0",
+    color: "#2d6382",
     desc: "Vivir lo que dices que importa",
     fortaleza: "Hay coherencia entre lo que dices que importa y cómo te comportas. Tomas decisiones desde tus valores reales, no solo desde la comodidad o el miedo. Eso da dirección y propósito.",
     crecimiento: "Hay una brecha entre lo que valoras y cómo vives. El miedo, la comodidad o el piloto automático dictan más tus decisiones de lo que quisieras. Cerrar esa brecha es el corazón del programa.",
@@ -62,7 +62,7 @@ const DIMS = [
   },
   {
     id: "autoconocimiento", label: "Autoconocimiento", tool: "SCS-Neff", autor: "Neff, 2003",
-    color: "#6A8A45",
+    color: "#4d6d2a",
     desc: "Cómo te ves y te tratas a ti mismo",
     fortaleza: "Te tratas con una generosidad real cuando fallas. Puedes ver tus errores sin exagerarlos ni minimizarlos, y no te sientes completamente solo cuando sufres. Eso es autocompasión funcional.",
     crecimiento: "La autocrítica es fuerte y la autocompasión escasa. Cuando fallas, la voz interna es dura. Aprender a tratarte como tratarías a alguien que quieres es uno de los cambios más profundos del programa.",
@@ -74,7 +74,7 @@ const DIMS = [
   },
   {
     id: "agencia", label: "Agencia", tool: "SCS-Tangney", autor: "Tangney et al., 2004",
-    color: "#A08A35",
+    color: "#7a6520",
     desc: "Tu capacidad de elegir conscientemente",
     fortaleza: "Puedes traducir tus intenciones en acciones con consistencia. Cuando decides algo, lo sostienes. Esa capacidad de autocontrol consciente es el músculo que hace posible cualquier cambio real.",
     crecimiento: "La brecha entre lo que quieres hacer y lo que terminas haciendo es grande. Las tentaciones, la dificultad o el cansancio ganan con frecuencia. Fortalecer este músculo es esencial para sostener la recuperación.",
@@ -86,15 +86,7 @@ const DIMS = [
   },
 ];
 
-const SCALE = ["Casi nunca", "Raramente", "A veces", "Con frecuencia", "Casi siempre"];
-const MODULO_MAP = {
-  presencia: { num: 1, nombre: "Ver claro" },
-  claridad: { num: 2, nombre: "Entender el mapa" },
-  regulacion: { num: 3, nombre: "Regular" },
-  valores: { num: 4, nombre: "Elegir" },
-  autoconocimiento: { num: 5, nombre: "Conocerte" },
-  agencia: { num: 6, nombre: "Vivir bien" },
-};
+const SCALE_LABELS = ["Casi nunca", "Raramente", "A veces", "Con frecuencia", "Casi siempre"];
 
 function computeScores(answers) {
   const scores = {};
@@ -112,25 +104,16 @@ function computeScores(answers) {
 function generateLocalReport(scores, user) {
   const nombre = user.nombre || "tú";
   const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / 6);
-
   const zona = (s) => s >= 80 ? "verde" : s >= 60 ? "ambar" : "rojo";
   const z = {};
-  DIMS.forEach((d) => {
-    z[d.id] = zona(scores[d.id] || 0);
-  });
-
+  DIMS.forEach((d) => { z[d.id] = zona(scores[d.id] || 0); });
   const rojasCount = Object.values(z).filter((v) => v === "rojo").length;
   const verdesCount = Object.values(z).filter((v) => v === "verde").length;
-
   const sorted = [...DIMS].sort((a, b) => (scores[b.id] || 0) - (scores[a.id] || 0));
   const top1 = sorted[0];
   const low1 = sorted[sorted.length - 1];
 
-  // ─── Detectar patrón dominante ───
-  let apertura = "";
-  let patron = "";
-  let prioridad = "";
-
+  let apertura = "", patron = "", prioridad = "";
   if (rojasCount >= 5) {
     apertura = `${nombre}, lo que muestra tu Índice es un punto de partida honesto — no un diagnóstico definitivo.`;
     patron = "Múltiples áreas están bajo presión al mismo tiempo. Eso no significa que todo está mal — significa que el sistema completo necesita atención, y que hay un orden para trabajarlo.";
@@ -141,412 +124,380 @@ function generateLocalReport(scores, user) {
     prioridad = `Tu área de mayor oportunidad es ${low1.label.toLowerCase()}. Desde una base sólida, ese trabajo avanza rápido.`;
   } else if (z.presencia === "rojo" && z.claridad === "rojo") {
     apertura = `${nombre}, tu mente raramente está donde estás tú.`;
-    patron = "Cuando no estás en piloto automático, el ruido interno ocupa el espacio. Es una combinación que agota sin que sepas bien por qué — porque el cansancio no viene de lo que haces, sino de dónde está tu mente mientras lo haces.";
+    patron = "Cuando no estás en piloto automático, el ruido interno ocupa el espacio. Es una combinación que agota sin que sepas bien por qué.";
     prioridad = "Presencia primero — sin ella, la claridad cognitiva no mejora sola.";
   } else if (z.regulacion === "rojo" && z.agencia === "rojo") {
     apertura = `${nombre}, la brecha entre lo que quieres hacer y lo que terminas haciendo es el patrón central de tu perfil.`;
-    patron = "Las emociones intensas desvían tus intenciones con frecuencia. No es falta de voluntad — es que el sistema de regulación está sobrecargado y el músculo de la agencia no tiene base estable desde donde operar.";
+    patron = "Las emociones intensas desvían tus intenciones con frecuencia. No es falta de voluntad — es que el sistema de regulación está sobrecargado.";
     prioridad = "Regulación primero — la agencia sin regulación es esfuerzo que se pierde.";
-  } else if (z.valores === "verde" && z.agencia === "rojo") {
-    apertura = `${nombre}, sabes exactamente lo que importa. El problema no es la dirección.`;
-    patron = "Hay claridad de valores pero dificultad para sostener el rumbo cuando algo interfiere. La brecha no es de comprensión — es de ejecución consistente bajo presión.";
-    prioridad = "Agencia — los valores ya están, solo necesitan músculo.";
-  } else if (z.autoconocimiento === "verde" && z.regulacion === "rojo") {
-    apertura = `${nombre}, te conoces bien. Pero ese conocimiento todavía no te protege cuando la emoción sube.`;
-    patron = "El autoconocimiento es real — puedes nombrar lo que pasa dentro de ti con precisión. Lo que falta es la herramienta que convierte ese insight en regulación efectiva en el momento crítico.";
-    prioridad = "Regulación — el insight es el mapa, falta el vehículo.";
-  } else if (z.presencia === "verde" && z.regulacion === "rojo" && z.valores === "rojo") {
-    apertura = `${nombre}, estás aquí — pero no siempre sabes para qué.`;
-    patron = "La atención funciona, pero las emociones te desbordan y la dirección no está clara. Es como tener buena visión pero no saber adónde ir — y cuando algo te perturba, el camino desaparece completamente.";
-    prioridad = "Regulación primero, luego valores.";
-  } else if (z.agencia === "verde" && z.valores === "rojo") {
-    apertura = `${nombre}, puedes ejecutar. El problema es que no siempre estás ejecutando lo que realmente importa.`;
-    patron = "Hay disciplina y capacidad de sostener compromisos. Pero la dirección no está clara — lo que produces con ese esfuerzo no siempre está alineado con lo que valoras de verdad.";
-    prioridad = "Valores — la agencia ya existe, necesita dirección.";
-  } else if (z.autoconocimiento === "rojo" && z.claridad === "rojo") {
-    apertura = `${nombre}, la voz interna es el ruido más constante de tu día.`;
-    patron = "Los pensamientos automáticos negativos y la autocrítica operan juntos. No es solo que la mente hace ruido — es que ese ruido casi siempre va dirigido hacia ti mismo.";
-    prioridad = "Claridad cognitiva primero — reestructurar el ruido antes de trabajar la autocompasión.";
-  } else if (z.agencia === "verde" && z.presencia === "rojo") {
-    apertura = `${nombre}, produces resultados — pero frecuentemente desde el piloto automático.`;
-    patron = "Hay capacidad de acción y disciplina, pero poca conciencia del momento presente. Las decisiones se toman desde la inercia más que desde la atención consciente.";
-    prioridad = "Presencia — la agencia ganará profundidad con ella.";
   } else {
     apertura = `${nombre}, tu Índice refleja un perfil en movimiento — con áreas que ya funcionan y otras que están esperando atención.`;
-    patron = `Tu dimensión más desarrollada es ${top1.label.toLowerCase()} (${scores[top1.id]}/100) — esa es tu base. Tu mayor oportunidad está en ${low1.label.toLowerCase()} (${scores[low1.id]}/100), donde el trabajo va a generar el mayor delta.`;
+    patron = `Tu dimensión más desarrollada es ${top1.label.toLowerCase()} (${scores[top1.id]}/100). Tu mayor oportunidad está en ${low1.label.toLowerCase()} (${scores[low1.id]}/100).`;
     prioridad = `Empieza por ${low1.label.toLowerCase()}.`;
   }
 
-  // ─── Fortaleza de la dimensión más alta ───
   const fortalezaTextos = {
     presencia: "Tienes una capacidad real de estar donde estás. Eso es más raro de lo que parece — y es la base desde donde el trabajo del programa se vuelve efectivo.",
-    claridad: "Tu mente no te sabotea constantemente. Puedes pensar con relativa claridad incluso bajo presión — eso es una ventaja real para el trabajo que sigue.",
-    regulacion: "Puedes sentir emociones intensas sin que te desborden. Eso es una fortaleza clínica real — significa que el sistema de regulación ya tiene base.",
-    valores: "Hay coherencia entre lo que dices que importa y cómo te comportas. Eso da dirección — y la dirección reduce la ansiedad existencial.",
-    autoconocimiento: "Te tratas con generosidad real cuando fallas. Eso no es debilidad — es la condición necesaria para cambiar sin destruirte en el proceso.",
-    agencia: "Puedes traducir intenciones en acciones con consistencia. Ese músculo es el que hace posible cualquier cambio real y sostenible.",
+    claridad: "Tu mente no te sabotea constantemente. Puedes pensar con relativa claridad incluso bajo presión.",
+    regulacion: "Puedes sentir emociones intensas sin que te desborden. Eso es una fortaleza clínica real.",
+    valores: "Hay coherencia entre lo que dices que importa y cómo te comportas. Eso da dirección.",
+    autoconocimiento: "Te tratas con generosidad real cuando fallas. Eso es la condición necesaria para cambiar sin destruirte en el proceso.",
+    agencia: "Puedes traducir intenciones en acciones con consistencia. Ese músculo es el que hace posible cualquier cambio real.",
   };
 
   const fortaleza = verdesCount > 0
     ? `Tu punto de apoyo es ${top1.label.toLowerCase()} (${scores[top1.id]}/100). ${fortalezaTextos[top1.id]}`
     : "Completar este Índice ya dice algo sobre ti — la disposición a mirarse de frente es el primer paso real.";
 
-  // ─── Cierre por zona general ───
   const cierreTextos = {
-    verde: "Este baseline confirma algo: el trabajo que has hecho tiene resultado medible. El programa es para sostenerlo y profundizarlo.",
+    verde: "Este baseline confirma algo: el trabajo que has hecho tiene resultado medible.",
     ambar: "Hay salida. Y es medible. El programa empieza exactamente donde estás — no donde crees que deberías estar.",
-    rojo: "El punto de partida más honesto es el más útil. Desde aquí el delta va a ser visible — y eso es lo que hace que el trabajo valga la pena.",
+    rojo: "El punto de partida más honesto es el más útil. Desde aquí el delta va a ser visible.",
   };
 
   const zonaGeneral = overall >= 80 ? "verde" : overall >= 60 ? "ambar" : "rojo";
-  const cierre = cierreTextos[zonaGeneral];
-
-  return `${apertura}\n\n${patron}\n\n${fortaleza}\n\n${prioridad}\n\n${cierre}`;
+  return `${apertura}\n\n${patron}\n\n${fortaleza}\n\n${prioridad}\n\n${cierreTextos[zonaGeneral]}`;
 }
 
+// ─── Estilos base ───
+const C = {
+  cream: "#f7f4f0",
+  creamDark: "#ede9e3",
+  ink: "#1a1714",
+  inkMuted: "#6b6460",
+  inkFaint: "#a09890",
+  border: "rgba(26,23,20,0.12)",
+  borderStrong: "rgba(26,23,20,0.22)",
+};
+
+const mono = "'Courier New', monospace";
+const serif = "Georgia, 'Times New Roman', serif";
+
+// ─── Radar chart ───
 function Radar({ scores }) {
-  const cx = 160, cy = 160, r = 110, n = DIMS.length;
+  const cx = 140, cy = 140, r = 95, n = DIMS.length;
   const angle = (i) => (2 * Math.PI * i) / n - Math.PI / 2;
   const pt = (i, ratio) => ({ x: cx + r * ratio * Math.cos(angle(i)), y: cy + r * ratio * Math.sin(angle(i)) });
   const dataPoints = DIMS.map((d, i) => pt(i, (scores[d.id] || 0) / 100));
   const poly = dataPoints.map((p) => `${p.x},${p.y}`).join(" ");
   return (
-    <svg width={320} height={320} style={{ display: "block", margin: "0 auto" }}>
+    <svg width={280} height={280} style={{ display: "block", margin: "0 auto" }}>
       {[0.25, 0.5, 0.75, 1].map((g) => (
-        <polygon key={g} points={DIMS.map((_, i) => { const p = pt(i, g); return `${p.x},${p.y}`; }).join(" ")} fill="none" stroke="#e8e2d9" strokeWidth={g === 1 ? 1 : 0.5} />
+        <polygon key={g} points={DIMS.map((_, i) => { const p = pt(i, g); return `${p.x},${p.y}`; }).join(" ")} fill="none" stroke={C.border} strokeWidth={g === 1 ? 1 : 0.5} />
       ))}
-      {DIMS.map((_, i) => { const e = pt(i, 1); return <line key={i} x1={cx} y1={cy} x2={e.x} y2={e.y} stroke="#e8e2d9" strokeWidth={0.5} />; })}
-      <polygon points={poly} fill="rgba(91,160,138,0.12)" stroke="#5BA08A" strokeWidth={2.5} />
-      {dataPoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={5} fill={DIMS[i].color} />)}
+      {DIMS.map((_, i) => { const e = pt(i, 1); return <line key={i} x1={cx} y1={cy} x2={e.x} y2={e.y} stroke={C.border} strokeWidth={0.5} />; })}
+      <polygon points={poly} fill="rgba(61,122,101,0.1)" stroke="#3d7a65" strokeWidth={2} />
+      {dataPoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={4} fill={DIMS[i].color} />)}
       {DIMS.map((d, i) => {
         const lp = pt(i, 1.28);
-        return <text key={i} x={lp.x} y={lp.y} textAnchor="middle" dominantBaseline="middle" fill="#666" fontSize={9} fontFamily="'DM Mono', monospace">{d.label}</text>;
+        return <text key={i} x={lp.x} y={lp.y} textAnchor="middle" dominantBaseline="middle" fill={C.inkFaint} fontSize={8} fontFamily={mono}>{d.label.split(" ")[0]}</text>;
       })}
     </svg>
   );
 }
 
-function ScaleBtn({ val, selected, color, onClick, label }) {
+// ─── Pantalla de nombre ───
+function NameScreen({ nombre, onChange, onStart }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-      <button onClick={() => onClick(val)} style={{
-        width: 44, height: 44, borderRadius: "50%",
-        border: selected ? `2.5px solid ${color}` : "1.5px solid #d0c8bc",
-        background: selected ? color : "transparent",
-        color: selected ? "#fff" : "#888",
-        fontFamily: "Georgia, serif", fontSize: 16,
-        fontWeight: selected ? 700 : 400,
-        cursor: "pointer", transition: "all 0.18s",
-      }}>{val}</button>
-      <span style={{ color: "#aaa", fontSize: 9, textAlign: "center", maxWidth: 44, lineHeight: 1.2, fontFamily: "'DM Mono', monospace" }}>{label}</span>
+    <div style={{ paddingTop: 48 }}>
+      <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 20, display: "block" }}>
+        Índice de Lucidez
+      </span>
+      <div style={{ fontSize: 26, fontWeight: "normal", lineHeight: 1.35, marginBottom: 28, color: C.ink }}>
+        ¿Cómo te llamas?
+      </div>
+      <input
+        type="text"
+        value={nombre}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Tu nombre"
+        autoFocus
+        style={{ display: "block", width: "100%", padding: "14px 0", background: "transparent", color: C.ink, border: "none", borderBottom: `1px solid ${C.borderStrong}`, fontFamily: serif, fontSize: 22, outline: "none", marginBottom: 32 }}
+      />
+      <button
+        onClick={onStart}
+        style={{ background: C.ink, color: C.cream, border: "none", padding: "13px 28px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+      >
+        Comenzar →
+      </button>
     </div>
   );
 }
 
-function QuizScreen({ dim, answers, onAnswer, onNext, onPrev, isFirst, isLast, dimIndex }) {
-  const allAnswered = dim.questions.every((q) => answers[q.id] !== undefined);
-  const progress = (dimIndex / DIMS.length) * 100;
+// ─── Una pregunta a la vez ───
+function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, onBack }) {
+  const q = allQuestions[currentIdx];
+  const dim = DIMS.find((d) => d.questions.some((dq) => dq.id === q.id));
+  const total = allQuestions.length;
+  const pct = Math.round(((currentIdx + 1) / total) * 100);
+  const answered = answers[q.id] !== undefined;
+
+  // Pills de dimensión
+  const dimProgress = DIMS.map((d) => {
+    const idxs = allQuestions.map((qq, i) => d.questions.some((dq) => dq.id === qq.id) ? i : -1).filter((i) => i >= 0);
+    const done = idxs.every((i) => answers[allQuestions[i].id] !== undefined);
+    const active = d.questions.some((dq) => dq.id === q.id);
+    return { ...d, done, active };
+  });
+
   return (
-    <div style={{ animation: "fadeIn 0.3s ease" }}>
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-          <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#888" }}>Dimensión {dimIndex + 1} de {DIMS.length}</span>
-          <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: dim.color, fontWeight: 600 }}>{dim.tool}</span>
-        </div>
-        <div style={{ height: 3, background: "#e8e2d9", borderRadius: 2, overflow: "hidden" }}>
-          <div style={{ height: "100%", width: `${progress}%`, background: dim.color, borderRadius: 2, transition: "width 0.5s" }} />
-        </div>
-      </div>
-      <div style={{ borderLeft: `4px solid ${dim.color}`, paddingLeft: 16, marginBottom: 28 }}>
-        <div style={{ color: "#aaa", fontSize: 13, fontStyle: "italic", fontFamily: "Georgia, serif", marginBottom: 2 }}>{dim.desc}</div>
-        <div style={{ fontSize: 28, fontWeight: 600, color: "#1a1a1a", fontFamily: "Georgia, serif" }}>{dim.label}</div>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 24, marginBottom: 36 }}>
-        {dim.questions.map((q, qi) => (
-          <div key={q.id} style={{ background: "#faf8f5", borderRadius: 12, padding: "20px 22px", border: `1.5px solid ${answers[q.id] !== undefined ? dim.color + "66" : "#e8e2d9"}`, transition: "border-color 0.25s" }}>
-            <p style={{ color: "#333", fontFamily: "Georgia, serif", fontSize: 16, lineHeight: 1.7, margin: "0 0 20px" }}>
-              <span style={{ color: dim.color, fontWeight: 700, marginRight: 6 }}>{qi + 1}.</span>{q.text}
-            </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {[1, 2, 3, 4, 5].map((v) => (
-                <ScaleBtn key={v} val={v} selected={answers[q.id] === v} color={dim.color} onClick={(val) => onAnswer(q.id, val)} label={SCALE[v - 1]} />
-              ))}
-            </div>
+    <div style={{ paddingTop: 32 }}>
+      {/* Pills */}
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 32 }}>
+        {dimProgress.map((d) => (
+          <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: mono, fontSize: 9, letterSpacing: "0.05em", textTransform: "uppercase", color: d.active ? C.ink : d.done ? C.inkMuted : C.inkFaint, padding: "4px 9px", borderRadius: 20, border: `1px solid ${d.active ? C.borderStrong : C.border}`, background: d.active ? C.creamDark : C.cream }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
+            {d.label.split(" ")[0]}
           </div>
         ))}
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <button onClick={onPrev} disabled={isFirst} style={{ padding: "12px 24px", background: "transparent", border: "1.5px solid #d0c8bc", borderRadius: 8, color: isFirst ? "#d0c8bc" : "#666", fontFamily: "Georgia, serif", fontSize: 15, cursor: isFirst ? "default" : "pointer" }}>← Anterior</button>
-        <button onClick={onNext} disabled={!allAnswered} style={{ padding: "12px 32px", background: allAnswered ? dim.color : "#e8e2d9", border: "none", borderRadius: 8, color: allAnswered ? "#fff" : "#bbb", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 700, cursor: allAnswered ? "pointer" : "default", transition: "all 0.25s" }}>
-          {isLast ? "Ver mi Índice →" : "Siguiente →"}
+
+      {/* Dim + número */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
+        <span style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
+        <span style={{ fontFamily: mono, fontSize: 10, color: C.inkFaint, marginLeft: "auto" }}>{currentIdx + 1} / {total}</span>
+      </div>
+
+      {/* Pregunta */}
+      <div style={{ fontSize: 20, fontWeight: "normal", lineHeight: 1.5, marginBottom: 36, color: C.ink, minHeight: 72 }}>
+        {q.text}
+      </div>
+
+      {/* Escala */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+          {[1, 2, 3, 4, 5].map((v) => {
+            const sel = answers[q.id] === v;
+            return (
+              <button
+                key={v}
+                onClick={() => onAnswer(q.id, v)}
+                style={{ width: 50, height: 50, borderRadius: "50%", border: `1px solid ${sel ? dim.color : C.borderStrong}`, background: sel ? dim.color : C.cream, color: sel ? C.cream : C.ink, fontFamily: mono, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s", padding: 0 }}
+              >
+                {v}
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ width: 290, display: "flex", justifyContent: "space-between", fontFamily: mono, fontSize: 9, color: C.inkFaint, letterSpacing: "0.04em" }}>
+          <span style={{ width: 50, textAlign: "center" }}>Nunca</span>
+          <span style={{ width: 50, textAlign: "center" }}>Siempre</span>
+        </div>
+      </div>
+
+      {/* Navegación */}
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <button
+          onClick={onBack}
+          style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: C.cream, color: C.inkMuted, border: `1px solid ${C.borderStrong}`, padding: "12px 20px", fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+        >
+          ← Anterior
+        </button>
+        <button
+          onClick={onNext}
+          disabled={!answered}
+          style={{ background: answered ? C.ink : C.creamDark, color: answered ? C.cream : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: answered ? "pointer" : "default", borderRadius: 2, opacity: answered ? 1 : 0.5 }}
+        >
+          {currentIdx === total - 1 ? "Ver mi reporte →" : "Siguiente →"}
         </button>
       </div>
     </div>
   );
 }
 
+// ─── Reporte ───
 function ResultsScreen({ scores, user, session }) {
   const [showReport, setShowReport] = useState(false);
-  const [saved, setSaved] = useState(null);
   const [emailOpcional, setEmailOpcional] = useState("");
+  const [saved, setSaved] = useState(null);
+
   const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / DIMS.length);
-  const level = overall >= 70 ? { label: "Alta", color: "#5BA08A" } : overall >= 40 ? { label: "Media", color: "#C07A45" } : { label: "En desarrollo", color: "#8A5BA0" };
+  const zona = overall >= 80 ? { label: "Zona verde", color: "#3d7a65", bg: "#edf4f0" } : overall >= 60 ? { label: "Zona ámbar", color: "#9a5e2e", bg: "#f5ede4" } : { label: "Zona roja", color: "#8A3030", bg: "#f5e8e8" };
   const sorted = [...DIMS].sort((a, b) => scores[b.id] - scores[a.id]);
-  const top2 = sorted.slice(0, 2);
-  const low2 = sorted.slice(-2).reverse();
+  const low1 = sorted[sorted.length - 1];
   const report = generateLocalReport(scores, user);
-  const resumenCorto = (texto) => {
-    const primerSegmento = (texto || "").split(". ")[0] || "";
-    return primerSegmento.endsWith(".") ? primerSegmento : `${primerSegmento}.`;
-  };
 
   const handleShowReport = async () => {
+    if (!session && !emailOpcional.trim()) return;
     setShowReport(true);
     const emailFinal = !session?.user?.id && emailOpcional.trim() ? emailOpcional.trim() : user.email;
-    const payload = {
-      nombre: user.nombre,
-      email: emailFinal,
-      edad: parseInt(user.edad) || null,
-      ciudad: user.ciudad,
-      scores,
-      overall,
-      nivel: level.label,
-      reporte: report,
-      fecha: new Date().toISOString(),
-    };
-
-    if (!session?.user?.id) {
-      // Guardado temporal para usuarios anónimos
-      localStorage.setItem("indice_anonimo", JSON.stringify(payload));
-      setSaved(true); // no mostrar error
-      return;
-    }
-
-    if (session.user?.id) {
-      payload.user_id = session.user.id;
-    }
-
+    const payload = { nombre: user.nombre, email: emailFinal, edad: parseInt(user.edad) || null, ciudad: user.ciudad, scores, overall, nivel: zona.label, reporte: report, fecha: new Date().toISOString() };
+    if (!session?.user?.id) { localStorage.setItem("indice_anonimo", JSON.stringify(payload)); setSaved(true); return; }
+    if (session.user?.id) payload.user_id = session.user.id;
     const ok = await saveToSupabase(payload);
     setSaved(ok);
   };
 
   return (
-    <div style={{ animation: "fadeIn 0.4s ease" }}>
-      <div style={{ textAlign: "center", marginBottom: 32, padding: "32px 24px", background: "#faf8f5", borderRadius: 16, border: "1px solid #e8e2d9" }}>
-        <div style={{ color: "#888", fontSize: 11, letterSpacing: 3, fontFamily: "'DM Mono', monospace", textTransform: "uppercase", marginBottom: 10 }}>Tu Índice de Lucidez</div>
-        <div style={{ fontSize: 96, fontWeight: 700, fontFamily: "Georgia, serif", color: level.color, lineHeight: 1 }}>{overall}</div>
-        <div style={{ color: level.color, fontSize: 20, letterSpacing: 2, fontFamily: "Georgia, serif", marginTop: 6, marginBottom: 8 }}>Lucidez {level.label}</div>
-        <div style={{ color: "#aaa", fontSize: 13, fontFamily: "'DM Mono', monospace" }}>{user.nombre} · {user.ciudad} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}</div>
+    <div style={{ paddingTop: 32 }}>
+      {/* Score general */}
+      <div style={{ marginBottom: 36 }}>
+        <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
+          Tu Índice de Lucidez
+        </span>
+        <div style={{ fontSize: 80, fontWeight: "normal", lineHeight: 1, color: zona.color, letterSpacing: "-0.03em", marginBottom: 4 }}>
+          {overall}
+        </div>
+        <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
+          {zona.label}
+        </div>
+        <div style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint }}>
+          {user.nombre} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+        </div>
       </div>
-      <div style={{ background: "#faf8f5", borderRadius: 14, padding: "20px 0", border: "1px solid #e8e2d9", marginBottom: 20 }}>
-        <Radar scores={scores} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+
+      {/* Barras por dimensión */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
         {DIMS.map((d) => (
-          <div key={d.id} style={{ background: "#faf8f5", borderRadius: 8, padding: "12px 16px", border: "1px solid #e8e2d9", borderLeft: `4px solid ${d.color}` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <span style={{ color: "#333", fontSize: 14, fontWeight: 600, fontFamily: "Georgia, serif" }}>{d.label}</span>
-              <span style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#555" }}>{scores[d.id]}<span style={{ color: "#bbb" }}>/100</span></span>
+          <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
+            <div style={{ flex: 1, height: 6, background: C.creamDark, borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3 }} />
             </div>
-            <div style={{ height: 5, background: "#e8e2d9", borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3, transition: "width 1.2s ease" }} />
-            </div>
+            <div style={{ fontFamily: mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
           </div>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
-        <div style={{ background: "#f0f7f4", borderRadius: 10, padding: 16, border: "1px solid #c8ddd7" }}>
-          <div style={{ color: "#5BA08A", fontSize: 10, letterSpacing: 2, fontFamily: "'DM Mono', monospace", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 }}>Fortalezas</div>
-          {top2.map((d) => (
-            <div key={d.id} style={{ marginBottom: 10 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
-                <span style={{ fontSize: 13, color: "#333", fontFamily: "Georgia, serif", fontWeight: 600 }}>{d.label}</span>
-                <span style={{ fontFamily: "Georgia, serif", fontSize: 12, color: "#5BA08A", marginLeft: "auto", fontWeight: 600 }}>{scores[d.id]}</span>
-              </div>
-              <p style={{ margin: 0, color: "#555", fontSize: 12, lineHeight: 1.5, fontFamily: "Georgia, serif" }}>{resumenCorto(d.fortaleza)}</p>
-            </div>
-          ))}
-        </div>
-        <div style={{ background: "#fdf5ef", borderRadius: 10, padding: 16, border: "1px solid #e8d0bc" }}>
-          <div style={{ color: "#C07A45", fontSize: 10, letterSpacing: 2, fontFamily: "'DM Mono', monospace", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 }}>Áreas de oportunidad</div>
-          {low2.map((d) => (
-            <div key={d.id} style={{ marginBottom: 10 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
-                <span style={{ fontSize: 13, color: "#333", fontFamily: "Georgia, serif", fontWeight: 600 }}>{d.label}</span>
-                <span style={{ fontFamily: "Georgia, serif", fontSize: 12, color: "#C07A45", marginLeft: "auto", fontWeight: 600 }}>{scores[d.id]}</span>
-              </div>
-              <p style={{ margin: 0, color: "#555", fontSize: 12, lineHeight: 1.5, fontFamily: "Georgia, serif" }}>{resumenCorto(d.crecimiento)}</p>
-            </div>
-          ))}
-        </div>
+
+      {/* Radar */}
+      <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "20px 0", marginBottom: 32 }}>
+        <Radar scores={scores} />
       </div>
 
+      {/* Gate de correo → reporte */}
       {!showReport ? (
-        <button onClick={handleShowReport} style={{ width: "100%", padding: 18, background: "#5BA08A", border: "none", borderRadius: 10, color: "#fff", fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 700, cursor: "pointer", letterSpacing: 1, marginBottom: 14 }}>
-          Ver mi reporte personalizado ✦
-        </button>
-      ) : (
-        <div style={{ background: "#faf8f5", borderRadius: 14, padding: 28, border: "1px solid #e8e2d9" }}>
-          <div style={{ color: "#5BA08A", fontSize: 10, letterSpacing: 3, fontFamily: "'DM Mono', monospace", textTransform: "uppercase", marginBottom: 6, fontWeight: 600 }}>Tu reporte</div>
-          <div style={{ color: "#aaa", fontSize: 11, fontFamily: "'DM Mono', monospace", marginBottom: 20 }}>Programa de Desarrollo de Lucidez · generado localmente</div>
-          {report.split("\n\n").map((p, i) => (
-            <p key={i} style={{ color: "#333", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.85, margin: "0 0 16px" }}>{p}</p>
-          ))}
-          {session && (
-            <a href='/dashboard' style={{ display: 'inline-block', padding: '12px 24px', background: '#5BA08A', color: '#fff', fontFamily: 'Georgia, serif', fontSize: 14, fontWeight: 600, borderRadius: 8, textDecoration: 'none' }}>
-              Ver mi dashboard →
-            </a>
-          )}
-        </div>
-      )}
-
-      {showReport && !session && (
-        <div style={{ paddingTop: 16, borderTop: "1px solid #e8e2d9", background: "#f0f7f4", borderRadius: 8, padding: 16, marginTop: 14 }}>
-          <div style={{ color: "#333", fontFamily: "Georgia, serif", fontSize: 15, marginBottom: 6 }}>
-            Guarda tu reporte y monitorea tu progreso
-          </div>
-          <div style={{ color: "#666", fontFamily: "Georgia, serif", fontSize: 13, marginBottom: 10 }}>
-            Opcional. Recibe tu reporte y accede a tu dashboard.
-          </div>
+        <div style={{ background: C.creamDark, borderRadius: 4, padding: "28px 24px", marginBottom: 24, textAlign: "center" }}>
+          <div style={{ fontSize: 18, fontWeight: "normal", marginBottom: 8, color: C.ink }}>Guarda tu reporte</div>
+          <div style={{ fontSize: 13, color: C.inkMuted, marginBottom: 20, lineHeight: 1.5 }}>Deja tu correo y te enviamos tus resultados. También guardamos tu historial.</div>
           <input
             type="email"
             value={emailOpcional}
             onChange={(e) => setEmailOpcional(e.target.value)}
-            placeholder="tucorreo@ejemplo.com"
-            style={{ width: "100%", background: "#faf8f5", border: "1px solid #e8e2d9", borderRadius: 8, padding: "12px", fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1a1a", marginBottom: 10 }}
+            placeholder="tu@correo.com"
+            style={{ display: "block", width: "100%", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
           />
+          {!emailOpcional.trim() && (
+            <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
+              Ingresa tu correo para ver el reporte
+            </p>
+          )}
           <button
-            onClick={() => {
-              const emailLimpio = emailOpcional.trim();
-              localStorage.setItem("email_anonimo", emailLimpio);
-              window.location.href = emailLimpio ? `/login?email=${encodeURIComponent(emailLimpio)}` : "/login";
-            }}
-            style={{ display: "inline-block", padding: "12px 24px", background: "#5BA08A", color: "#fff", fontFamily: "Georgia, serif", fontSize: 14, fontWeight: 600, borderRadius: 8, border: "none", cursor: "pointer" }}
+            onClick={handleShowReport}
+            style={{ width: "100%", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
           >
-            Guardar mis resultados →
+            Ver mi reporte completo →
           </button>
         </div>
+      ) : (
+        <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "24px", marginBottom: 24 }}>
+          <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+          {report.split("\n\n").map((p, i) => (
+            <p key={i} style={{ color: C.inkMuted, fontFamily: serif, fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
+          ))}
+          {session && (
+            <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+              Ir al dashboard →
+            </a>
+          )}
+        </div>
       )}
-
-      <div style={{ background: "#eee7de", border: "1px solid #ddd3c8", borderRadius: 10, padding: 16, marginTop: 14 }}>
-        <div style={{ color: "#4A4540", fontSize: 16, fontFamily: "Georgia, serif", fontWeight: 600, marginBottom: 10 }}>
-          Tu plan de acción personalizado
-        </div>
-        <div style={{ filter: "blur(4px)", userSelect: "none", marginBottom: 12 }}>
-          <p style={{ margin: "0 0 6px", color: "#5f5952", fontSize: 13, fontFamily: "Georgia, serif" }}>Semana 1: intervención en regulación y presencia con tareas diarias.</p>
-          <p style={{ margin: "0 0 6px", color: "#5f5952", fontSize: 13, fontFamily: "Georgia, serif" }}>Semana 2: protocolo cognitivo para reducir ruido mental y sesgos.</p>
-          <p style={{ margin: 0, color: "#5f5952", fontSize: 13, fontFamily: "Georgia, serif" }}>Semana 3: plan de hábitos por dimensión con seguimiento semanal.</p>
-        </div>
-        <button style={{ width: "100%", padding: "12px 16px", background: "#5BA08A", border: "none", borderRadius: 8, color: "#fff", fontFamily: "Georgia, serif", fontSize: 14, fontWeight: 600, cursor: "pointer", marginBottom: 8 }}>
-          Desbloquear — $149 MXN
-        </button>
-        <div style={{ color: "#7c756d", fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: 1 }}>
-          Evaluación profunda · Reporte completo · Plan por dimensión
-        </div>
-      </div>
     </div>
   );
 }
 
+// ─── Componente principal ───
 export default function Indice() {
-  const [screen, setScreen] = useState("intro");
-  const [user, setUser] = useState({ nombre: "", email: "", edad: "", ciudad: "" });
-  const [dimIdx, setDimIdx] = useState(0);
+  const [screen, setScreen] = useState("name");
+  const [nombre, setNombre] = useState("");
+  const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState({});
   const [session, setSession] = useState(null);
-  const resultsRef = useRef(null);
-  const scroll = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const topRef = useRef(null);
 
-  // Detecta sesión y pre-llena datos del usuario
+  // Aplanar todas las preguntas en orden
+  const allQuestions = DIMS.flatMap((d) => d.questions);
+
+  const scroll = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setSession(session);
-        setScreen("quiz");
         const meta = session.user.user_metadata;
-        setUser({
-          nombre: meta?.full_name || meta?.name || session.user.email.split("@")[0],
-          email: session.user.email,
-          edad: meta?.age || "",
-          ciudad: meta?.city || "",
-        });
+        setNombre(meta?.full_name || meta?.name || session.user.email.split("@")[0]);
+        setScreen("questions");
       }
     });
   }, []);
 
-  useEffect(() => {
-    if (screen === "results" && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [screen]);
+  const handleAnswer = (id, val) => {
+    setAnswers((prev) => ({ ...prev, [id]: val }));
+    // Auto-avance
+    setTimeout(() => {
+      if (currentQ < allQuestions.length - 1) {
+        setCurrentQ((q) => q + 1);
+        scroll();
+      } else {
+        setScreen("results");
+        scroll();
+      }
+    }, 360);
+  };
+
+  const handleNext = () => {
+    if (answers[allQuestions[currentQ].id] === undefined) return;
+    if (currentQ < allQuestions.length - 1) { setCurrentQ((q) => q + 1); scroll(); }
+    else { setScreen("results"); scroll(); }
+  };
+
+  const handleBack = () => {
+    if (currentQ > 0) { setCurrentQ((q) => q - 1); scroll(); }
+  };
+
+  const pct = screen === "questions" ? Math.round(((currentQ + 1) / allQuestions.length) * 100) : screen === "results" ? 100 : 0;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f4f0", color: "#1a1a1a", fontFamily: "Georgia, serif" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap');
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-        * { box-sizing:border-box; margin:0; padding:0; }
-        input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; }
-        input::placeholder { color: #ccc; }
-        input:focus { outline: none; border-bottom-color: #5BA08A !important; }
-        ::-webkit-scrollbar { width:3px; }
-        ::-webkit-scrollbar-thumb { background:#d0c8bc; border-radius:2px; }
-      `}</style>
-      <div style={{ borderBottom: "1px solid #e8e2d9", padding: "16px 24px", position: "sticky", top: 0, background: "#f7f4f0", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <a href="/" style={{ textDecoration: "none" }}>
-          <div>
-            <div style={{ color: "#aaa", fontSize: 9, letterSpacing: 4, fontFamily: "'DM Mono', monospace", textTransform: "uppercase" }}>Programa de Desarrollo de</div>
-            <div style={{ fontSize: 18, fontWeight: 600, letterSpacing: 1, color: "#1a1a1a" }}>Lucidez</div>
-          </div>
-        </a>
-        {screen === "quiz" && (
-          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: DIMS[dimIdx].color }}>{dimIdx + 1} / {DIMS.length}</div>
-        )}
-      </div>
-      <div style={{ maxWidth: 580, margin: "0 auto", padding: "36px 20px 80px" }}>
-        {screen === "intro" && (
-          <div style={{ background: "#faf8f5", borderRadius: 14, padding: 24, border: "1px solid #e8e2d9", animation: "fadeIn 0.35s ease" }}>
-            <div style={{ color: "#1a1a1a", fontFamily: "Georgia, serif", fontSize: 24, marginBottom: 10 }}>
-              ¿Cómo te llamas?
-            </div>
-            <div style={{ color: "#888", fontFamily: "Georgia, serif", fontSize: 13, marginBottom: 14 }}>
-              Solo tu nombre — sin cuenta, sin correo.
-            </div>
-            <input
-              type="text"
-              value={user.nombre}
-              onChange={(e) => setUser((p) => ({ ...p, nombre: e.target.value }))}
-              placeholder="Tu nombre o como quieras que te llamemos"
-              style={{ width: "100%", background: "#faf8f5", border: "1px solid #e8e2d9", borderRadius: 8, padding: "12px", fontFamily: "Georgia, serif", fontSize: 15, color: "#1a1a1a", marginBottom: 14 }}
-            />
-            <button
-              onClick={() => {
-                if (!user.nombre.trim()) return;
-                setScreen("quiz");
-                scroll();
-              }}
-              style={{ width: "100%", padding: 14, background: user.nombre.trim() ? "#5BA08A" : "#e8e2d9", border: "none", borderRadius: 10, color: user.nombre.trim() ? "#fff" : "#bbb", fontFamily: "Georgia, serif", fontSize: 17, fontWeight: 700, cursor: user.nombre.trim() ? "pointer" : "default" }}
-            >
-              Empezar →
-            </button>
-          </div>
-        )}
+    <div ref={topRef} style={{ background: C.cream, minHeight: "100vh", fontFamily: serif, color: C.ink, fontSize: 15, lineHeight: 1.6 }}>
 
-        {screen === "quiz" && (
-          <QuizScreen
-            dim={DIMS[dimIdx]} answers={answers} dimIndex={dimIdx}
-            onAnswer={(id, val) => setAnswers((p) => ({ ...p, [id]: val }))}
-            onNext={() => { if (dimIdx < DIMS.length - 1) { setDimIdx(p => p + 1); scroll(); } else { setScreen("results"); } }}
-            onPrev={() => { if (dimIdx > 0) { setDimIdx(p => p - 1); scroll(); } }}
-            isFirst={dimIdx === 0} isLast={dimIdx === DIMS.length - 1}
+      {/* Nav */}
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 28px", borderBottom: `0.5px solid ${C.border}`, background: C.cream, position: "sticky", top: 0, zIndex: 10 }}>
+        <a href="/" style={{ textDecoration: "none", fontFamily: serif, fontSize: 17, color: C.ink, letterSpacing: "0.04em" }}>lucidez</a>
+        <span style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint, letterSpacing: "0.06em" }}>
+          {screen === "questions" ? `${pct}% completado` : screen === "results" ? "Índice completado" : "Índice de Lucidez"}
+        </span>
+      </nav>
+
+      {/* Barra de progreso */}
+      <div style={{ height: 2, background: "rgba(26,23,20,0.08)" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: C.ink, transition: "width 0.4s ease" }} />
+      </div>
+
+      {/* Contenido */}
+      <div style={{ maxWidth: 520, margin: "0 auto", padding: "0 28px 80px" }}>
+        {screen === "name" && (
+          <NameScreen
+            nombre={nombre}
+            onChange={setNombre}
+            onStart={() => { if (nombre.trim()) { setScreen("questions"); scroll(); } else { setScreen("questions"); } }}
+          />
+        )}
+        {screen === "questions" && (
+          <QuestionScreen
+            allQuestions={allQuestions}
+            currentIdx={currentQ}
+            answers={answers}
+            onAnswer={handleAnswer}
+            onNext={handleNext}
+            onBack={handleBack}
           />
         )}
         {screen === "results" && (
-          <div ref={resultsRef}>
-            <ResultsScreen scores={computeScores(answers)} user={user} session={session} />
-          </div>
+          <ResultsScreen
+            scores={computeScores(answers)}
+            user={{ nombre, email: session?.user?.email || "", edad: "", ciudad: "" }}
+            session={session}
+          />
         )}
       </div>
     </div>
