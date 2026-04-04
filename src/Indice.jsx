@@ -11,6 +11,73 @@ async function saveToSupabase(data) {
   }
 }
 
+const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
+
+async function generateAIReport(scores, nombre) {
+  const dimTexts = [
+    { id: "presencia", label: "Presencia", score: scores.presencia },
+    { id: "claridad", label: "Claridad Cognitiva", score: scores.claridad },
+    { id: "regulacion", label: "Regulación Emocional", score: scores.regulacion },
+    { id: "valores", label: "Alineación de Valores", score: scores.valores },
+    { id: "autoconocimiento", label: "Autoconocimiento", score: scores.autoconocimiento },
+    { id: "agencia", label: "Agencia", score: scores.agencia },
+  ];
+  const sorted = [...dimTexts].sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const low = sorted[sorted.length - 1];
+  const overall = Math.round(dimTexts.reduce((s, d) => s + d.score, 0) / 6);
+  const zona = overall >= 80 ? "verde" : overall >= 60 ? "ámbar" : "roja";
+
+  const prompt = `Eres un clínico experto en psicología basada en evidencia. Vas a escribir un reporte personalizado para ${nombre} basado en su Índice de Lucidez.
+
+Datos del perfil:
+- Score general: ${overall}/100 (zona ${zona})
+- Presencia: ${scores.presencia}/100
+- Claridad Cognitiva: ${scores.claridad}/100
+- Regulación Emocional: ${scores.regulacion}/100
+- Alineación de Valores: ${scores.valores}/100
+- Autoconocimiento: ${scores.autoconocimiento}/100
+- Agencia: ${scores.agencia}/100
+- Dimensión más alta: ${top.label} (${top.score}/100)
+- Dimensión más baja: ${low.label} (${low.score}/100)
+
+Escribe un reporte en español de 4 párrafos con este formato exacto:
+
+Párrafo 1 — Apertura personal: Una observación específica sobre la forma del perfil de ${nombre}. No genérica. Menciona su nombre. Máximo 3 oraciones.
+
+Párrafo 2 — El patrón: Qué significa la combinación de scores. Qué está pasando en la vida de alguien con este perfil. Concreto y clínico. Máximo 3 oraciones.
+
+Párrafo 3 — La fortaleza: Qué tiene ${nombre} que ya funciona y cómo puede usarlo. Menciona la dimensión más alta específicamente.
+
+Párrafo 4 — La pregunta abierta: Termina con algo que el Índice no puede responder y que solo la evaluación profunda de ${low.label} puede resolver. Genera curiosidad sin ser manipulador.
+
+Tono: directo, clínico, sin jerga terapéutica, sin frases de autoayuda. Como Epicteto escribiría un reporte clínico.
+Longitud total: máximo 200 palabras.
+Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const data = await response.json();
+    return data.content?.[0]?.text || null;
+  } catch (e) {
+    console.error("Claude API error:", e);
+    return null;
+  }
+}
+
 const DIMS = [
   {
     id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003",
@@ -311,6 +378,8 @@ function ResultsScreen({ scores, user, session }) {
   const [showReport, setShowReport] = useState(false);
   const [emailOpcional, setEmailOpcional] = useState("");
   const [saved, setSaved] = useState(null);
+  const [aiReport, setAiReport] = useState(null);
+  const [loadingReport, setLoadingReport] = useState(false);
 
   const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / DIMS.length);
   const zona = overall >= 80 ? { label: "Zona verde", color: "#3d7a65", bg: "#edf4f0" } : overall >= 60 ? { label: "Zona ámbar", color: "#9a5e2e", bg: "#f5ede4" } : { label: "Zona roja", color: "#8A3030", bg: "#f5e8e8" };
@@ -321,12 +390,32 @@ function ResultsScreen({ scores, user, session }) {
   const handleShowReport = async () => {
     if (!session && !emailOpcional.trim()) return;
     setShowReport(true);
+    setLoadingReport(true);
+
+    // Guardar en Supabase
     const emailFinal = !session?.user?.id && emailOpcional.trim() ? emailOpcional.trim() : user.email;
-    const payload = { nombre: user.nombre, email: emailFinal, edad: parseInt(user.edad) || null, ciudad: user.ciudad, scores, overall, nivel: zona.label, reporte: report, fecha: new Date().toISOString() };
-    if (!session?.user?.id) { localStorage.setItem("indice_anonimo", JSON.stringify(payload)); setSaved(true); return; }
-    if (session.user?.id) payload.user_id = session.user.id;
-    const ok = await saveToSupabase(payload);
-    setSaved(ok);
+    const payload = {
+      nombre: user.nombre,
+      email: emailFinal,
+      edad: parseInt(user.edad) || null,
+      ciudad: user.ciudad,
+      scores,
+      overall,
+      nivel: zona.label,
+      reporte: generateLocalReport(scores, user),
+      fecha: new Date().toISOString(),
+    };
+    if (!session?.user?.id) {
+      localStorage.setItem("indice_anonimo", JSON.stringify(payload));
+    } else {
+      payload.user_id = session.user.id;
+      await saveToSupabase(payload);
+    }
+
+    // Llamar a Claude API
+    const ai = await generateAIReport(scores, user.nombre);
+    setAiReport(ai);
+    setLoadingReport(false);
   };
 
   return (
@@ -392,9 +481,15 @@ function ResultsScreen({ scores, user, session }) {
       ) : (
         <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "24px", marginBottom: 24 }}>
           <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
-          {report.split("\n\n").map((p, i) => (
-            <p key={i} style={{ color: C.inkMuted, fontFamily: serif, fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
-          ))}
+          {loadingReport ? (
+            <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
+              Generando tu reporte...
+            </p>
+          ) : (
+            (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
+              <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
+            ))
+          )}
           {session && (
             <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
               Ir al dashboard →
