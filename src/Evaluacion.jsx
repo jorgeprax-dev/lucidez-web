@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { ESCALAS } from "./escalas";
 
@@ -85,15 +85,18 @@ Responde SOLO con los 4 párrafos. Sin títulos.`;
 
 export default function Evaluacion() {
   const { dimension } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [savedOverall, setSavedOverall] = useState(null);
   const [loading, setLoading] = useState(false);
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
   const autoAdvanceTimeoutRef = useRef(null);
+  const modoReporte = searchParams.get("modo") === "reporte";
 
   const escalaLabels = {
     presencia: "Escala de Atención Consciente · versión breve",
@@ -110,6 +113,33 @@ export default function Evaluacion() {
     if (!escala) return;
     document.title = `Evaluación ${escala.label} · Lucidez`;
   }, [escala]);
+
+  useEffect(() => {
+    if (!modoReporte) return;
+    let isMounted = true;
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session || !isMounted) return;
+      const { data } = await supabase
+        .from("evaluacion_profunda")
+        .select("reporte, overall, fecha")
+        .eq("user_id", session.user.id)
+        .eq("dimension", dimension)
+        .order("fecha", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (data?.reporte && isMounted) {
+        setAiReport(data.reporte);
+        setSavedOverall(data.overall ?? null);
+        setSaved(true);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [modoReporte, dimension]);
 
   const questions = escala?.preguntas || [];
   const currentQ = questions[questionIndex];
@@ -195,6 +225,7 @@ export default function Evaluacion() {
 
       // Mostrar reporte aunque no haya sesión
       setSaved(true);
+      setSavedOverall(overall);
       setLoadingReport(true);
       const report = await generateDeepReport(dimension, escala, formattedScores, overall);
       setAiReport(report);
@@ -228,13 +259,14 @@ export default function Evaluacion() {
   }
 
   if (saved) {
-    const nivel = overall >= 70 ? 'alto' : overall >= 40 ? 'medio' : 'bajo';
+    const visibleOverall = savedOverall ?? overall;
+    const nivel = visibleOverall >= 70 ? 'alto' : visibleOverall >= 40 ? 'medio' : 'bajo';
     const interpretacion = escala.interpretacion[nivel];
     return (
       <div style={{ minHeight: "100vh", background: "#f7f4f0", fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
           <div style={{ fontSize: "clamp(48px, 12vw, 72px)", fontWeight: 300, color: "#5BA08A", marginBottom: 16 }}>
-            {overall}%
+            {visibleOverall}%
           </div>
           <h1 style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 400, margin: "0 0 24px", color: "#1a1a1a" }}>
             {escala.label}
@@ -256,6 +288,14 @@ export default function Evaluacion() {
           <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 28px", background: "#5BA08A", border: "none", borderRadius: 8, color: "#fff", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
             Volver al dashboard →
           </button>
+          <div>
+            <button
+              onClick={() => navigate(`/evaluacion/${dimension}`)}
+              style={{ marginTop: 14, padding: "12px 24px", background: "transparent", border: "1px solid #d0c8bc", borderRadius: 8, color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, cursor: "pointer" }}
+            >
+              Repetir evaluación →
+            </button>
+          </div>
         </div>
       </div>
     );

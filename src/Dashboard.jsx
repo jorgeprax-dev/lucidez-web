@@ -381,7 +381,7 @@ export default function Dashboard() {
     // Carga evaluaciones profundas y las indexa por dimensión
     const { data: deepData, error: deepError } = await supabase
       .from("evaluacion_profunda")
-      .select("dimension, overall, fecha")
+      .select("dimension, overall, fecha, reporte")
       .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
@@ -538,7 +538,7 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <button
-                  onClick={() => navigate(`/evaluacion/${d.key}`)}
+                  onClick={() => navigate(`/evaluacion/${d.key}${hasDeepEval ? "?modo=reporte" : ""}`)}
                   style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                 >
                   {hasDeepEval ? "Ver mi reporte →" : "Realizar evaluación →"}
