@@ -43,13 +43,15 @@ Datos del perfil:
 
 Escribe un reporte en español de 4 párrafos con este formato exacto:
 
-Párrafo 1 — Apertura personal: Una observación específica sobre la forma del perfil de ${nombre}. No genérica. Menciona su nombre. Máximo 3 oraciones.
+Párrafo 1 — Apertura personal: La primera palabra del reporte debe ser el nombre '${nombre}' seguido de una coma. Obligatorio. Ejemplo exacto del formato: '${nombre}, tu perfil muestra...'. Nunca empieces con otra palabra. Máximo 3 oraciones.
 
 Párrafo 2 — El patrón: Qué significa la combinación de scores. Qué está pasando en la vida de alguien con este perfil. Concreto y clínico. Máximo 3 oraciones.
 
 Párrafo 3 — La fortaleza: Qué tiene ${nombre} que ya funciona y cómo puede usarlo. Menciona la dimensión más alta específicamente.
 
 Párrafo 4 — La pregunta abierta: Termina con algo que el Índice no puede responder y que solo la evaluación profunda de ${low.label} puede resolver. Genera curiosidad sin ser manipulador.
+
+Voz: segunda persona directa en todo el reporte. Nunca tercera persona. No escribas 'Jorge presenta' ni 'su perfil' — escribe 'tu perfil', 'presentas', 'tu dimensión'. El reporte le habla a ${nombre} directamente, no habla sobre él.
 
 Tono: directo, clínico, sin jerga terapéutica, sin frases de autoayuda. Como Epicteto escribiría un reporte clínico.
 Longitud total: máximo 200 palabras.
@@ -267,7 +269,7 @@ function Radar({ scores }) {
 // ─── Pantalla de nombre ───
 function NameScreen({ nombre, onChange, onStart }) {
   return (
-    <div style={{ paddingTop: 48 }}>
+    <div style={{ maxWidth: 680, margin: "0 auto", paddingTop: 48 }}>
       <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 20, display: "block" }}>
         Índice de Lucidez
       </span>
@@ -297,10 +299,8 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
   const q = allQuestions[currentIdx];
   const dim = DIMS.find((d) => d.questions.some((dq) => dq.id === q.id));
   const total = allQuestions.length;
-  const pct = Math.round(((currentIdx + 1) / total) * 100);
   const answered = answers[q.id] !== undefined;
 
-  // Pills de dimensión
   const dimProgress = DIMS.map((d) => {
     const idxs = allQuestions.map((qq, i) => d.questions.some((dq) => dq.id === qq.id) ? i : -1).filter((i) => i >= 0);
     const done = idxs.every((i) => answers[allQuestions[i].id] !== undefined);
@@ -309,66 +309,103 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
   });
 
   return (
-    <div style={{ paddingTop: 32 }}>
-      {/* Pills */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 32 }}>
-        {dimProgress.map((d) => (
-          <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: mono, fontSize: 9, letterSpacing: "0.05em", textTransform: "uppercase", color: d.active ? C.ink : d.done ? C.inkMuted : C.inkFaint, padding: "4px 9px", borderRadius: 20, border: `1px solid ${d.active ? C.borderStrong : C.border}`, background: d.active ? C.creamDark : C.cream }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
-            {d.label.split(" ")[0]}
+    <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "200px minmax(0, 1fr) 220px", alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
+        <div style={{ padding: "32px 20px", borderRight: `0.5px solid ${C.border}` }}>
+          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
+            Dimensiones
           </div>
-        ))}
-      </div>
-
-      {/* Dim + número */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-        <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
-        <span style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
-        <span style={{ fontFamily: mono, fontSize: 10, color: C.inkFaint, marginLeft: "auto" }}>{currentIdx + 1} / {total}</span>
-      </div>
-
-      {/* Pregunta */}
-      <div style={{ fontSize: 20, fontWeight: "normal", lineHeight: 1.5, marginBottom: 36, color: C.ink, minHeight: 72 }}>
-        {q.text}
-      </div>
-
-      {/* Escala */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
-          {[1, 2, 3, 4, 5].map((v) => {
-            const sel = answers[q.id] === v;
-            return (
-              <button
-                key={v}
-                onClick={() => onAnswer(q.id, v)}
-                style={{ width: 50, height: 50, borderRadius: "50%", border: `1px solid ${sel ? dim.color : C.borderStrong}`, background: sel ? dim.color : C.cream, color: sel ? C.cream : C.ink, fontFamily: mono, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s", padding: 0 }}
-              >
-                {v}
-              </button>
-            );
-          })}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {dimProgress.map((d) => {
+              const color = d.active ? C.cream : d.done ? C.inkMuted : C.inkFaint;
+              const background = d.active ? C.ink : d.done ? "#edf4f0" : "transparent";
+              return (
+                <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 4, background }}>
+                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.active ? C.cream : d.color, flexShrink: 0 }} />
+                  <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
+                    {d.label.split(" ")[0]}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <div style={{ width: 290, display: "flex", justifyContent: "space-between", fontFamily: mono, fontSize: 9, color: C.inkFaint, letterSpacing: "0.04em" }}>
-          <span style={{ width: 50, textAlign: "center" }}>Nunca</span>
-          <span style={{ width: 50, textAlign: "center" }}>Siempre</span>
-        </div>
-      </div>
 
-      {/* Navegación */}
-      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <button
-          onClick={onBack}
-          style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: C.cream, color: C.inkMuted, border: `1px solid ${C.borderStrong}`, padding: "12px 20px", fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
-        >
-          ← Anterior
-        </button>
-        <button
-          onClick={onNext}
-          disabled={!answered}
-          style={{ background: answered ? C.ink : C.creamDark, color: answered ? C.cream : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: answered ? "pointer" : "default", borderRadius: 2, opacity: answered ? 1 : 0.5 }}
-        >
-          {currentIdx === total - 1 ? "Ver mi reporte →" : "Siguiente →"}
-        </button>
+        <div style={{ padding: "40px 48px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
+            <span style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
+            <span style={{ fontFamily: mono, fontSize: 10, color: C.inkFaint, marginLeft: "auto" }}>{currentIdx + 1} / {total}</span>
+          </div>
+
+          <div style={{ fontSize: 20, fontWeight: "normal", lineHeight: 1.5, marginBottom: 36, color: C.ink, minHeight: 72 }}>
+            {q.text}
+          </div>
+
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+              {[1, 2, 3, 4, 5].map((v) => {
+                const sel = answers[q.id] === v;
+                return (
+                  <button
+                    key={v}
+                    onClick={() => onAnswer(q.id, v)}
+                    style={{ width: 50, height: 50, borderRadius: "50%", border: `1px solid ${sel ? dim.color : C.borderStrong}`, background: sel ? dim.color : C.cream, color: sel ? C.cream : C.ink, fontFamily: mono, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s", padding: 0 }}
+                  >
+                    {v}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ width: 290, display: "flex", justifyContent: "space-between", fontFamily: mono, fontSize: 9, color: C.inkFaint, letterSpacing: "0.04em" }}>
+              <span style={{ width: 50, textAlign: "center" }}>Nunca</span>
+              <span style={{ width: 50, textAlign: "center" }}>Siempre</span>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <button
+              onClick={onBack}
+              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: C.cream, color: C.inkMuted, border: `1px solid ${C.borderStrong}`, padding: "12px 20px", fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+            >
+              ← Anterior
+            </button>
+            <button
+              onClick={onNext}
+              disabled={!answered}
+              style={{ background: answered ? C.ink : C.creamDark, color: answered ? C.cream : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: answered ? "pointer" : "default", borderRadius: 2, opacity: answered ? 1 : 0.5 }}
+            >
+              {currentIdx === total - 1 ? "Ver mi reporte →" : "Siguiente →"}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ padding: "32px 20px", borderLeft: `0.5px solid ${C.border}`, background: "#faf8f5" }}>
+          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
+            Esta dimensión
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
+            <div style={{ fontSize: 13, color: C.ink, fontWeight: "normal" }}>{dim.label}</div>
+          </div>
+          <div style={{ fontSize: 12, color: C.inkMuted, lineHeight: 1.5, marginTop: 6 }}>
+            {dim.desc}
+          </div>
+          <hr style={{ border: "none", borderTop: `0.5px solid ${C.border}`, margin: "16px 0" }} />
+          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 8 }}>
+            Escalas validadas
+          </div>
+          <div>
+            {DIMS.map((d) => {
+              const active = d.id === dim.id;
+              return (
+                <div key={d.id} style={{ fontFamily: mono, fontSize: 11, lineHeight: 2, color: active ? C.ink : C.inkFaint }}>
+                  {d.tool} · {d.autor}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -378,6 +415,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
 function ResultsScreen({ scores, user, session }) {
   const [showReport, setShowReport] = useState(false);
   const [emailOpcional, setEmailOpcional] = useState("");
+  const [emailFinal, setEmailFinal] = useState("");
   const [saved, setSaved] = useState(null);
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
@@ -394,10 +432,11 @@ function ResultsScreen({ scores, user, session }) {
     setLoadingReport(true);
 
     // Guardar en Supabase
-    const emailFinal = !session?.user?.id && emailOpcional.trim() ? emailOpcional.trim() : user.email;
+    const resolvedEmailFinal = !session?.user?.id && emailOpcional.trim() ? emailOpcional.trim() : user.email;
+    setEmailFinal(resolvedEmailFinal);
     const payload = {
       nombre: user.nombre,
-      email: emailFinal,
+      email: resolvedEmailFinal,
       edad: parseInt(user.edad) || null,
       ciudad: user.ciudad,
       scores,
@@ -408,10 +447,24 @@ function ResultsScreen({ scores, user, session }) {
     };
     if (!session?.user?.id) {
       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
+      await supabase.auth.signInWithOtp({
+        email: resolvedEmailFinal,
+        options: { emailRedirectTo: window.location.origin + '/dashboard' }
+      });
     } else {
       payload.user_id = session.user.id;
       await saveToSupabase(payload);
     }
+
+    await supabase.functions.invoke("send-welcome-email", {
+      body: {
+        nombre: user.nombre,
+        email: resolvedEmailFinal,
+        scores,
+        overall,
+        zona: zona.label,
+      },
+    });
 
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
@@ -420,84 +473,89 @@ function ResultsScreen({ scores, user, session }) {
   };
 
   return (
-    <div style={{ paddingTop: 32 }}>
-      {/* Score general */}
-      <div style={{ marginBottom: 36 }}>
-        <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
-          Tu Índice de Lucidez
-        </span>
-        <div style={{ fontSize: 80, fontWeight: "normal", lineHeight: 1, color: zona.color, letterSpacing: "-0.03em", marginBottom: 4 }}>
-          {overall}
-        </div>
-        <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
-          {zona.label}
-        </div>
-        <div style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint }}>
-          {user.nombre} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
-        </div>
-      </div>
-
-      {/* Barras por dimensión */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
-        {DIMS.map((d) => (
-          <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
-            <div style={{ flex: 1, height: 6, background: C.creamDark, borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3 }} />
+    <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: 40, alignItems: "start" }}>
+        <div>
+          <div style={{ marginBottom: 36 }}>
+            <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
+              Tu Índice de Lucidez
+            </span>
+            <div style={{ fontSize: 80, fontWeight: "normal", lineHeight: 1, color: zona.color, letterSpacing: "-0.03em", marginBottom: 4 }}>
+              {overall}
             </div>
-            <div style={{ fontFamily: mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
+            <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
+              {zona.label}
+            </div>
+            <div style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint }}>
+              {user.nombre} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* Radar */}
-      <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "20px 0", marginBottom: 32 }}>
-        <Radar scores={scores} />
-      </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+            {DIMS.map((d) => (
+              <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
+                <div style={{ flex: 1, height: 6, background: C.creamDark, borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3 }} />
+                </div>
+                <div style={{ fontFamily: mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
+              </div>
+            ))}
+          </div>
 
-      {/* Gate de correo → reporte */}
-      {!showReport ? (
-        <div style={{ background: C.creamDark, borderRadius: 4, padding: "28px 24px", marginBottom: 24, textAlign: "center" }}>
-          <div style={{ fontSize: 18, fontWeight: "normal", marginBottom: 8, color: C.ink }}>Guarda tu reporte</div>
-          <div style={{ fontSize: 13, color: C.inkMuted, marginBottom: 20, lineHeight: 1.5 }}>Deja tu correo y te enviamos tus resultados. También guardamos tu historial.</div>
-          <input
-            type="email"
-            value={emailOpcional}
-            onChange={(e) => setEmailOpcional(e.target.value)}
-            placeholder="tu@correo.com"
-            style={{ display: "block", width: "100%", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
-          />
-          {!emailOpcional.trim() && (
-            <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
-              Ingresa tu correo para ver el reporte
-            </p>
-          )}
-          <button
-            onClick={handleShowReport}
-            style={{ width: "100%", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
-          >
-            Ver mi reporte completo →
-          </button>
+          <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "20px 0", marginBottom: 32 }}>
+            <Radar scores={scores} />
+          </div>
         </div>
-      ) : (
-        <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "24px", marginBottom: 24 }}>
-          <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
-          {loadingReport ? (
-            <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
-              Generando tu reporte...
-            </p>
+
+        <div style={{ position: "sticky", top: 80 }}>
+          {!showReport ? (
+            <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
+              <div style={{ fontSize: 18, fontWeight: "normal", marginBottom: 8, color: C.ink }}>Guarda tu reporte</div>
+              <div style={{ fontSize: 13, color: C.inkMuted, marginBottom: 20, lineHeight: 1.5 }}>Deja tu correo y te enviamos tus resultados. También guardamos tu historial.</div>
+              <input
+                type="email"
+                value={emailOpcional}
+                onChange={(e) => setEmailOpcional(e.target.value)}
+                placeholder="tu@correo.com"
+                style={{ display: "block", width: "100%", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
+              />
+              {!emailOpcional.trim() && (
+                <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
+                  Ingresa tu correo para ver el reporte
+                </p>
+              )}
+              <button
+                onClick={handleShowReport}
+                style={{ width: "100%", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+              >
+                Ver mi reporte completo →
+              </button>
+            </div>
           ) : (
-            (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
-              <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
-            ))
-          )}
-          {session && (
-            <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
-              Ir al dashboard →
-            </a>
+            <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
+              <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+              {loadingReport ? (
+                <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
+                  Generando tu reporte...
+                </p>
+              ) : (
+                (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
+                  <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
+                ))
+              )}
+              <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
+                Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
+              </p>
+              {session && (
+                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                  Ir al dashboard →
+                </a>
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -556,21 +614,19 @@ export default function Indice() {
   return (
     <div ref={topRef} style={{ background: C.cream, minHeight: "100vh", fontFamily: serif, color: C.ink, fontSize: 15, lineHeight: 1.6 }}>
 
-      {/* Nav */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 28px", borderBottom: `0.5px solid ${C.border}`, background: C.cream, position: "sticky", top: 0, zIndex: 10 }}>
-        <a href="/" style={{ textDecoration: "none", fontFamily: serif, fontSize: 17, color: C.ink, letterSpacing: "0.04em" }}>lucidez</a>
-        <span style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint, letterSpacing: "0.06em" }}>
-          {screen === "questions" ? `${pct}% completado` : screen === "results" ? "Índice completado" : "Índice de Lucidez"}
-        </span>
+      <nav style={{ borderBottom: `0.5px solid ${C.border}`, background: C.cream, position: "sticky", top: 0, zIndex: 10 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "16px 28px", display: "flex", alignItems: "center" }}>
+          <a href="/" style={{ textDecoration: "none", fontFamily: serif, fontSize: 17, color: C.ink, letterSpacing: "0.04em", flexShrink: 0 }}>lucidez</a>
+          <div style={{ flex: 1, margin: "0 40px", height: 2, background: C.border, overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${pct}%`, background: C.ink, transition: "width 0.4s ease" }} />
+          </div>
+          <span style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint, letterSpacing: "0.06em", flexShrink: 0 }}>
+            {screen === "questions" ? `${pct}% completado` : screen === "results" ? "Índice completado" : "Índice de Lucidez"}
+          </span>
+        </div>
       </nav>
 
-      {/* Barra de progreso */}
-      <div style={{ height: 2, background: "rgba(26,23,20,0.08)" }}>
-        <div style={{ height: "100%", width: `${pct}%`, background: C.ink, transition: "width 0.4s ease" }} />
-      </div>
-
-      {/* Contenido */}
-      <div style={{ maxWidth: 520, margin: "0 auto", padding: "0 28px 80px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 28px 80px" }}>
         {screen === "name" && (
           <NameScreen
             nombre={nombre}
