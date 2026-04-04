@@ -83,7 +83,7 @@ Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`
 
 const DIMS = [
   {
-    id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003", escalaLabel: "Escala de Atención Consciente",
+    id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003", escalaLabel: "Escala de Atención Consciente · versión breve",
     color: "#3d7a65",
     desc: "Tu capacidad de estar aquí, ahora",
     fortaleza: "Vives con atención genuina al momento presente. Tienes una capacidad natural de notar lo que está pasando — en tu cuerpo, en tus emociones, en el entorno — antes de que te rebase.",
