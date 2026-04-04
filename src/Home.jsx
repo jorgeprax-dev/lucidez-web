@@ -60,8 +60,12 @@ export default function Home() {
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 32px", borderBottom: `0.5px solid ${colors.border}`, background: colors.cream, position: "sticky", top: 0, zIndex: 10 }}>
         <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: "normal", letterSpacing: "0.04em", color: colors.ink }}>lucidez</span>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          <button onClick={() => navigate("/indice")} style={{ fontFamily: mono, fontSize: 12, color: colors.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}>El Índice</button>
-          <button style={{ fontFamily: mono, fontSize: 12, color: colors.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}>Programa</button>
+          <button
+            onClick={() => document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" })}
+            style={{ fontFamily: mono, fontSize: 12, color: colors.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}
+          >
+            Cómo funciona
+          </button>
           <button onClick={() => navigate("/login")} style={{ fontFamily: mono, fontSize: 12, color: colors.ink, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none", padding: 0 }}>Entrar →</button>
         </div>
       </nav>
@@ -115,7 +119,7 @@ export default function Home() {
 
       <hr style={{ border: "none", borderTop: `0.5px solid ${colors.border}`, margin: "0 32px 48px" }} />
 
-      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 48px 60px" }}>
+      <section id="como-funciona" style={{ maxWidth: 1100, margin: "0 auto", padding: "0 48px 60px" }}>
         <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 24 }}>
           Cómo funciona
         </p>
