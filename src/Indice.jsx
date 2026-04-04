@@ -480,6 +480,7 @@ function ResultsScreen({ scores, user, session }) {
       fecha: new Date().toISOString(),
     };
     if (!session?.user?.id) {
+      delete payload.user_id;
       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email: resolvedEmailFinal,
@@ -494,18 +495,22 @@ function ResultsScreen({ scores, user, session }) {
     }
 
     try {
-      await supabase.functions.invoke("send-welcome-email", {
-        body: {
+      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-welcome-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
           nombre: user.nombre,
           email: resolvedEmailFinal,
           scores,
           overall,
           zona: zona.label,
-        },
+        }),
       });
     } catch (fnError) {
       console.error("Edge Function error:", fnError);
-      // No romper el flujo si el email falla
     }
 
     // Llamar a Claude API
