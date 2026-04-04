@@ -471,6 +471,14 @@ export default function Dashboard() {
   const fechaLabel = ultima
     ? new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })
     : "";
+  const ESCALA_DESC = {
+    presencia: "MAAS-5 · qué tan presente estás en tu vida diaria",
+    claridad: "ATQ-8 · frecuencia de pensamientos negativos automáticos",
+    regulacion: "DERS-16 · cómo manejas tus emociones cuando te desbordan",
+    valores: "VQ-8 · qué tan alineado estás con lo que realmente valoras",
+    autoconocimiento: "SCS-12 · cómo te tratas a ti mismo cuando fallas",
+    agencia: "BSCS-13 · tu capacidad de actuar según tus intenciones",
+  };
 
   return (
     <div style={S.page}>
@@ -509,16 +517,13 @@ export default function Dashboard() {
           const hasDeepEval = deepScore !== undefined;
           const zDeep = hasDeepEval ? zona(deepScore) : null;
           const cDeep = hasDeepEval ? colorZona(zDeep) : null;
-          const escalaNombre = ESCALAS[d.key]?.escala || "";
-          const escalaRef = ESCALAS[d.key]?.referencia || "";
-          const escalaLinea = escalaRef ? `${escalaNombre} · ${escalaRef}` : escalaNombre;
           return (
             <div key={d.key} style={{ background: hasDeepEval ? "#fff" : "#FAFAF7", borderRadius: 10, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "14px 16px", marginBottom: 10 }}>
               <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1A1A1A", marginBottom: 2 }}>
                 {d.label}
               </div>
               <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 10 }}>
-                {escalaLinea}
+                {ESCALA_DESC[d.key]}
               </div>
               <div style={{ height: 3, background: "#ede9e3", borderRadius: 2, marginBottom: 10, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${hasDeepEval ? deepScore : s}%`, background: hasDeepEval ? cDeep : colorZona(zona(s)), borderRadius: 2 }} />
