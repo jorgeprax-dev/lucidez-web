@@ -347,11 +347,18 @@ const S = {
 export default function Dashboard() {
   const navigate = useNavigate();
   const [tab, setTab]             = useState("hoy");
+  const [isMobile, setIsMobile]   = useState(window.innerWidth < 768);
   const [session, setSession]     = useState(null);
   const [mediciones, setMediciones] = useState([]);
   const [evaluacionesProfundas, setEvaluacionesProfundas] = useState({});
   const [loading, setLoading]     = useState(true);
   const [dimActiva, setDimActiva] = useState("presencia");
+
+  useEffect(() => {
+    const handle = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
 
   // Sesión activa
   useEffect(() => {
@@ -470,7 +477,44 @@ export default function Dashboard() {
     <div style={S.page}>
       <nav style={{ background: "#FAF7F2", padding: "14px 40px", borderBottom: "0.5px solid rgba(0,0,0,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: "Georgia, serif", fontSize: 16, color: "#1A1A1A" }}>lucidez</span>
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        {isMobile ? (
+          <span style={{ background: "#ede9e3", fontFamily: "'Courier New', monospace", fontSize: 11, borderRadius: 20, padding: "4px 10px", color: "#1A1A1A" }}>
+            {nombre}
+          </span>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+            {[
+              { key: "hoy", label: "Hoy" },
+              { key: "progreso", label: "Progreso" },
+              { key: "reporte", label: "Reporte" },
+            ].map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  padding: "4px 0",
+                  fontFamily: "'Courier New', monospace",
+                  fontSize: 12,
+                  color: tab === t.key ? "#1A1A1A" : "#8A7F74",
+                  borderBottom: tab === t.key ? "1.5px solid #1A1A1A" : "1.5px solid transparent",
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+            <span style={{ background: "#ede9e3", fontFamily: "'Courier New', monospace", fontSize: 12, borderRadius: 20, padding: "4px 12px", color: "#1A1A1A" }}>
+              {nombre} · día {diasDesdeInicio}
+            </span>
+            <button style={{ border: "none", background: "none", cursor: "pointer", padding: 0, fontFamily: "'Courier New', monospace", fontSize: 12, color: "#8A7F74" }} onClick={handleSignOut}>Salir</button>
+          </div>
+        )}
+      </nav>
+
+      {isMobile && (
+        <div style={{ display: "flex", width: "100%", borderBottom: "0.5px solid rgba(0,0,0,0.1)" }}>
           {[
             { key: "hoy", label: "Hoy" },
             { key: "progreso", label: "Progreso" },
@@ -480,27 +524,26 @@ export default function Dashboard() {
               key={t.key}
               onClick={() => setTab(t.key)}
               style={{
+                flex: 1,
+                textAlign: "center",
+                padding: "10px 0",
+                fontFamily: "'Courier New', monospace",
+                fontSize: 12,
                 border: "none",
                 background: "none",
                 cursor: "pointer",
-                padding: "4px 0",
-                fontFamily: "'Courier New', monospace",
-                fontSize: 12,
                 color: tab === t.key ? "#1A1A1A" : "#8A7F74",
-                borderBottom: tab === t.key ? "1.5px solid #1A1A1A" : "1.5px solid transparent",
+                borderBottom: tab === t.key ? "2px solid #1A1A1A" : "2px solid transparent",
               }}
             >
               {t.label}
             </button>
           ))}
-          <span style={{ background: "#ede9e3", fontFamily: "'Courier New', monospace", fontSize: 12, borderRadius: 20, padding: "4px 12px", color: "#1A1A1A" }}>
-            {nombre} · día {diasDesdeInicio}
-          </span>
-          <button style={{ border: "none", background: "none", cursor: "pointer", padding: 0, fontFamily: "'Courier New', monospace", fontSize: 12, color: "#8A7F74" }} onClick={handleSignOut}>Salir</button>
         </div>
-      </nav>
+      )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", minHeight: "calc(100vh - 55px)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr", minHeight: "calc(100vh - 55px)" }}>
+        {!isMobile && (
         <aside style={{ background: "#FFFFFF", borderRight: "0.5px solid rgba(0,0,0,0.1)", padding: "28px 24px" }}>
           <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a09890", marginBottom: 16 }}>
             Score general
@@ -542,131 +585,299 @@ export default function Dashboard() {
             Re-aplicar el Índice →
           </button>
         </aside>
+        )}
 
         <div>
 
         {/* ── TAB: HOY ── */}
         {tab === "hoy" && (
-          <div style={{ padding: "28px 32px" }}>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a09890", marginBottom: 16 }}>
-              Dimensión prioritaria
-            </div>
-            {(() => {
-              const fallbackMin = DIMENSIONES.reduce((min, d) => (scores[d.key] ?? 0) < (scores[min.key] ?? 0) ? d : min, DIMENSIONES[0]);
-              const prioritaria = dimsRojas[0] || fallbackMin;
-              const pScore = scores[prioritaria.key] ?? 0;
-              return (
-                <div style={{ background: "#fff", borderRadius: 10, border: "0.5px solid rgba(0,0,0,0.1)", borderLeft: "2px solid #E24B4A", padding: "16px 20px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714", marginBottom: 4 }}>{prioritaria.label}</div>
-                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>{pScore} · {labelZona(zona(pScore))}</div>
-                  </div>
-                  <button
-                    onClick={() => navigate(`/evaluacion/${prioritaria.key}`)}
-                    style={{ border: "none", cursor: "pointer", fontFamily: "'Courier New', monospace", fontSize: 11, background: "#FCE9E8", color: "#A32D2D", borderRadius: 4, padding: "4px 10px" }}
-                  >
-                    Reporte profundo — $49 →
-                  </button>
+          isMobile ? (
+            <div>
+              <div style={{ padding: "24px 20px 16px", background: "#fff", borderBottom: "0.5px solid #ede9e3" }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+                  TU INDICE DE LUCIDEZ
                 </div>
-              );
-            })()}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 8 }}>
+                  <div style={{ fontFamily: "Georgia, serif", fontSize: 64, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 2 }}>OBJETIVO</div>
+                    <div style={{ fontFamily: "Georgia, serif", fontSize: 24, color: "#D3D1C7" }}>80</div>
+                  </div>
+                </div>
+                <div style={{ display: "inline-block", padding: "3px 10px", borderRadius: 2, fontFamily: "'Courier New', monospace", fontSize: 11, background: zona(overall) === "verde" ? "#edf4f0" : zona(overall) === "ambar" ? "#f5ede4" : "#FCE9E8", color: zona(overall) === "verde" ? "#3d7a65" : zona(overall) === "ambar" ? "#9a5e2e" : "#8A3030", marginRight: 8 }}>
+                  {labelZona(zona(overall))}
+                </div>
+                <span style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>
+                  {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                </span>
+              </div>
 
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a09890", marginBottom: 12 }}>
-              Todas las dimensiones
+              <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #ede9e3" }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+                  DIMENSION PRIORITARIA
+                </div>
+                {(() => {
+                  const fallbackMin = DIMENSIONES.reduce((min, d) => (scores[d.key] ?? 0) < (scores[min.key] ?? 0) ? d : min, DIMENSIONES[0]);
+                  const prioritaria = dimsRojas[0] || fallbackMin;
+                  const pScore = scores[prioritaria.key] ?? 0;
+                  return (
+                    <div onClick={() => navigate(`/evaluacion/${prioritaria.key}`)} style={{ cursor: "pointer", background: "#fff", borderRadius: 10, border: "0.5px solid rgba(0,0,0,0.1)", borderLeft: "2px solid #E24B4A", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714", marginBottom: 4 }}>{prioritaria.label}</div>
+                        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>{pScore} · {labelZona(zona(pScore))}</div>
+                      </div>
+                      <span style={{ fontFamily: "'Courier New', monospace", fontSize: 11, background: "#FCE9E8", color: "#A32D2D", borderRadius: 4, padding: "4px 10px" }}>$49 →</span>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #ede9e3" }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+                  TUS 6 DIMENSIONES
+                </div>
+                {DIMENSIONES.map((d) => {
+                  const s = scores[d.key] ?? 0;
+                  const z = zona(s);
+                  const c = colorZona(z);
+                  const hasDeepEval = evaluacionesProfundas[d.key] !== undefined;
+                  const badgeColor = z === "verde" ? "#3d7a65" : z === "ambar" ? "#9a5e2e" : "#8A3030";
+                  const badgeBg = z === "verde" ? "#edf4f0" : z === "ambar" ? "#f5ede4" : "#FCE9E8";
+                  return (
+                    <div key={d.key} style={{ background: "#FAFAF7", borderRadius: 8, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "12px 14px", marginBottom: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                        <span style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#1A1A1A" }}>{d.label}</span>
+                        <span style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#1A1A1A", lineHeight: 1 }}>{s}</span>
+                      </div>
+                      <div style={{ height: 4, background: "#ede9e3", borderRadius: 2, overflow: "hidden", marginBottom: 10 }}>
+                        <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: 2 }} />
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ background: badgeBg, color: badgeColor, fontSize: 10, fontFamily: "'Courier New', monospace", padding: "4px 10px", borderRadius: "12px" }}>
+                          {labelZona(z)}
+                        </div>
+                        <button onClick={() => navigate(`/evaluacion/${d.key}`)} style={{ background: "transparent", border: "none", color: "#5BA08A", fontSize: 10, fontFamily: "'Courier New', monospace", cursor: "pointer", padding: 0 }}>
+                          {hasDeepEval ? "Ver reporte →" : "Evaluar - $49 →"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+                <button
+                  onClick={() => navigate("/chat")}
+                  style={{ border: "0.5px solid #D3D1C7", borderRadius: 8, padding: "14px 16px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}
+                >
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#5BA08A", flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714" }}>Hablar con tu acompañante</div>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>Disponible 24/7 · Conoce tu perfil</div>
+                  </div>
+                </button>
+                <button onClick={() => navigate("/indice")} style={{ border: "0.5px solid #D3D1C7", borderRadius: 8, padding: "12px 16px", textAlign: "center", fontFamily: "'Courier New', monospace", fontSize: 12, color: "#888780", background: "#fff", cursor: "pointer" }}>
+                  Re-aplicar el Índice →
+                </button>
+              </div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "28px" }}>
-              {DIMENSIONES.map(d => {
-                const s = scores[d.key] ?? 0;
-                const z = zona(s);
-                const c = colorZona(z);
-                const deepScore = evaluacionesProfundas[d.key];
-                const hasDeepEval = deepScore !== undefined;
-
-                const badgeColor = z === "verde" ? "#3d7a65" : z === "ambar" ? "#9a5e2e" : "#8A3030";
-                const badgeBg = z === "verde" ? "#edf4f0" : z === "ambar" ? "#f5ede4" : "#FCE9E8";
-
+          ) : (
+            <div style={{ padding: "28px 32px" }}>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a09890", marginBottom: 16 }}>
+                Dimensión prioritaria
+              </div>
+              {(() => {
+                const fallbackMin = DIMENSIONES.reduce((min, d) => (scores[d.key] ?? 0) < (scores[min.key] ?? 0) ? d : min, DIMENSIONES[0]);
+                const prioritaria = dimsRojas[0] || fallbackMin;
+                const pScore = scores[prioritaria.key] ?? 0;
                 return (
-                  <div
-                    key={d.key}
-                    style={{
-                      background: "#FAFAF7",
-                      border: hasDeepEval ? "0.5px solid #5BA08A33" : "0.5px solid rgba(0,0,0,0.1)",
-                      borderRadius: "10px",
-                      padding: "14px 16px",
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                      <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
-                        {d.label}
-                      </span>
-                      <span style={{ fontSize: "24px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "normal", lineHeight: 1 }}>
-                        {s}
-                      </span>
+                  <div style={{ background: "#fff", borderRadius: 10, border: "0.5px solid rgba(0,0,0,0.1)", borderLeft: "2px solid #E24B4A", padding: "16px 20px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714", marginBottom: 4 }}>{prioritaria.label}</div>
+                      <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>{pScore} · {labelZona(zona(pScore))}</div>
                     </div>
-
-                    <div style={{ height: "4px", background: "#ede9e3", borderRadius: "2px", marginBottom: "12px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: "2px" }} />
-                    </div>
-
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div style={{ background: badgeBg, color: badgeColor, fontSize: "10px", fontFamily: "'Courier New', monospace", padding: "4px 10px", borderRadius: "12px" }}>
-                        {labelZona(z)}
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-                        {hasDeepEval ? (
-                          <div style={{ color: "#5BA08A", fontFamily: "'Courier New', monospace", fontSize: "10px" }}>✓ Evaluado</div>
-                        ) : (
-                          <button
-                            onClick={() => navigate(`/evaluacion/${d.key}`)}
-                            style={{
-                              background: "transparent",
-                              border: "none",
-                              color: "#5BA08A",
-                              fontSize: "10px",
-                              fontFamily: "'Courier New', monospace",
-                              cursor: "pointer",
-                              padding: 0,
-                            }}
-                          >
-                            Evaluar →
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <button
+                      onClick={() => navigate(`/evaluacion/${prioritaria.key}`)}
+                      style={{ border: "none", cursor: "pointer", fontFamily: "'Courier New', monospace", fontSize: 11, background: "#FCE9E8", color: "#A32D2D", borderRadius: 4, padding: "4px 10px" }}
+                    >
+                      Reporte profundo — $49 →
+                    </button>
                   </div>
                 );
-              })}
-            </div>
+              })()}
 
-            <button
-              onClick={() => navigate("/chat")}
-              style={{
-                width: "100%",
-                border: "0.5px solid rgba(0,0,0,0.1)",
-                borderRadius: "10px",
-                padding: "16px 20px",
-                background: "#fff",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-              }}
-            >
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#5BA08A", flexShrink: 0 }} />
-              <div style={{ textAlign: "left" }}>
-                <p style={{ fontSize: "14px", color: "#1a1714", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0, marginBottom: "2px" }}>
-                  Hablar con tu acompañante
-                </p>
-                <p style={{ fontSize: "11px", color: "#a09890", fontFamily: "'Courier New', monospace", margin: 0 }}>
-                  Disponible 24/7 · Conoce tu perfil
-                </p>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#a09890", marginBottom: 12 }}>
+                Todas las dimensiones
               </div>
-            </button>
-          </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "28px" }}>
+                {DIMENSIONES.map(d => {
+                  const s = scores[d.key] ?? 0;
+                  const z = zona(s);
+                  const c = colorZona(z);
+                  const deepScore = evaluacionesProfundas[d.key];
+                  const hasDeepEval = deepScore !== undefined;
+
+                  const badgeColor = z === "verde" ? "#3d7a65" : z === "ambar" ? "#9a5e2e" : "#8A3030";
+                  const badgeBg = z === "verde" ? "#edf4f0" : z === "ambar" ? "#f5ede4" : "#FCE9E8";
+
+                  return (
+                    <div
+                      key={d.key}
+                      style={{
+                        background: "#FAFAF7",
+                        border: hasDeepEval ? "0.5px solid #5BA08A33" : "0.5px solid rgba(0,0,0,0.1)",
+                        borderRadius: "10px",
+                        padding: "14px 16px",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                        <span style={{ fontSize: "13px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
+                          {d.label}
+                        </span>
+                        <span style={{ fontSize: "24px", color: "#1A1A1A", fontFamily: "Georgia, serif", fontWeight: "normal", lineHeight: 1 }}>
+                          {s}
+                        </span>
+                      </div>
+
+                      <div style={{ height: "4px", background: "#ede9e3", borderRadius: "2px", marginBottom: "12px", overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: "2px" }} />
+                      </div>
+
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ background: badgeBg, color: badgeColor, fontSize: "10px", fontFamily: "'Courier New', monospace", padding: "4px 10px", borderRadius: "12px" }}>
+                          {labelZona(z)}
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                          {hasDeepEval ? (
+                            <div style={{ color: "#5BA08A", fontFamily: "'Courier New', monospace", fontSize: "10px" }}>✓ Evaluado</div>
+                          ) : (
+                            <button
+                              onClick={() => navigate(`/evaluacion/${d.key}`)}
+                              style={{
+                                background: "transparent",
+                                border: "none",
+                                color: "#5BA08A",
+                                fontSize: "10px",
+                                fontFamily: "'Courier New', monospace",
+                                cursor: "pointer",
+                                padding: 0,
+                              }}
+                            >
+                              Evaluar →
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => navigate("/chat")}
+                style={{
+                  width: "100%",
+                  border: "0.5px solid rgba(0,0,0,0.1)",
+                  borderRadius: "10px",
+                  padding: "16px 20px",
+                  background: "#fff",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "16px",
+                }}
+              >
+                <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#5BA08A", flexShrink: 0 }} />
+                <div style={{ textAlign: "left" }}>
+                  <p style={{ fontSize: "14px", color: "#1a1714", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0, marginBottom: "2px" }}>
+                    Hablar con tu acompañante
+                  </p>
+                  <p style={{ fontSize: "11px", color: "#a09890", fontFamily: "'Courier New', monospace", margin: 0 }}>
+                    Disponible 24/7 · Conoce tu perfil
+                  </p>
+                </div>
+              </button>
+            </div>
+          )
         )}
 
         {/* ── TAB: PROGRESO ── */}
         {tab === "progreso" && (
+          isMobile ? (
+            <div style={{ padding: 20 }}>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                Score general
+              </div>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 56, lineHeight: 1, color: colorZona(zona(overall)), marginBottom: 12 }}>
+                {overall}
+              </div>
+
+              <div style={{ background: "#fff", border: "0.5px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 14, marginBottom: 14 }}>
+                <svg width="100%" height="200" viewBox="0 0 640 200" style={{ display: "block" }}>
+                  <defs>
+                    <pattern id="lines-mobile" patternUnits="userSpaceOnUse" width="30" height="30">
+                      <line x1="0" y1="0" x2="30" y2="0" stroke="#F0EBE3" strokeWidth="1" />
+                    </pattern>
+                  </defs>
+                  <line x1="40" y1="10" x2="40" y2="160" stroke="#E8E2D9" strokeWidth="1" />
+                  <line x1="40" y1="160" x2="630" y2="160" stroke="#E8E2D9" strokeWidth="1" />
+                  {[0, 50, 100].map((v, i) => {
+                    const y = 160 - (v / 100) * 150;
+                    return (
+                      <g key={i}>
+                        <text x="25" y={y + 4} fontSize="9" fill="#B0A89E" textAnchor="end">{v}</text>
+                        {v !== 0 && <line x1="35" y1={y} x2="630" y2={y} stroke="#F0EBE3" strokeWidth="1" strokeDasharray="4,2" />}
+                      </g>
+                    );
+                  })}
+                  <line x1="40" y1={160 - (80 / 100) * 150} x2="630" y2={160 - (80 / 100) * 150} stroke="#EF9F27" strokeWidth="2" strokeDasharray="5,3" />
+                  {mediciones.length > 0 && (
+                    <>
+                      {mediciones.map((m, idx) => {
+                        const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                        const y = 160 - ((m.overall ?? 0) / 100) * 150;
+                        return <circle key={idx} cx={x} cy={y} r="4" fill={colorZona(zona(m.overall ?? 0))} />;
+                      })}
+                      {mediciones.length > 1 && (
+                        <polyline
+                          points={mediciones.map((m, idx) => {
+                            const x = 40 + ((idx + 1) / mediciones.length) * 590;
+                            const y = 160 - ((m.overall ?? 0) / 100) * 150;
+                            return `${x},${y}`;
+                          }).join(" ")}
+                          fill="none"
+                          stroke="#EF9F27"
+                          strokeWidth="2"
+                        />
+                      )}
+                    </>
+                  )}
+                </svg>
+              </div>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+                {DIMENSIONES.map((d) => (
+                  <button
+                    key={d.key}
+                    onClick={() => setDimActiva(d.key)}
+                    style={{ fontFamily: "'Courier New', monospace", fontSize: 11, padding: "6px 10px", borderRadius: 20, border: dimActiva === d.key ? "1px solid #1A1A1A" : "1px solid #E8E2D9", background: dimActiva === d.key ? "#1A1A1A" : "#fff", color: dimActiva === d.key ? "#fff" : "#8A7F74", cursor: "pointer" }}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ background: "#fff", border: "0.5px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 14 }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", textTransform: "uppercase", marginBottom: 6 }}>
+                  Dimension activa
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1A1A1A" }}>{DIMENSIONES.find((d) => d.key === dimActiva)?.label}</span>
+                  <span style={{ fontFamily: "Georgia, serif", fontSize: 28, color: colorZona(zona(scores[dimActiva] ?? 0)) }}>{scores[dimActiva] ?? 0}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
           <div style={{ padding: "28px 32px", maxWidth: "860px" }}>
             {/* Score General */}
             <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "28px" }}>
@@ -918,10 +1129,59 @@ export default function Dashboard() {
               </p>
             )}
           </div>
+          )
         )}
 
         {/* ── TAB: REPORTE ── */}
         {tab === "reporte" && (
+          isMobile ? (
+            <div style={{ padding: 20 }}>
+              <div style={{ background: "#fff", border: "0.5px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: "14px 16px", marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontFamily: "Georgia, serif", fontSize: 15, color: "#1A1A1A" }}>{nombre}</div>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>
+                    {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                  </div>
+                </div>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 44, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
+              </div>
+
+              <div style={{ background: "#fff", border: "0.5px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: "16px 18px", marginBottom: 12 }}>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1A1A1A", marginBottom: 10 }}>Análisis personalizado</div>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#4A4540", lineHeight: 1.8 }}>
+                  {(ultima.reporte ?? "No hay reporte disponible para esta medición.").split("\n\n").map((p, i) => (
+                    <p key={i} style={{ margin: "0 0 10px 0" }}>{p}</p>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ background: "#fff", border: "0.5px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: "14px 16px", marginBottom: 12 }}>
+                {DIMENSIONES.map((d, i) => {
+                  const s = scores[d.key] ?? 0;
+                  return (
+                    <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: i < DIMENSIONES.length - 1 ? 10 : 0 }}>
+                      <div style={{ flex: 1, fontFamily: "Georgia, serif", fontSize: 12, color: "#1A1A1A" }}>{d.label}</div>
+                      <div style={{ width: 80, height: 4, background: "#E8E2D9", borderRadius: 2, overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${s}%`, background: colorZona(zona(s)) }} />
+                      </div>
+                      <div style={{ width: 24, textAlign: "right", fontFamily: "'Courier New', monospace", fontSize: 11, color: "#1A1A1A" }}>{s}</div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => {
+                  const reportText = `Mi reporte de Lucidez:\n\nScore general: ${overall}\nDía ${diasDesdeInicio} del programa\n\n${ultima.reporte}`;
+                  navigator.clipboard?.writeText(reportText);
+                  alert("Reporte copiado al portapapeles");
+                }}
+                style={{ width: "100%", padding: "12px 16px", background: "transparent", border: "1px solid #E8E2D9", borderRadius: 8, color: "#8A7F74", fontFamily: "Georgia, serif", fontSize: 13, cursor: "pointer" }}
+              >
+                Compartir con mi terapeuta →
+              </button>
+            </div>
+          ) : (
           <div style={{ padding: "28px 32px", maxWidth: "860px" }}>
             {/* Header */}
             <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "12px", padding: "20px 24px", marginBottom: "20px", display: "flex", justifyContent: "space-between" }}>
@@ -1140,6 +1400,7 @@ export default function Dashboard() {
               Compartir con mi terapeuta →
             </button>
           </div>
+          )
         )}
 
         </div>

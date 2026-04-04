@@ -570,9 +570,14 @@ function ResultsScreen({ scores, user, session }) {
             <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 24 }}>
               <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
               {loadingReport ? (
-                <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
-                  Generando tu reporte...
-                </p>
+                <div style={{ textAlign: "center", padding: "24px 0" }}>
+                  <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
+                    Analizando tu perfil...
+                  </p>
+                  <p style={{ fontFamily: serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
+                    Esto toma unos segundos. Claude está leyendo tus 6 dimensiones.
+                  </p>
+                </div>
               ) : (
                 (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
                   <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
@@ -652,9 +657,14 @@ function ResultsScreen({ scores, user, session }) {
               <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
                 <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
                 {loadingReport ? (
-                  <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
-                    Generando tu reporte...
-                  </p>
+                  <div style={{ textAlign: "center", padding: "24px 0" }}>
+                    <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
+                      Analizando tu perfil...
+                    </p>
+                    <p style={{ fontFamily: serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
+                      Esto toma unos segundos. Claude está leyendo tus 6 dimensiones.
+                    </p>
+                  </div>
                 ) : (
                   (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
                     <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
