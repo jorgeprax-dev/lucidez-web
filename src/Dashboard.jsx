@@ -381,7 +381,7 @@ export default function Dashboard() {
     // Carga evaluaciones profundas y las indexa por dimensión
     const { data: deepData, error: deepError } = await supabase
       .from("evaluacion_profunda")
-      .select("dimension, overall, fecha, reporte")
+      .select("dimension, overall, fecha")
       .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
