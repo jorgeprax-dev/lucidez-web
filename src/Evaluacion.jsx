@@ -89,6 +89,15 @@ export default function Evaluacion() {
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
 
+  const escalaLabels = {
+    presencia: "Escala de Atención Consciente · versión breve",
+    claridad: "Cuestionario de Pensamientos Automáticos",
+    regulacion: "Escala de Dificultades en Regulación Emocional",
+    valores: "Cuestionario de Valores",
+    autoconocimiento: "Escala de Autocompasión",
+    agencia: "Escala Breve de Autocontrol",
+  };
+
   const escala = ESCALAS[dimension];
 
   useEffect(() => {
@@ -225,7 +234,7 @@ export default function Evaluacion() {
       <div style={{ maxWidth: 620, margin: "0 auto", padding: "32px 20px 60px" }}>
         <div style={{ marginBottom: 20 }}>
           <h1 style={{ margin: 0, fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(28px, 4vw, 36px)", fontWeight: 300, color: "#1a1a1a" }}>{escala.label}</h1>
-          <p style={{ margin: "8px 0", color: "#8a7f74", fontSize: 14 }}>{escala.escala} · {escala.referencia}</p>
+          <p style={{ margin: "8px 0", color: "#8a7f74", fontSize: 14 }}>{escalaLabels[dimension] || escala.escala}</p>
           <p style={{ margin: 0, color: "#666", fontSize: 14 }}>{escala.instruccion}</p>
         </div>
 
