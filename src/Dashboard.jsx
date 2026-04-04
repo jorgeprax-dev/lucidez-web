@@ -426,6 +426,8 @@ export default function Dashboard() {
 
   // Dimensiones en rojo (score < 60)
   const dimsRojas = DIMENSIONES.filter(d => (scores[d.key] ?? 0) < 60);
+  const evaluadas = Object.keys(evaluacionesProfundas).length;
+  const delta = mediciones.length > 1 ? overall - (mediciones[0].overall ?? 0) : 0;
 
   // Historial por dimensión para la gráfica
   const historialDim = mediciones.map(m => ({
@@ -478,8 +480,8 @@ export default function Dashboard() {
       <nav style={{ background: "#FAF7F2", padding: "14px 40px", borderBottom: "0.5px solid rgba(0,0,0,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: "Georgia, serif", fontSize: 16, color: "#1A1A1A" }}>lucidez</span>
         {isMobile ? (
-          <span style={{ background: "#ede9e3", fontFamily: "'Courier New', monospace", fontSize: 11, borderRadius: 20, padding: "4px 10px", color: "#1A1A1A" }}>
-            {nombre}
+          <span style={{ background: "#ede9e3", fontFamily: "'Courier New', monospace", fontSize: 11, borderRadius: 20, padding: "4px 10px", color: "#8A7F74" }}>
+            {nombre} · día {diasDesdeInicio}
           </span>
         ) : (
           <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
@@ -593,71 +595,114 @@ export default function Dashboard() {
         {tab === "hoy" && (
           isMobile ? (
             <div>
+              {/* a) Score hero */}
               <div style={{ padding: "24px 20px 16px", background: "#fff", borderBottom: "0.5px solid #ede9e3" }}>
-                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
-                  TU INDICE DE LUCIDEZ
-                </div>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>TU ÍNDICE DE LUCIDEZ</div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 8 }}>
-                  <div style={{ fontFamily: "Georgia, serif", fontSize: 64, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
+                  <div>
+                    <div style={{ fontFamily: "Georgia, serif", fontSize: 64, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
+                    <div style={{ display: "inline-block", marginTop: 6, padding: "3px 10px", borderRadius: 2, fontFamily: "'Courier New', monospace", fontSize: 11, background: zona(overall) === "verde" ? "#edf4f0" : zona(overall) === "ambar" ? "#f5ede4" : "#FCE9E8", color: zona(overall) === "verde" ? "#3d7a65" : zona(overall) === "ambar" ? "#9a5e2e" : "#8A3030" }}>{labelZona(zona(overall))}</div>
+                  </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 2 }}>OBJETIVO</div>
-                    <div style={{ fontFamily: "Georgia, serif", fontSize: 24, color: "#D3D1C7" }}>80</div>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 2 }}>Objetivo</div>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 28, color: "#D3D1C7" }}>80</div>
                   </div>
                 </div>
-                <div style={{ display: "inline-block", padding: "3px 10px", borderRadius: 2, fontFamily: "'Courier New', monospace", fontSize: 11, background: zona(overall) === "verde" ? "#edf4f0" : zona(overall) === "ambar" ? "#f5ede4" : "#FCE9E8", color: zona(overall) === "verde" ? "#3d7a65" : zona(overall) === "ambar" ? "#9a5e2e" : "#8A3030", marginRight: 8 }}>
-                  {labelZona(zona(overall))}
-                </div>
-                <span style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890", marginTop: 6 }}>
                   {new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
-                </span>
-              </div>
-
-              <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #ede9e3" }}>
-                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
-                  DIMENSION PRIORITARIA
                 </div>
-                {(() => {
-                  const fallbackMin = DIMENSIONES.reduce((min, d) => (scores[d.key] ?? 0) < (scores[min.key] ?? 0) ? d : min, DIMENSIONES[0]);
-                  const prioritaria = dimsRojas[0] || fallbackMin;
-                  const pScore = scores[prioritaria.key] ?? 0;
+                {mediciones.length > 1 && (
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 12, color: "#639922", marginTop: 4 }}>↑ +{delta} desde que empezaste</div>
+                )}
+                {mediciones.length > 1 && (() => {
+                  const n = mediciones.length;
+                  const xPos = (i) => n === 1 ? 160 : 10 + (i / (n - 1)) * 300;
+                  const yPos = (v) => 40 - (v / 100) * 32;
+                  const pts = mediciones.map((m, i) => `${xPos(i)},${yPos(m.overall ?? 0)}`).join(" ");
                   return (
-                    <div onClick={() => navigate(`/evaluacion/${prioritaria.key}`)} style={{ cursor: "pointer", background: "#fff", borderRadius: 10, border: "0.5px solid rgba(0,0,0,0.1)", borderLeft: "2px solid #E24B4A", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714", marginBottom: 4 }}>{prioritaria.label}</div>
-                        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>{pScore} · {labelZona(zona(pScore))}</div>
-                      </div>
-                      <span style={{ fontFamily: "'Courier New', monospace", fontSize: 11, background: "#FCE9E8", color: "#A32D2D", borderRadius: 4, padding: "4px 10px" }}>$49 →</span>
+                    <div style={{ marginTop: 12, background: "#f7f4f0", borderRadius: 6, padding: 8 }}>
+                      <svg width="100%" height="48" viewBox="0 0 320 48" style={{ display: "block" }}>
+                        <line x1="10" y1="8" x2="310" y2="8" stroke="#D3D1C7" strokeWidth="1" strokeDasharray="3,2" />
+                        <polyline points={pts} fill="none" stroke="#3d7a65" strokeWidth="1.5" />
+                        {mediciones.map((m, i) => (
+                          <circle key={i} cx={xPos(i)} cy={yPos(m.overall ?? 0)} r={i === n - 1 ? 3.5 : 2} fill={colorZona(zona(m.overall ?? 0))} />
+                        ))}
+                      </svg>
                     </div>
                   );
                 })()}
               </div>
 
-              <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #ede9e3" }}>
-                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
-                  TUS 6 DIMENSIONES
+              {/* b) Stats rápidos */}
+              {mediciones.length > 1 && (
+                <div style={{ padding: "12px 20px", background: "#f7f4f0", borderBottom: "0.5px solid #ede9e3" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                    {[
+                      { valor: `+${delta}`, label: "desde inicio", color: colorZona(zona(overall)) },
+                      { valor: `${evaluadas}/6`, label: "evaluadas", color: "#1A1A1A" },
+                      { valor: `${diasDesdeInicio}`, label: "días", color: "#1A1A1A" },
+                    ].map((stat, i) => (
+                      <div key={i} style={{ background: "#fff", borderRadius: 6, padding: 10, border: "0.5px solid #D3D1C7", textAlign: "center" }}>
+                        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 18, color: stat.color }}>{stat.valor}</div>
+                        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 9, color: "#a09890" }}>{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+              )}
+
+              {/* c) Siguiente paso */}
+              {evaluadas < 6 && (
+                <div style={{ padding: "16px 20px", background: "#f7f4f0", borderBottom: "0.5px solid #ede9e3" }}>
+                  <div
+                    onClick={() => { const first = DIMENSIONES.find(d => evaluacionesProfundas[d.key] === undefined); if (first) navigate(`/evaluacion/${first.key}`); }}
+                    style={{ background: "#1a1714", borderRadius: 8, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}
+                  >
+                    <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#f7f4f0" }}>Evalúa tus dimensiones</div>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#888780", marginTop: 4 }}>Gratis · ~5 min por dimensión</div>
+                  </div>
+                </div>
+              )}
+
+              {/* d) 6 dimensiones */}
+              <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #ede9e3" }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>TUS DIMENSIONES · {evaluadas} de 6 evaluadas</div>
                 {DIMENSIONES.map((d) => {
                   const s = scores[d.key] ?? 0;
                   const z = zona(s);
                   const c = colorZona(z);
-                  const hasDeepEval = evaluacionesProfundas[d.key] !== undefined;
+                  const deepScore = evaluacionesProfundas[d.key];
+                  const hasDeepEval = deepScore !== undefined;
+                  const escalaInfo = ESCALAS[d.key];
+                  const numItems = escalaInfo?.preguntas?.length ?? 0;
                   const badgeColor = z === "verde" ? "#3d7a65" : z === "ambar" ? "#9a5e2e" : "#8A3030";
                   const badgeBg = z === "verde" ? "#edf4f0" : z === "ambar" ? "#f5ede4" : "#FCE9E8";
+                  const barScore = hasDeepEval ? deepScore : s;
+                  const barColor = hasDeepEval ? colorZona(zona(deepScore)) : c;
                   return (
-                    <div key={d.key} style={{ background: "#FAFAF7", borderRadius: 8, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "12px 14px", marginBottom: 8 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                    <div key={d.key} style={{ background: hasDeepEval ? "#fff" : "#FAFAF7", borderRadius: 8, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "12px 14px", marginBottom: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                         <span style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#1A1A1A" }}>{d.label}</span>
-                        <span style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#1A1A1A", lineHeight: 1 }}>{s}</span>
+                        {hasDeepEval ? (
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890" }}>índice {s}</div>
+                            <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: colorZona(zona(deepScore)), lineHeight: 1 }}>{deepScore}</div>
+                          </div>
+                        ) : (
+                          <span style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#1A1A1A", lineHeight: 1 }}>{s}</span>
+                        )}
                       </div>
-                      <div style={{ height: 4, background: "#ede9e3", borderRadius: 2, overflow: "hidden", marginBottom: 10 }}>
-                        <div style={{ height: "100%", width: `${s}%`, backgroundColor: c, borderRadius: 2 }} />
+                      <div style={{ height: 4, background: "#ede9e3", borderRadius: 2, overflow: "hidden", marginBottom: 8 }}>
+                        <div style={{ height: "100%", width: `${barScore}%`, backgroundColor: barColor, borderRadius: 2 }} />
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div style={{ background: badgeBg, color: badgeColor, fontSize: 10, fontFamily: "'Courier New', monospace", padding: "4px 10px", borderRadius: "12px" }}>
-                          {labelZona(z)}
-                        </div>
+                        {hasDeepEval ? (
+                          <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, padding: "3px 8px", borderRadius: 10, background: badgeBg, color: badgeColor }}>{labelZona(z)} · {escalaInfo?.escala || ""}</div>
+                        ) : (
+                          <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, padding: "3px 8px", borderRadius: 10, background: "#f0ede9", color: "#8A7F74" }}>Screening · {numItems} ítems</div>
+                        )}
                         <button onClick={() => navigate(`/evaluacion/${d.key}`)} style={{ background: "transparent", border: "none", color: "#5BA08A", fontSize: 10, fontFamily: "'Courier New', monospace", cursor: "pointer", padding: 0 }}>
-                          {hasDeepEval ? "Ver reporte →" : "Evaluar - $49 →"}
+                          {hasDeepEval ? "Ver reporte →" : "Evaluar →"}
                         </button>
                       </div>
                     </div>
@@ -665,19 +710,18 @@ export default function Dashboard() {
                 })}
               </div>
 
+              {/* e) Botones inferiores */}
               <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-                <button
-                  onClick={() => navigate("/chat")}
-                  style={{ border: "0.5px solid #D3D1C7", borderRadius: 8, padding: "14px 16px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}
-                >
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#5BA08A", flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1a1714" }}>Hablar con tu acompañante</div>
-                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890" }}>Disponible 24/7 · Conoce tu perfil</div>
-                  </div>
+                <button onClick={() => navigate("/indice")} style={{ background: "#1a1714", borderRadius: 8, padding: "14px 16px", textAlign: "center", border: "none", cursor: "pointer" }}>
+                  <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#f7f4f0" }}>Re-aplicar el Índice →</div>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#888780", marginTop: 2 }}>Mide tu progreso esta semana</div>
                 </button>
-                <button onClick={() => navigate("/indice")} style={{ border: "0.5px solid #D3D1C7", borderRadius: 8, padding: "12px 16px", textAlign: "center", fontFamily: "'Courier New', monospace", fontSize: 12, color: "#888780", background: "#fff", cursor: "pointer" }}>
-                  Re-aplicar el Índice →
+                <button onClick={() => navigate("/chat")} style={{ border: "0.5px solid #D3D1C7", borderRadius: 8, padding: "14px 16px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#639922", flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#1a1714" }}>Hablar con tu acompañante</div>
+                    <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890" }}>Disponible 24/7</div>
+                  </div>
                 </button>
               </div>
             </div>

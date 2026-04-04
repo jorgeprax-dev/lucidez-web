@@ -29,6 +29,55 @@ async function saveEvaluation({ userId, dimension, scores, overall }) {
   return true;
 }
 
+async function generateDeepReport(dimension, escala, scores, overall) {
+  const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  const zona = overall >= 80 ? "verde" : overall >= 60 ? "ámbar" : "roja";
+  const nivel = overall >= 70 ? "alto" : overall >= 40 ? "medio" : "bajo";
+  const interpretacion = escala.interpretacion?.[nivel] || "";
+
+  const prompt = `Eres un clínico experto en psicología basada en evidencia. Escribe un reporte personalizado basado en la evaluación profunda de ${escala.label} usando la escala ${escala.escala}.
+
+Datos:
+- Dimensión: ${escala.label}
+- Escala: ${escala.escala} (${escala.referencia})
+- Score: ${overall}/100
+- Zona: ${zona}
+- Interpretación clínica base: ${interpretacion}
+
+Escribe un reporte en español de 4 párrafos:
+
+Párrafo 1 — El diagnóstico: Qué revela exactamente este score en ${escala.label}. Concreto, específico, sin generalidades.
+Párrafo 2 — El patrón: Cómo se manifiesta esto en la vida diaria de alguien con este perfil.
+Párrafo 3 — El recurso: Qué tiene esta persona que puede usar como punto de apoyo.
+Párrafo 4 — El siguiente paso: Una acción concreta y específica para esta semana. No genérica.
+
+Tono: directo, clínico, sin jerga terapéutica, sin frases de autoayuda. Como Epicteto escribiría un reporte clínico.
+Longitud: máximo 180 palabras.
+Responde SOLO con los 4 párrafos. Sin títulos.`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5",
+        max_tokens: 1024,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const data = await response.json();
+    return data.content?.[0]?.text || null;
+  } catch (e) {
+    console.error("Claude API error:", e);
+    return null;
+  }
+}
+
 export default function Evaluacion() {
   const { dimension } = useParams();
   const navigate = useNavigate();
@@ -37,6 +86,8 @@ export default function Evaluacion() {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [aiReport, setAiReport] = useState(null);
+  const [loadingReport, setLoadingReport] = useState(false);
 
   const escala = ESCALAS[dimension];
 
@@ -111,6 +162,10 @@ export default function Evaluacion() {
       });
 
       setSaved(true);
+      setLoadingReport(true);
+      const report = await generateDeepReport(dimension, escala, formattedScores, overall);
+      setAiReport(report);
+      setLoadingReport(false);
     } catch (err) {
       setSaved(false);
       setError(err.message || "Error al guardar la evaluación.");
@@ -146,8 +201,19 @@ export default function Evaluacion() {
           <p style={{ fontSize: 18, lineHeight: 1.6, color: "#444", margin: "0 0 32px" }}>
             {interpretacion}
           </p>
+
+          <div style={{ textAlign: "left", margin: "0 0 32px" }}>
+            <p style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", color: "#8a7f74", letterSpacing: "0.08em", margin: "0 0 12px" }}>Tu reporte clínico</p>
+            {loadingReport && (
+              <p style={{ fontFamily: "'Courier New', monospace", fontSize: 12, color: "#a09890" }}>Analizando tu evaluación...</p>
+            )}
+            {aiReport && aiReport.split("\n\n").map((para, i) => (
+              <p key={i} style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#4A4540", lineHeight: 1.8, margin: "0 0 16px" }}>{para}</p>
+            ))}
+          </div>
+
           <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 28px", background: "#5BA08A", border: "none", borderRadius: 8, color: "#fff", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
-            Ver mi dashboard →
+            Volver al dashboard →
           </button>
         </div>
       </div>
