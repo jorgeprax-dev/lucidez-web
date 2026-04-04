@@ -296,10 +296,17 @@ function NameScreen({ nombre, onChange, onStart }) {
 
 // ─── Una pregunta a la vez ───
 function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, onBack }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const q = allQuestions[currentIdx];
   const dim = DIMS.find((d) => d.questions.some((dq) => dq.id === q.id));
   const total = allQuestions.length;
   const answered = answers[q.id] !== undefined;
+
+  useEffect(() => {
+    const handle = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
 
   const dimProgress = DIMS.map((d) => {
     const idxs = allQuestions.map((qq, i) => d.questions.some((dq) => dq.id === qq.id) ? i : -1).filter((i) => i >= 0);
@@ -310,7 +317,8 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 32 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "200px minmax(0, 1fr) 220px", alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
+      <div style={{ display: isMobile ? "flex" : "grid", flexDirection: isMobile ? "column" : undefined, gridTemplateColumns: isMobile ? undefined : "200px 1fr 220px", gap: 0, alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
+        {!isMobile && (
         <div style={{ padding: "32px 20px", borderRight: `0.5px solid ${C.border}` }}>
           <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
             Dimensiones
@@ -330,8 +338,25 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
             })}
           </div>
         </div>
+        )}
 
-        <div style={{ padding: "40px 48px" }}>
+        <div style={{ padding: isMobile ? "24px 20px" : "40px 48px" }}>
+          {isMobile && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+              {dimProgress.map((d) => {
+                const color = d.active ? C.cream : d.done ? C.inkMuted : C.inkFaint;
+                const background = d.active ? C.ink : d.done ? "#edf4f0" : "transparent";
+                return (
+                  <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderRadius: 4, background }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.active ? C.cream : d.color, flexShrink: 0 }} />
+                    <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
+                      {d.label.split(" ")[0]}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
             <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
             <span style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
@@ -380,6 +405,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
           </div>
         </div>
 
+        {!isMobile && (
         <div style={{ padding: "32px 20px", borderLeft: `0.5px solid ${C.border}`, background: "#faf8f5" }}>
           <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
             Esta dimensión
@@ -406,6 +432,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
             })}
           </div>
         </div>
+        )}
       </div>
     </div>
   );
@@ -414,11 +441,18 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
 // ─── Reporte ───
 function ResultsScreen({ scores, user, session }) {
   const [showReport, setShowReport] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [emailOpcional, setEmailOpcional] = useState("");
   const [emailFinal, setEmailFinal] = useState("");
   const [saved, setSaved] = useState(null);
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
+
+  useEffect(() => {
+    const handle = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
 
   const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / DIMS.length);
   const zona = overall >= 80 ? { label: "Zona verde", color: "#3d7a65", bg: "#edf4f0" } : overall >= 60 ? { label: "Zona ámbar", color: "#9a5e2e", bg: "#f5ede4" } : { label: "Zona roja", color: "#8A3030", bg: "#f5e8e8" };
@@ -474,7 +508,7 @@ function ResultsScreen({ scores, user, session }) {
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 32 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: 40, alignItems: "start" }}>
+      {isMobile ? (
         <div>
           <div style={{ marginBottom: 36 }}>
             <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
@@ -491,7 +525,7 @@ function ResultsScreen({ scores, user, session }) {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
             {DIMS.map((d) => (
               <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
@@ -503,14 +537,8 @@ function ResultsScreen({ scores, user, session }) {
             ))}
           </div>
 
-          <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "20px 0", marginBottom: 32 }}>
-            <Radar scores={scores} />
-          </div>
-        </div>
-
-        <div style={{ position: "sticky", top: 80 }}>
-          {!showReport ? (
-            <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
+          {!showReport && (
+            <div style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", overflowX: "hidden", background: C.creamDark, borderRadius: 4, padding: 24, margin: "24px 0" }}>
               <div style={{ fontSize: 18, fontWeight: "normal", marginBottom: 8, color: C.ink }}>Guarda tu reporte</div>
               <div style={{ fontSize: 13, color: C.inkMuted, marginBottom: 20, lineHeight: 1.5 }}>Deja tu correo y te enviamos tus resultados. También guardamos tu historial.</div>
               <input
@@ -518,7 +546,7 @@ function ResultsScreen({ scores, user, session }) {
                 value={emailOpcional}
                 onChange={(e) => setEmailOpcional(e.target.value)}
                 placeholder="tu@correo.com"
-                style={{ display: "block", width: "100%", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
+                style={{ display: "block", width: "100%", maxWidth: "100%", boxSizing: "border-box", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
               />
               {!emailOpcional.trim() && (
                 <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
@@ -527,13 +555,19 @@ function ResultsScreen({ scores, user, session }) {
               )}
               <button
                 onClick={handleShowReport}
-                style={{ width: "100%", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
               >
                 Ver mi reporte completo →
               </button>
             </div>
-          ) : (
-            <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
+          )}
+
+          <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "20px 0", marginBottom: 24 }}>
+            <Radar scores={scores} />
+          </div>
+
+          {showReport && (
+            <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 24 }}>
               <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
               {loadingReport ? (
                 <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
@@ -555,7 +589,90 @@ function ResultsScreen({ scores, user, session }) {
             </div>
           )}
         </div>
-      </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: 40, alignItems: "start" }}>
+          <div>
+            <div style={{ marginBottom: 36 }}>
+              <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
+                Tu Índice de Lucidez
+              </span>
+              <div style={{ fontSize: 80, fontWeight: "normal", lineHeight: 1, color: zona.color, letterSpacing: "-0.03em", marginBottom: 4 }}>
+                {overall}
+              </div>
+              <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
+                {zona.label}
+              </div>
+              <div style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint }}>
+                {user.nombre} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+              {DIMS.map((d) => (
+                <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
+                  <div style={{ flex: 1, height: 6, background: C.creamDark, borderRadius: 3, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3 }} />
+                  </div>
+                  <div style={{ fontFamily: mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ border: `0.5px solid ${C.border}`, borderRadius: 4, padding: "20px 0", marginBottom: 32 }}>
+              <Radar scores={scores} />
+            </div>
+          </div>
+
+          <div style={{ position: "sticky", top: 80 }}>
+            {!showReport ? (
+              <div style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", overflowX: "hidden", background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
+                <div style={{ fontSize: 18, fontWeight: "normal", marginBottom: 8, color: C.ink }}>Guarda tu reporte</div>
+                <div style={{ fontSize: 13, color: C.inkMuted, marginBottom: 20, lineHeight: 1.5 }}>Deja tu correo y te enviamos tus resultados. También guardamos tu historial.</div>
+                <input
+                  type="email"
+                  value={emailOpcional}
+                  onChange={(e) => setEmailOpcional(e.target.value)}
+                  placeholder="tu@correo.com"
+                  style={{ display: "block", width: "100%", maxWidth: "100%", boxSizing: "border-box", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
+                />
+                {!emailOpcional.trim() && (
+                  <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
+                    Ingresa tu correo para ver el reporte
+                  </p>
+                )}
+                <button
+                  onClick={handleShowReport}
+                  style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                >
+                  Ver mi reporte completo →
+                </button>
+              </div>
+            ) : (
+              <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
+                <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+                {loadingReport ? (
+                  <p style={{ color: "#a09890", fontFamily: "'Courier New', monospace", fontSize: 12, letterSpacing: "0.06em" }}>
+                    Generando tu reporte...
+                  </p>
+                ) : (
+                  (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
+                    <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
+                  ))
+                )}
+                <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
+                  Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
+                </p>
+                {session && (
+                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                    Ir al dashboard →
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
