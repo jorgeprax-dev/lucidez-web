@@ -39,7 +39,7 @@ export default function Login() {
 
         <div style={{ marginBottom: 32, textAlign: "center" }}>
           <div style={{ fontSize: 22, letterSpacing: "0.08em", color: "#1A1A1A", marginBottom: 8 }}>lucidez</div>
-          <div style={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0A89E", fontFamily: "'Courier New', monospace" }}>Ver claro · Actuar bien · Vivir bien</div>
+          <div style={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0A89E", fontFamily: "'Courier New', monospace" }}>PERCIBIR · PROCESAR · ACTUAR</div>
         </div>
 
         {sent ? (
