@@ -472,12 +472,12 @@ export default function Dashboard() {
     ? new Date(ultima.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })
     : "";
   const ESCALA_DESC = {
-    presencia: "MAAS-5 · qué tan presente estás en tu vida diaria",
-    claridad: "ATQ-8 · frecuencia de pensamientos negativos automáticos",
-    regulacion: "DERS-16 · cómo manejas tus emociones cuando te desbordan",
-    valores: "VQ-8 · qué tan alineado estás con lo que realmente valoras",
-    autoconocimiento: "SCS-12 · cómo te tratas a ti mismo cuando fallas",
-    agencia: "BSCS-13 · tu capacidad de actuar según tus intenciones",
+    presencia: "Escala de Atención Consciente · qué tan presente estás en tu vida diaria",
+    claridad: "Cuestionario de Pensamientos Automáticos · frecuencia de pensamientos negativos",
+    regulacion: "Escala de Dificultades en Regulación Emocional · cómo manejas tus emociones cuando te desbordan",
+    valores: "Cuestionario de Valores · qué tan alineado estás con lo que realmente valoras",
+    autoconocimiento: "Escala de Autocompasión · cómo te tratas a ti mismo cuando fallas",
+    agencia: "Escala Breve de Autocontrol · tu capacidad de actuar según tus intenciones",
   };
 
   return (
