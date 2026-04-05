@@ -820,7 +820,7 @@ function ResultsScreen({ scores, user, session }) {
             <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 14, fontFamily: "Georgia, serif" }}>
               ¿Qué tan útil te pareció el reporte?
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {[1,2,3,4,5,6,7,8,9,10].map((n) => (
                 <button
                   key={n}
