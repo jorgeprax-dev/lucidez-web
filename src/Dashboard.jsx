@@ -344,6 +344,70 @@ const S = {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
+async function generateMapaCompleto(scores, indiceScores) {
+  const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({
+      model: "claude-haiku-4-5",
+      max_tokens: 1024,
+      messages: [{
+        role: "user",
+        content: `Eres un clínico experto en psicología basada en evidencia. 
+Tienes los resultados completos de una persona en 6 dimensiones psicológicas.
+
+EVALUACIÓN PROFUNDA (escalas validadas):
+- Presencia: ${scores.presencia}/100
+- Claridad cognitiva: ${scores.claridad}/100
+- Regulación emocional: ${scores.regulacion}/100
+- Autoconocimiento: ${scores.autoconocimiento}/100
+- Alineación de valores: ${scores.valores}/100
+- Agencia: ${scores.agencia}/100
+
+ÍNDICE DE LUCIDEZ (screening):
+- Presencia: ${indiceScores.presencia}/100
+- Claridad cognitiva: ${indiceScores.claridad}/100
+- Regulación emocional: ${indiceScores.regulacion}/100
+- Autoconocimiento: ${indiceScores.autoconocimiento}/100
+- Alineación de valores: ${indiceScores.valores}/100
+- Agencia: ${indiceScores.agencia}/100
+
+Escribe un mapa de síntesis en español con exactamente esta estructura:
+
+CÓMO PERCIBES
+Un párrafo que integre Presencia y Claridad cognitiva como sistema. 
+Qué revela la combinación de estos dos scores sobre cómo esta persona 
+recibe e interpreta la realidad.
+
+CÓMO PROCESAS
+Un párrafo que integre Regulación emocional y Autoconocimiento. 
+Qué revela la combinación sobre cómo procesa lo que le pasa internamente.
+
+CÓMO ACTÚAS
+Un párrafo que integre Alineación de valores y Agencia. 
+Qué revela la combinación sobre cómo convierte (o no) sus intenciones en acciones.
+
+EL PATRÓN
+Un párrafo de síntesis final. Dónde está el cuello de botella real 
+en el sistema completo. Qué dimensión, si mejora, mueve más el resto.
+
+Voz: segunda persona directa. Nunca tercera persona.
+Tono: directo, clínico, sin jerga terapéutica. Como Epicteto escribiría un diagnóstico de sistema.
+Sin títulos en el texto — solo los 4 párrafos separados por salto de línea.
+Máximo 250 palabras.`
+      }]
+    })
+  });
+  const data = await response.json();
+  return data.content?.[0]?.text || null;
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile]   = useState(window.innerWidth < 768);
@@ -351,6 +415,8 @@ export default function Dashboard() {
   const [mediciones, setMediciones] = useState([]);
   const [evaluacionesProfundas, setEvaluacionesProfundas] = useState({});
   const [loading, setLoading]     = useState(true);
+  const [mapaCompleto, setMapaCompleto] = useState(null);
+  const [loadingMapa, setLoadingMapa] = useState(false);
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -565,6 +631,62 @@ export default function Dashboard() {
           );
         })}
       </div>
+
+      {/* 3.5 — Botón mapa completo (solo si todas evaluadas) */}
+      {evaluadas === 6 && (
+        <div style={{ padding: secPad }}>
+          <button
+            onClick={async () => {
+              setLoadingMapa(true);
+              const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
+              setMapaCompleto(mapa);
+              setLoadingMapa(false);
+            }}
+            disabled={loadingMapa}
+            style={{
+              width: "100%",
+              fontFamily: "'Courier New', monospace",
+              fontSize: 12,
+              color: "#5BA08A",
+              background: "#f0f4f2",
+              border: "1px solid #9FE1CB",
+              borderRadius: 8,
+              padding: "14px 16px",
+              cursor: loadingMapa ? "not-allowed" : "pointer",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+            }}
+          >
+            {loadingMapa ? "Generando mapa..." : "Generar mi mapa completo →"}
+          </button>
+        </div>
+      )}
+
+      {/* 3.6 — Mapa completo */}
+      {mapaCompleto && (
+        <div style={{ padding: secPad }}>
+          <div style={{ background: "#ffffff", border: "1px solid #5BA08A", borderRadius: 6, padding: 28 }}>
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              TU MAPA COMPLETO · {fechaLabel}
+            </div>
+            {mapaCompleto.split("\n\n").map((block, i) => {
+              const lines = block.split("\n");
+              const label = lines[0];
+              const texto = lines.slice(1).join("\n").trim();
+              return (
+                <div key={i} style={{ marginBottom: i < 3 ? 24 : 0 }}>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#5BA08A", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
+                    {label}
+                  </div>
+                  <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#4A4540", lineHeight: 1.8, margin: 0 }}>
+                    {texto}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* 4 — Botón re-aplicar */}
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
