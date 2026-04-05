@@ -3,6 +3,55 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { ESCALAS } from "./escalas";
 
+const PREGUNTAS_POR_DIMENSION = {
+  presencia: [
+    "¿Hay momentos del día donde sientes que estás en piloto automático sin darte cuenta? ¿Cuándo pasa más?",
+    "¿Cuándo fue la última vez que estuviste completamente presente en algo que importaba?",
+  ],
+  claridad: [
+    "¿Qué tipo de pensamientos aparecen solos cuando algo sale mal?",
+    "¿Hay una voz interna que te juzga con frecuencia? ¿Qué dice exactamente?",
+  ],
+  regulacion: [
+    "¿Qué situación reciente te sacó del centro? ¿Qué pasó después?",
+    "¿Cuánto tardas normalmente en volver a un estado funcional cuando algo te perturba?",
+  ],
+  valores: [
+    "¿Hay algo que dices que te importa pero que no estás haciendo? ¿Qué te lo impide?",
+    "¿Cuándo fue la última vez que tomaste una decisión que se sintió completamente tuya?",
+  ],
+  autoconocimiento: [
+    "¿Cómo te hablas a ti mismo cuando cometes un error importante?",
+    "¿Te tratas con la misma generosidad con la que tratarías a alguien que quieres?",
+  ],
+  agencia: [
+    "¿Hay algo que llevas tiempo queriendo cambiar y no has podido sostener? ¿Qué pasa exactamente?",
+    "¿Cuál es la brecha más grande entre lo que quieres hacer y lo que terminas haciendo?",
+  ],
+};
+
+async function saveRespuestasCualitativas({ userId, momento, dimension, preguntas, respuestas }) {
+  try {
+    const payload = {
+      user_id: userId,
+      momento,
+      dimension: dimension || null,
+      pregunta_1: preguntas[0] || null,
+      respuesta_1: respuestas[0] || null,
+      pregunta_2: preguntas[1] || null,
+      respuesta_2: respuestas[1] || null,
+      pregunta_3: null,
+      respuesta_3: null,
+    };
+    const { error } = await supabase.from("respuestas_cualitativas").insert([payload]);
+    if (error) console.error("Error guardando respuestas:", error);
+    return !error;
+  } catch (e) {
+    console.error("Error guardando respuestas:", e);
+    return false;
+  }
+}
+
 function getScaledScore(value) {
   // Valor numérico según selección
   return Number(value);
@@ -92,6 +141,8 @@ export default function Evaluacion() {
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
   const [reporteGuardado, setReporteGuardado] = useState(null);
+  const [respuestasCual, setRespuestasCual] = useState(["", ""]);
+  const [cualGuardadas, setCualGuardadas] = useState(false);
   const autoAdvanceTimeoutRef = useRef(null);
   const modoReporte = searchParams.get("modo") === "reporte";
 
@@ -271,6 +322,7 @@ export default function Evaluacion() {
     const visibleOverall = savedOverall ?? overall;
     const nivel = visibleOverall >= 70 ? 'alto' : visibleOverall >= 40 ? 'medio' : 'bajo';
     const interpretacion = escala.interpretacion[nivel];
+    const reporte = aiReport;
     return (
       <div style={{ minHeight: "100vh", background: "#f7f4f0", fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
@@ -293,6 +345,69 @@ export default function Evaluacion() {
               <p key={i} style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#4A4540", lineHeight: 1.8, margin: "0 0 16px" }}>{para}</p>
             ))}
           </div>
+
+          {reporte && !cualGuardadas && (
+            <div style={{ marginTop: 24, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 28 }}>
+              <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 16, display: "block" }}>
+                Dos preguntas · para profundizar
+              </span>
+              {(PREGUNTAS_POR_DIMENSION[dimension] || []).map((pregunta, i) => (
+                <div key={i} style={{ marginBottom: 20 }}>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.10em", textTransform: "uppercase", color: "#a09890", marginBottom: 6 }}>
+                    Pregunta {i + 1} de 2
+                  </div>
+                  <div style={{ fontSize: 16, color: "#1a1714", lineHeight: 1.5, marginBottom: 10, fontFamily: "Georgia, serif" }}>
+                    {pregunta}
+                  </div>
+                  <textarea
+                    value={respuestasCual[i]}
+                    onChange={(e) => {
+                      const nuevas = [...respuestasCual];
+                      nuevas[i] = e.target.value;
+                      setRespuestasCual(nuevas);
+                    }}
+                    placeholder="Escribe con libertad..."
+                    rows={3}
+                    style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+                  />
+                </div>
+              ))}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
+                <button
+                  onClick={() => setCualGuardadas(true)}
+                  style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+                >
+                  Ahora no
+                </button>
+                <button
+                  onClick={async () => {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user?.id) {
+                      await saveRespuestasCualitativas({
+                        userId: session.user.id,
+                        momento: `evaluacion_${dimension}`,
+                        dimension,
+                        preguntas: PREGUNTAS_POR_DIMENSION[dimension] || [],
+                        respuestas: respuestasCual,
+                      });
+                    }
+                    setCualGuardadas(true);
+                  }}
+                  style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                >
+                  Guardar y continuar →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {reporte && cualGuardadas && (
+            <div style={{ marginTop: 16, textAlign: "center" }}>
+              <a href="/dashboard" style={{ fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#1a1714", textDecoration: "none" }}>
+                Volver al dashboard →
+              </a>
+            </div>
+          )}
 
           <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 28px", background: "#5BA08A", border: "none", borderRadius: 8, color: "#fff", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
             Volver al dashboard →
