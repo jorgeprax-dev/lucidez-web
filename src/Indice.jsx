@@ -11,8 +11,6 @@ async function saveToSupabase(data) {
   }
 }
 
-const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
-
 async function generateAIReport(scores, nombre) {
   const dimTexts = [
     { id: "presencia", label: "Presencia", score: scores.presencia },
@@ -58,32 +56,28 @@ Longitud total: máximo 200 palabras.
 Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5",
-        max_tokens: 1024,
-        messages: [{ role: "user", content: prompt }],
-      }),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/claude-proxy`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ prompt }),
+      }
+    );
     const data = await response.json();
-    console.log("Anthropic response:", JSON.stringify(data));
-    return data.content?.[0]?.text || null;
+    return data.text || null;
   } catch (e) {
-    console.error("Claude API error:", e);
+    console.error("Claude proxy error:", e);
     return null;
   }
 }
 
 const DIMS = [
   {
-    id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003", escalaLabel: "Escala de Atención Consciente · versión breve",
+    id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003",
     color: "#3d7a65",
     desc: "Tu capacidad de estar aquí, ahora",
     fortaleza: "Vives con atención genuina al momento presente. Tienes una capacidad natural de notar lo que está pasando — en tu cuerpo, en tus emociones, en el entorno — antes de que te rebase.",
@@ -95,7 +89,7 @@ const DIMS = [
     ],
   },
   {
-    id: "claridad", label: "Claridad Cognitiva", tool: "ATQ", autor: "Hollon & Kendall, 1980", escalaLabel: "Cuestionario de Pensamientos Automáticos",
+    id: "claridad", label: "Claridad Cognitiva", tool: "ATQ", autor: "Hollon & Kendall, 1980",
     color: "#9a5e2e",
     desc: "El ruido vs. la señal en tu mente",
     fortaleza: "Tu mente no te sabotea constantemente. Puedes pensar con relativa claridad incluso en momentos de estrés, y los pensamientos autocríticos no dominan tu narrativa interna.",
@@ -107,7 +101,7 @@ const DIMS = [
     ],
   },
   {
-    id: "regulacion", label: "Regulación Emocional", tool: "DERS", autor: "Gratz & Roemer, 2004", escalaLabel: "Escala de Dificultades en Regulación Emocional",
+    id: "regulacion", label: "Regulación Emocional", tool: "DERS", autor: "Gratz & Roemer, 2004",
     color: "#6a3d82",
     desc: "Tu relación con lo que sientes",
     fortaleza: "Puedes sentir emociones intensas sin que te desborden. Tienes recursos internos para volver a un estado funcional cuando algo te perturba — eso es una fortaleza clínica real.",
@@ -119,7 +113,7 @@ const DIMS = [
     ],
   },
   {
-    id: "valores", label: "Alineación de Valores", tool: "VQ", autor: "Wilson et al., 2010", escalaLabel: "Cuestionario de Valores",
+    id: "valores", label: "Alineación de Valores", tool: "VQ", autor: "Wilson et al., 2010",
     color: "#2d6382",
     desc: "Vivir lo que dices que importa",
     fortaleza: "Hay coherencia entre lo que dices que importa y cómo te comportas. Tomas decisiones desde tus valores reales, no solo desde la comodidad o el miedo. Eso da dirección y propósito.",
@@ -131,7 +125,7 @@ const DIMS = [
     ],
   },
   {
-    id: "autoconocimiento", label: "Autoconocimiento", tool: "SCS-Neff", autor: "Neff, 2003", escalaLabel: "Escala de Autocompasión",
+    id: "autoconocimiento", label: "Autoconocimiento", tool: "SCS-Neff", autor: "Neff, 2003",
     color: "#4d6d2a",
     desc: "Cómo te ves y te tratas a ti mismo",
     fortaleza: "Te tratas con una generosidad real cuando fallas. Puedes ver tus errores sin exagerarlos ni minimizarlos, y no te sientes completamente solo cuando sufres. Eso es autocompasión funcional.",
@@ -143,7 +137,7 @@ const DIMS = [
     ],
   },
   {
-    id: "agencia", label: "Agencia", tool: "SCS-Tangney", autor: "Tangney et al., 2004", escalaLabel: "Escala Breve de Autocontrol",
+    id: "agencia", label: "Agencia", tool: "SCS-Tangney", autor: "Tangney et al., 2004",
     color: "#7a6520",
     desc: "Tu capacidad de elegir conscientemente",
     fortaleza: "Puedes traducir tus intenciones en acciones con consistencia. Cuando decides algo, lo sostienes. Esa capacidad de autocontrol consciente es el músculo que hace posible cualquier cambio real.",
@@ -478,40 +472,27 @@ function ResultsScreen({ scores, user, session }) {
       nivel: zona.label,
       reporte: generateLocalReport(scores, user),
       fecha: new Date().toISOString(),
-      // user_id se agrega solo si hay sesión activa
     };
     if (!session?.user?.id) {
       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
-      const { error: otpError } = await supabase.auth.signInWithOtp({
+      await supabase.auth.signInWithOtp({
         email: resolvedEmailFinal,
         options: { emailRedirectTo: window.location.origin + '/dashboard' }
       });
-      if (otpError) {
-        console.error("OTP error:", otpError);
-      }
     } else {
       payload.user_id = session.user.id;
       await saveToSupabase(payload);
     }
 
-    try {
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-welcome-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          nombre: user.nombre,
-          email: resolvedEmailFinal,
-          scores,
-          overall,
-          zona: zona.label,
-        }),
-      });
-    } catch (fnError) {
-      console.error("Edge Function error:", fnError);
-    }
+    await supabase.functions.invoke("send-welcome-email", {
+      body: {
+        nombre: user.nombre,
+        email: resolvedEmailFinal,
+        scores,
+        overall,
+        zona: zona.label,
+      },
+    });
 
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
@@ -599,19 +580,11 @@ function ResultsScreen({ scores, user, session }) {
               <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                 Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
               </p>
-              <div style={{ marginTop: 16, padding: "16px 20px", background: "#f0f4f2", borderRadius: 4, borderLeft: "3px solid #5BA08A" }}>
-                <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5BA08A", marginBottom: 6 }}>Siguiente paso</div>
-                <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.6 }}>
-                  Revisa tu correo en <strong>{emailFinal}</strong> y haz clic en el enlace para acceder a tu dashboard — no necesitas contraseña.
-                </div>
-                <div style={{ marginTop: 12, fontSize: 12, color: C.inkMuted, fontFamily: mono, letterSpacing: "0.04em" }}>
-                  La próxima vez entra desde{" "}
-                  <a href="/login" style={{ color: C.teal, textDecoration: "none" }}>
-                    lucidez.app/login
-                  </a>
-                  {" "}con Google — sin esperar correo.
-                </div>
-              </div>
+              {session && (
+                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                  Ir al dashboard →
+                </a>
+              )}
             </div>
           )}
         </div>
@@ -694,19 +667,11 @@ function ResultsScreen({ scores, user, session }) {
                 <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                   Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
                 </p>
-                <div style={{ marginTop: 16, padding: "16px 20px", background: "#f0f4f2", borderRadius: 4, borderLeft: "3px solid #5BA08A" }}>
-                  <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5BA08A", marginBottom: 6 }}>Siguiente paso</div>
-                  <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.6 }}>
-                    Revisa tu correo en <strong>{emailFinal}</strong> y haz clic en el enlace para acceder a tu dashboard — no necesitas contraseña.
-                  </div>
-                  <div style={{ marginTop: 12, fontSize: 12, color: C.inkMuted, fontFamily: mono, letterSpacing: "0.04em" }}>
-                    La próxima vez entra desde{" "}
-                    <a href="/login" style={{ color: C.teal, textDecoration: "none" }}>
-                      lucidez.app/login
-                    </a>
-                    {" "}con Google — sin esperar correo.
-                  </div>
-                </div>
+                {session && (
+                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                    Ir al dashboard →
+                  </a>
+                )}
               </div>
             )}
           </div>
@@ -735,8 +700,8 @@ export default function Indice() {
       if (session) {
         setSession(session);
         const meta = session.user.user_metadata;
-        setNombre(meta?.full_name || meta?.name || "");
-        // No saltar la pantalla de nombre — el usuario confirma o edita
+        setNombre(meta?.full_name || meta?.name || session.user.email.split("@")[0]);
+        setScreen("questions");
       }
     });
   }, []);

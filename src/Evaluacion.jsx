@@ -30,7 +30,6 @@ async function saveEvaluation({ userId, dimension, scores, overall }) {
 }
 
 async function generateDeepReport(dimension, escala, scores, overall) {
-  const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
   const zona = overall >= 80 ? "verde" : overall >= 60 ? "ámbar" : "roja";
   const nivel = overall >= 70 ? "alto" : overall >= 40 ? "medio" : "bajo";
   const interpretacion = escala.interpretacion?.[nivel] || "";
@@ -51,7 +50,7 @@ Párrafo 2 — El patrón: Cómo se manifiesta esto en la vida diaria de alguien
 Párrafo 3 — El recurso: Qué tiene esta persona que puede usar como punto de apoyo.
 Párrafo 4 — El siguiente paso: Una acción concreta y específica para esta semana. No genérica.
 
-Voz: segunda persona directa en todo el reporte. Nunca tercera persona. 
+Voz: segunda persona directa en todo el reporte. Nunca tercera persona.
 No escribas "Su puntuación" ni "esta persona" — escribe "tu puntuación", "tu atención", "tienes".
 El reporte le habla directamente al usuario, no habla sobre él.
 
@@ -61,24 +60,21 @@ Longitud: máximo 180 palabras.
 Responde SOLO con los 4 párrafos. Sin títulos.`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5",
-        max_tokens: 1024,
-        messages: [{ role: "user", content: prompt }],
-      }),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/claude-proxy`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ prompt }),
+      }
+    );
     const data = await response.json();
-    return data.content?.[0]?.text || null;
+    return data.text || null;
   } catch (e) {
-    console.error("Claude API error:", e);
+    console.error("Claude proxy error:", e);
     return null;
   }
 }

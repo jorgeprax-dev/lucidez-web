@@ -10,35 +10,20 @@ const colors = {
   border: "rgba(26,23,20,0.12)",
 };
 
-const dimCapas = [
-  {
-    capa: "Cómo percibes",
-    items: [
-      { color: "#3d7a65", name: "Presencia", escala: "Escala de Atención Consciente", desc: "Qué tan presente estás en tu vida diaria vs en piloto automático" },
-      { color: "#9a5e2e", name: "Claridad cognitiva", escala: "Cuestionario de Pensamientos Automáticos", desc: "Qué tan seguido te atrapan los pensamientos negativos sobre ti mismo" },
-    ],
-  },
-  {
-    capa: "Cómo procesas",
-    items: [
-      { color: "#6a3d82", name: "Regulación emocional", escala: "Escala de Dificultades en Regulación Emocional", desc: "Cómo manejas tus emociones cuando te desbordan" },
-      { color: "#2d6382", name: "Autoconocimiento", escala: "Escala de Autocompasión", desc: "Qué tan bien te observas a ti mismo sin juzgarte" },
-    ],
-  },
-  {
-    capa: "Cómo actúas",
-    items: [
-      { color: "#4d6d2a", name: "Alineación de valores", escala: "Cuestionario de Valores", desc: "Si lo que haces cada día refleja lo que realmente te importa" },
-      { color: "#7a6520", name: "Agencia", escala: "Escala Breve de Autocontrol", desc: "Si puedes convertir tus intenciones en acciones" },
-    ],
-  },
+const dims = [
+  { color: "#3d7a65", name: "Conciencia plena", desc: "Piloto automático, distracción crónica" },
+  { color: "#EF9F27", name: "Regulación emocional", desc: "Reacciones intensas, difícil calmarte" },
+  { color: "#3d7a65", name: "Valores personales", desc: "Urgente vs lo que realmente importa" },
+  { color: "#E24B4A", name: "Autocompasión", desc: "Autocrítica excesiva, exigencia interna" },
+  { color: "#3d7a65", name: "Autocontrol", desc: "Impulsos, hábitos, postergación" },
+  { color: "#EF9F27", name: "Atención plena", desc: "Rumia, mente dispersa" },
 ];
 
 const steps = [
-  { num: "01", title: "Haces el Índice", desc: "18 preguntas validadas clínicamente. 8 minutos. Gratis." },
-  { num: "02", title: "Ves tu reporte", desc: "La IA analiza tu patrón específico entre las seis dimensiones y genera un diagnóstico personalizado. No un texto genérico — el tuyo." },
-  { num: "03", title: "Profundizas donde importa", desc: "Evaluación detallada por dimensión con diagnóstico clínico preciso." },
-  { num: "04", title: "Mides si algo cambia", desc: "Vuelve en una semana. El número te dice si algo se movió." },
+  { num: "01", title: "Haces el Índice", desc: "18 preguntas. 8 minutos. Gratis y sin cuenta." },
+  { num: "02", title: "Ves tu reporte", desc: "Score por dimensión y patrón clínico generado con IA." },
+  { num: "03", title: "Trabajas lo prioritario", desc: "Reporte profundo y contenido por dimensión." },
+  { num: "04", title: "Mides tu progreso", desc: "Dashboard con historial y evolución longitudinal." },
 ];
 
 export default function Home() {
@@ -60,12 +45,8 @@ export default function Home() {
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 32px", borderBottom: `0.5px solid ${colors.border}`, background: colors.cream, position: "sticky", top: 0, zIndex: 10 }}>
         <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: "normal", letterSpacing: "0.04em", color: colors.ink }}>lucidez</span>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          <button
-            onClick={() => document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" })}
-            style={{ fontFamily: mono, fontSize: 12, color: colors.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}
-          >
-            Cómo funciona
-          </button>
+          <button onClick={() => navigate("/indice")} style={{ fontFamily: mono, fontSize: 12, color: colors.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}>El Índice</button>
+          <button style={{ fontFamily: mono, fontSize: 12, color: colors.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}>Programa</button>
           <button onClick={() => navigate("/login")} style={{ fontFamily: mono, fontSize: 12, color: colors.ink, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none", padding: 0 }}>Entrar →</button>
         </div>
       </nav>
@@ -74,13 +55,13 @@ export default function Home() {
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 56, alignItems: "center" }}>
           <div>
             <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 24 }}>
-              Autoconocimiento · Basado en ciencia · Medido con datos
+              Bienestar mental · Basado en ciencia · Medido con datos
             </p>
             <h1 style={{ fontSize: 40, fontWeight: "normal", lineHeight: 1.2, marginBottom: 18, color: colors.ink, letterSpacing: "-0.01em" }}>
-              ¿Quieres conocerte a ti mismo de una manera que nunca habías imaginado?
+              Entiende qué está pasando contigo
             </h1>
             <p style={{ fontSize: 15, color: colors.inkMuted, lineHeight: 1.7, maxWidth: 460, marginBottom: 24 }}>
-              Lucidez mide cómo percibes la realidad, cómo la procesas, y cómo actúas en consecuencia — con datos precisos, no con intuición. Un modelo de IA analiza tu combinación específica de dimensiones y te devuelve un reporte personalizado.
+              Un índice clínico gratuito que mide seis dimensiones de tu salud mental. Sin cuenta requerida. Sin juicios.
             </p>
             <button onClick={() => navigate("/indice")} style={{ background: colors.ink, color: colors.cream, border: "none", padding: "12px 24px", fontFamily: mono, fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2, marginBottom: 12 }}>
               Hacer el Índice — gratis
@@ -92,24 +73,16 @@ export default function Home() {
 
           <div style={{ background: "#ffffff", border: `0.5px solid ${colors.border}`, borderRadius: 6, padding: 20 }}>
             <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 14 }}>
-              Seis dimensiones de tu mente
+              Lo que puede estar pasando
             </p>
-            <div>
-              {dimCapas.map((grupo, gi) => (
-                <div key={grupo.capa} style={{ marginTop: gi === 0 ? 0 : 16 }}>
-                  <div style={{ fontFamily: mono, fontSize: 10, color: colors.inkFaint, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
-                    {grupo.capa}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 14 }}>
+              {dims.map((d) => (
+                <div key={d.name} style={{ minWidth: 0, padding: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
+                    <div style={{ fontSize: 13, fontWeight: "normal", color: colors.ink }}>{d.name}</div>
                   </div>
-                  {grupo.items.map((d) => (
-                    <div key={d.name} style={{ minWidth: 0, padding: "8px 0" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: d.color, flexShrink: 0 }} />
-                        <div style={{ fontSize: 13, fontWeight: "normal", color: colors.ink }}>{d.name}</div>
-                      </div>
-                      <div style={{ fontFamily: mono, fontSize: 10, color: colors.inkFaint, letterSpacing: "0.04em", marginBottom: 4 }}>{d.escala}</div>
-                      <p style={{ fontSize: 12, color: colors.inkMuted, lineHeight: 1.4, margin: 0 }}>{d.desc}</p>
-                    </div>
-                  ))}
+                  <p style={{ fontSize: 13, color: colors.inkMuted, lineHeight: 1.4 }}>{d.desc}</p>
                 </div>
               ))}
             </div>
@@ -119,7 +92,7 @@ export default function Home() {
 
       <hr style={{ border: "none", borderTop: `0.5px solid ${colors.border}`, margin: "0 32px 48px" }} />
 
-      <section id="como-funciona" style={{ maxWidth: 1100, margin: "0 auto", padding: "0 48px 60px" }}>
+      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 48px 60px" }}>
         <p style={{ fontFamily: mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: colors.inkFaint, marginBottom: 24 }}>
           Cómo funciona
         </p>
@@ -135,8 +108,8 @@ export default function Home() {
       </section>
 
       <div style={{ background: colors.ink, borderRadius: 0, padding: "40px 32px", textAlign: "center", margin: "0 0 0 0" }}>
-        <h2 style={{ fontSize: 26, fontWeight: "normal", marginBottom: 12, color: colors.cream }}>Empieza por conocerte</h2>
-        <p style={{ fontSize: 14, color: "#b8b0a8", marginBottom: 24 }}>El Índice es gratis. Siempre lo será.</p>
+        <h2 style={{ fontSize: 26, fontWeight: "normal", marginBottom: 12, color: colors.cream }}>Empieza por entenderte</h2>
+        <p style={{ fontSize: 14, color: "#b8b0a8", marginBottom: 24 }}>El Índice de Lucidez es gratis. Siempre.</p>
         <button onClick={() => navigate("/indice")} style={{ background: colors.cream, color: colors.ink, border: "none", padding: "12px 28px", fontFamily: mono, fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}>
           Hacer el Índice — 8 minutos
         </button>
