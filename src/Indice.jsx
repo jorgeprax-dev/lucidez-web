@@ -499,6 +499,8 @@ function ResultsScreen({ scores, user, session }) {
   const [utilidad, setUtilidad] = useState(null);
   const [valioso, setValioso] = useState("");
   const [mejora, setMejora] = useState("");
+  const [quiereEntrevista, setQuiereEntrevista] = useState(false);
+  const [emailEntrevista, setEmailEntrevista] = useState("");
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -860,6 +862,30 @@ function ResultsScreen({ scores, user, session }) {
             />
           </div>
 
+          <div style={{ marginBottom: 24, paddingTop: 16, borderTop: "0.5px solid rgba(26,23,20,0.10)" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: quiereEntrevista ? 14 : 0 }}>
+              <input
+                type="checkbox"
+                id="entrevista"
+                checked={quiereEntrevista}
+                onChange={(e) => setQuiereEntrevista(e.target.checked)}
+                style={{ marginTop: 3, cursor: "pointer", flexShrink: 0 }}
+              />
+              <label htmlFor="entrevista" style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#6b6460", lineHeight: 1.6, cursor: "pointer" }}>
+                ¿Tendrías 15 minutos para contarme cómo te fue? Estoy construyendo Lucidez y cada conversación me ayuda a mejorarlo. Sin agenda, sin venta.
+              </label>
+            </div>
+            {quiereEntrevista && (
+              <input
+                type="email"
+                value={emailEntrevista}
+                onChange={(e) => setEmailEntrevista(e.target.value)}
+                placeholder="Tu email o WhatsApp"
+                style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "10px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, outline: "none" }}
+              />
+            )}
+          </div>
+
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <button
               onClick={() => setFeedbackGuardado(true)}
@@ -877,6 +903,14 @@ function ResultsScreen({ scores, user, session }) {
                   valioso,
                   mejora,
                 });
+                if (quiereEntrevista && emailEntrevista.trim()) {
+                  await supabase.from("feedback").insert([{
+                    user_id: session?.user?.id || null,
+                    momento: "entrevista",
+                    valioso: emailEntrevista.trim(),
+                    mejora: "solicitud de entrevista",
+                  }]);
+                }
                 setFeedbackGuardado(true);
               }}
               style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
