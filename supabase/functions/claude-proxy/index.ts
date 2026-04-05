@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt, model = "claude-haiku-4-5" } = await req.json();
+    const { prompt, system, history, model = "claude-haiku-4-5" } = await req.json();
 
     if (!prompt) {
       return new Response(
@@ -28,6 +28,21 @@ serve(async (req) => {
       );
     }
 
+    const messages = [
+      ...(history || []),
+      { role: "user", content: prompt },
+    ];
+
+    const body: Record<string, unknown> = {
+      model,
+      max_tokens: 1024,
+      messages,
+    };
+
+    if (system) {
+      body.system = system;
+    }
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -35,11 +50,7 @@ serve(async (req) => {
         "x-api-key": anthropicKey,
         "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify({
-        model,
-        max_tokens: 1024,
-        messages: [{ role: "user", content: prompt }],
-      }),
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();
