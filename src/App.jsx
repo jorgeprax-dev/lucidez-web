@@ -11,6 +11,7 @@ import Login from "./Login.jsx";
 import Evaluacion from "./Evaluacion.jsx";
 import Curso from "./Curso.jsx";
 import Leccion from "./Leccion.jsx";
+import ReportePublico from "./ReportePublico.jsx";
 
 // Maneja el callback de magic link — procesa el token y redirige al dashboard
 function AuthCallback() {
@@ -64,6 +65,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/r/:slug" element={<ReportePublico />} />
 
         {/* Rutas privadas — requieren sesión */}
         <Route path="/indice" element={<Indice />} />

@@ -51,6 +51,42 @@ async function saveFeedback({ userId, momento, utilidad, valioso, mejora }) {
   }
 }
 
+function generarSlug() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({length: 6}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+async function generarReportePublico({ scores, overall, nivel, aiReport }) {
+  try {
+    const frase = aiReport
+      ? aiReport.replace(/PREGUNTA_DINAMICA:.*$/m, "").trim().split("\n\n")[0]
+      : null;
+    
+    const fraseAnonima = frase
+      ? frase.replace(/^[^,]+,/, "Tu perfil,")
+      : null;
+
+    let slug = generarSlug();
+    
+    const { error } = await supabase.from("reportes_publicos").insert([{
+      slug,
+      scores,
+      overall,
+      nivel,
+      frase: fraseAnonima,
+    }]);
+
+    if (error) {
+      console.error("Error guardando reporte público:", error);
+      return null;
+    }
+    return slug;
+  } catch (e) {
+    console.error("Error generando reporte público:", e);
+    return null;
+  }
+}
+
 async function generateAIReport(scores, nombre) {
   const dimTexts = [
     { id: "presencia", label: "Presencia", score: scores.presencia },
@@ -501,6 +537,8 @@ function ResultsScreen({ scores, user, session }) {
   const [mejora, setMejora] = useState("");
   const [quiereEntrevista, setQuiereEntrevista] = useState(false);
   const [emailEntrevista, setEmailEntrevista] = useState("");
+  const [slug, setSlug] = useState(null);
+  const [generandoLink, setGenerandoLink] = useState(false);
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -922,6 +960,54 @@ function ResultsScreen({ scores, user, session }) {
               Enviar →
             </button>
           </div>
+        </div>
+      )}
+
+      {showReport && !loadingReport && (
+        <div style={{ marginTop: 16, padding: "20px 28px", background: "#f7f4f0", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div>
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 4 }}>
+              Comparte tu Índice
+            </div>
+            <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#6b6460", lineHeight: 1.5 }}>
+              Genera un link anónimo para compartir tus resultados.
+            </div>
+          </div>
+          {slug ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                readOnly
+                value={`${window.location.origin}/r/${slug}`}
+                style={{ padding: "8px 12px", background: "#ffffff", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "'Courier New', monospace", fontSize: 11, width: 200, outline: "none" }}
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/r/${slug}`);
+                }}
+                style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+              >
+                Copiar →
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={async () => {
+                setGenerandoLink(true);
+                const generatedSlug = await generarReportePublico({
+                  scores,
+                  overall,
+                  nivel: zona.label,
+                  aiReport,
+                });
+                if (generatedSlug) setSlug(generatedSlug);
+                setGenerandoLink(false);
+              }}
+              disabled={generandoLink}
+              style={{ background: generandoLink ? "#ede9e3" : "#1a1714", color: generandoLink ? "#a09890" : "#f7f4f0", border: "none", padding: "10px 20px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: generandoLink ? "default" : "pointer", borderRadius: 2, flexShrink: 0 }}
+            >
+              {generandoLink ? "Generando..." : "Generar link →"}
+            </button>
+          )}
         </div>
       )}
 
