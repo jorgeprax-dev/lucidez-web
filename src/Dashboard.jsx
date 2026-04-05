@@ -454,7 +454,7 @@ export default function Dashboard() {
     const { data, error } = await supabase
       .from("indice_lucidez")
       .select("id, fecha, scores, overall, nivel, reporte, nombre")
-      .eq("email", session.user.email)
+      .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
     if (!error && data) setMediciones(data);
