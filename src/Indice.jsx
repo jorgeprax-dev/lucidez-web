@@ -11,6 +11,28 @@ async function saveToSupabase(data) {
   }
 }
 
+async function saveRespuestasCualitativas({ userId, momento, dimension, preguntas, respuestas }) {
+  try {
+    const payload = {
+      user_id: userId,
+      momento,
+      dimension: dimension || null,
+      pregunta_1: preguntas[0] || null,
+      respuesta_1: respuestas[0] || null,
+      pregunta_2: preguntas[1] || null,
+      respuesta_2: respuestas[1] || null,
+      pregunta_3: preguntas[2] || null,
+      respuesta_3: respuestas[2] || null,
+    };
+    const { error } = await supabase.from("respuestas_cualitativas").insert([payload]);
+    if (error) console.error("Error guardando respuestas:", error);
+    return !error;
+  } catch (e) {
+    console.error("Error guardando respuestas:", e);
+    return false;
+  }
+}
+
 async function generateAIReport(scores, nombre) {
   const dimTexts = [
     { id: "presencia", label: "Presencia", score: scores.presencia },
@@ -48,6 +70,15 @@ Párrafo 2 — El patrón: Qué significa la combinación de scores. Qué está 
 Párrafo 3 — La fortaleza: Qué tiene ${nombre} que ya funciona y cómo puede usarlo. Menciona la dimensión más alta específicamente.
 
 Párrafo 4 — La pregunta abierta: Termina con algo que el Índice no puede responder y que solo la evaluación profunda de ${low.label} puede resolver. Genera curiosidad sin ser manipulador.
+
+Después de los 4 párrafos, en una línea completamente separada, genera UNA pregunta cualitativa adicional precedida exactamente por el texto "PREGUNTA_DINAMICA:" (sin espacio antes, sin salto de línea antes del prefijo).
+
+La pregunta debe:
+- Ser específica a la dimensión más baja: ${low.label} (${low.score}/100)
+- Preguntar cómo se manifiesta esa dimensión en la vida concreta del usuario
+- Pedir un ejemplo reciente, no una descripción general
+- Máximo 25 palabras
+- No mencionar nombres de escalas ni acrónimos
 
 Voz: segunda persona directa en todo el reporte. Nunca tercera persona. No escribas 'Jorge presenta' ni 'su perfil' — escribe 'tu perfil', 'presentas', 'tu dimensión'. El reporte le habla a ${nombre} directamente, no habla sobre él.
 
@@ -441,6 +472,10 @@ function ResultsScreen({ scores, user, session }) {
   const [saved, setSaved] = useState(null);
   const [aiReport, setAiReport] = useState(null);
   const [loadingReport, setLoadingReport] = useState(false);
+  const [showPreguntas, setShowPreguntas] = useState(false);
+  const [preguntasDinamicas, setPreguntasDinamicas] = useState([]);
+  const [respuestas, setRespuestas] = useState(["", "", ""]);
+  const [preguntasGuardadas, setPreguntasGuardadas] = useState(false);
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -453,6 +488,9 @@ function ResultsScreen({ scores, user, session }) {
   const sorted = [...DIMS].sort((a, b) => scores[b.id] - scores[a.id]);
   const low1 = sorted[sorted.length - 1];
   const report = generateLocalReport(scores, user);
+  const reporteTexto = (aiReport || generateLocalReport(scores, user))
+    .replace(/PREGUNTA_DINAMICA:.*$/m, "")
+    .trim();
 
   const handleShowReport = async () => {
     if (!session && !emailOpcional.trim()) return;
@@ -497,6 +535,16 @@ function ResultsScreen({ scores, user, session }) {
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
     setAiReport(ai);
+    if (ai) {
+      const match = ai.match(/PREGUNTA_DINAMICA:\s*(.+)/);
+      const preguntaDinamica = match ? match[1].trim() : null;
+      const preguntas = [
+        "¿Qué está pasando en tu vida ahora mismo que te trajo aquí?",
+        "¿Qué querrías que fuera diferente en los próximos tres meses?",
+      ];
+      if (preguntaDinamica) preguntas.push(preguntaDinamica);
+      setPreguntasDinamicas(preguntas);
+    }
     setLoadingReport(false);
   };
 
@@ -573,7 +621,7 @@ function ResultsScreen({ scores, user, session }) {
                   </p>
                 </div>
               ) : (
-                (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
+                reporteTexto.split("\n\n").map((p, i) => (
                   <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
                 ))
               )}
@@ -660,7 +708,7 @@ function ResultsScreen({ scores, user, session }) {
                     </p>
                   </div>
                 ) : (
-                  (aiReport || generateLocalReport(scores, user)).split("\n\n").map((p, i) => (
+                  reporteTexto.split("\n\n").map((p, i) => (
                     <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
                   ))
                 )}
@@ -675,6 +723,69 @@ function ResultsScreen({ scores, user, session }) {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {showReport && !showPreguntas && !loadingReport && !preguntasGuardadas && preguntasDinamicas.length > 0 && (
+        <div style={{ marginTop: 24, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 28 }}>
+          <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 16, display: "block" }}>
+            Tres preguntas · para conocerte mejor
+          </span>
+          {preguntasDinamicas.map((pregunta, i) => (
+            <div key={i} style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.10em", textTransform: "uppercase", color: "#a09890", marginBottom: 6 }}>
+                Pregunta {i + 1} de {preguntasDinamicas.length}
+              </div>
+              <div style={{ fontSize: 16, color: "#1a1714", lineHeight: 1.5, marginBottom: 10, fontFamily: "Georgia, serif" }}>
+                {pregunta}
+              </div>
+              <textarea
+                value={respuestas[i]}
+                onChange={(e) => {
+                  const nuevas = [...respuestas];
+                  nuevas[i] = e.target.value;
+                  setRespuestas(nuevas);
+                }}
+                placeholder="Escribe con libertad..."
+                rows={3}
+                style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+              />
+            </div>
+          ))}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
+            <button
+              onClick={() => setPreguntasGuardadas(true)}
+              style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+            >
+              Ahora no
+            </button>
+            <button
+              onClick={async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user?.id) {
+                  await saveRespuestasCualitativas({
+                    userId: session.user.id,
+                    momento: "indice",
+                    dimension: null,
+                    preguntas: preguntasDinamicas,
+                    respuestas,
+                  });
+                }
+                setPreguntasGuardadas(true);
+              }}
+              style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+            >
+              Guardar y continuar →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showReport && !loadingReport && preguntasGuardadas && (
+        <div style={{ marginTop: 16, textAlign: "center" }}>
+          <a href="/dashboard" style={{ fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#1a1714", textDecoration: "none" }}>
+            Ir a mi dashboard →
+          </a>
         </div>
       )}
     </div>
