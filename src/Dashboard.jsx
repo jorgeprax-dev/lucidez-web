@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { ESCALAS } from "./escalas";
+import { generarReportePublico } from "./utils";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -432,6 +433,8 @@ export default function Dashboard() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackTexto, setFeedbackTexto] = useState("");
   const [feedbackEnviado, setFeedbackEnviado] = useState(false);
+  const [slugIndice, setSlugIndice] = useState(null);
+  const [generandoSlug, setGenerandoSlug] = useState(false);
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -604,6 +607,44 @@ export default function Dashboard() {
           <div style={{ height: 6, borderRadius: 3, background: "#ede9e3", marginTop: 12, width: "100%", overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${overall}%`, background: colorZona(zona(overall)), borderRadius: 3 }} />
           </div>
+        </div>
+        <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
+          {slugIndice ? (
+            <>
+              <input
+                readOnly
+                value={`${window.location.origin}/r/${slugIndice}`}
+                style={{ flex: 1, padding: "8px 12px", background: "#ffffff", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "'Courier New', monospace", fontSize: 11, outline: "none" }}
+              />
+              <button
+                onClick={() => navigator.clipboard.writeText(`${window.location.origin}/r/${slugIndice}`)}
+                style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2, flexShrink: 0 }}
+              >
+                Copiar →
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={async () => {
+                setGenerandoSlug(true);
+                const ultimoIndice = mediciones?.[mediciones.length - 1];
+                if (ultimoIndice) {
+                  const slug = await generarReportePublico({
+                    scores: ultimoIndice.scores,
+                    overall: ultimoIndice.overall,
+                    nivel: ultimoIndice.nivel,
+                    aiReport: ultimoIndice.reporte || null,
+                  });
+                  if (slug) setSlugIndice(slug);
+                }
+                setGenerandoSlug(false);
+              }}
+              disabled={generandoSlug}
+              style={{ background: generandoSlug ? "#ede9e3" : "#1a1714", color: generandoSlug ? "#a09890" : "#f7f4f0", border: "none", padding: "8px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: generandoSlug ? "default" : "pointer", borderRadius: 2 }}
+            >
+              {generandoSlug ? "Generando..." : "Compartir mi Índice →"}
+            </button>
+          )}
         </div>
       </div>
 
