@@ -359,48 +359,55 @@ async function generateMapaCompleto(scores, indiceScores) {
       max_tokens: 1024,
       messages: [{
         role: "user",
-        content: `Eres un clínico experto en psicología basada en evidencia. 
-Tienes los resultados completos de una persona en 6 dimensiones psicológicas.
+        content: `Eres un psicólogo clínico con 20 años de experiencia leyendo perfiles 
+psicométricos. Tienes los scores completos de una persona.
 
-EVALUACIÓN PROFUNDA (escalas validadas):
+CÓMO PERCIBE:
 - Presencia: ${scores.presencia}/100
 - Claridad cognitiva: ${scores.claridad}/100
-- Regulación emocional: ${scores.regulacion}/100
+
+CÓMO PROCESA:
+- Regulación emocional: ${scores.regulacion}/100  
 - Autoconocimiento: ${scores.autoconocimiento}/100
+
+CÓMO ACTÚA:
 - Alineación de valores: ${scores.valores}/100
 - Agencia: ${scores.agencia}/100
 
-ÍNDICE DE LUCIDEZ (screening):
-- Presencia: ${indiceScores.presencia}/100
-- Claridad cognitiva: ${indiceScores.claridad}/100
-- Regulación emocional: ${indiceScores.regulacion}/100
-- Autoconocimiento: ${indiceScores.autoconocimiento}/100
-- Alineación de valores: ${indiceScores.valores}/100
-- Agencia: ${indiceScores.agencia}/100
+Tu trabajo es encontrar lo que esta persona no sabe de sí misma.
+No lo que sospecha. Lo que aún no ha nombrado.
 
-Escribe un mapa de síntesis en español con exactamente esta estructura:
+Escribe exactamente 4 bloques, cada uno con su eyebrow en mayúsculas 
+y un párrafo debajo. Sin introducción. Sin cierre. Solo los 4 bloques.
 
 CÓMO PERCIBES
-Un párrafo que integre Presencia y Claridad cognitiva como sistema. 
-Qué revela la combinación de estos dos scores sobre cómo esta persona 
-recibe e interpreta la realidad.
+[Una sola observación sobre la combinación de presencia y claridad. 
+No describas los scores — describe la experiencia vivida de alguien 
+con ese patrón. Qué siente esta persona en su día a día que no entiende 
+bien por qué le pasa. Máximo 3 oraciones. Sin jerga clínica.]
 
 CÓMO PROCESAS
-Un párrafo que integre Regulación emocional y Autoconocimiento. 
-Qué revela la combinación sobre cómo procesa lo que le pasa internamente.
+[Una sola observación sobre regulación y autoconocimiento juntos. 
+Encuentra la paradoja — qué intenta hacer esta persona con sus emociones 
+y por qué no le funciona. La contradicción que no ha visto. 
+Máximo 3 oraciones.]
 
 CÓMO ACTÚAS
-Un párrafo que integre Alineación de valores y Agencia. 
-Qué revela la combinación sobre cómo convierte (o no) sus intenciones en acciones.
+[La brecha entre valores y agencia. No lo que debería hacer — 
+lo que realmente pasa entre que decide y que actúa. 
+Máximo 3 oraciones.]
 
-EL PATRÓN
-Un párrafo de síntesis final. Dónde está el cuello de botella real 
-en el sistema completo. Qué dimensión, si mejora, mueve más el resto.
+EL PUNTO DE PALANCA
+[Una sola cosa. La dimensión que, si se mueve, mueve todo lo demás. 
+No "trabaja en X". Di por qué esa dimensión específica es el 
+nudo del sistema completo. Una observación que suene a que alguien 
+finalmente vio lo que estaba pasando. Máximo 2 oraciones.]
 
-Voz: segunda persona directa. Nunca tercera persona.
-Tono: directo, clínico, sin jerga terapéutica. Como Epicteto escribiría un diagnóstico de sistema.
-Sin títulos en el texto — solo los 4 párrafos separados por salto de línea.
-Máximo 250 palabras.`
+Voz: segunda persona directa. Tutéame.
+Tono: como un amigo que es clínico — directo, honesto, sin suavizar, 
+pero sin crueldad. Que suene a persona, no a reporte.
+Prohibido: jerga clínica, mayúsculas en el texto, frases de autoayuda, 
+adjetivos vacíos como "importante" o "significativo".`
       }]
     })
   });
