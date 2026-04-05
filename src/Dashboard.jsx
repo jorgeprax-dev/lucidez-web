@@ -429,6 +429,9 @@ export default function Dashboard() {
   const [loading, setLoading]     = useState(true);
   const [mapaCompleto, setMapaCompleto] = useState(null);
   const [loadingMapa, setLoadingMapa] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackTexto, setFeedbackTexto] = useState("");
+  const [feedbackEnviado, setFeedbackEnviado] = useState(false);
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -556,6 +559,26 @@ export default function Dashboard() {
     valores: "Cuestionario de Valores · qué tan alineado estás con lo que realmente valoras",
     autoconocimiento: "Escala de Autocompasión · cómo te tratas a ti mismo cuando fallas",
     agencia: "Escala Breve de Autocontrol · tu capacidad de actuar según tus intenciones",
+  };
+
+  const handleFeedbackFlotante = async () => {
+    if (!feedbackTexto.trim()) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      await supabase.from("feedback").insert([{
+        user_id: session?.user?.id || null,
+        momento: "flotante",
+        valioso: feedbackTexto.trim(),
+      }]);
+      setFeedbackEnviado(true);
+      setTimeout(() => {
+        setShowFeedbackModal(false);
+        setFeedbackTexto("");
+        setFeedbackEnviado(false);
+      }, 2000);
+    } catch (e) {
+      console.error("Error feedback:", e);
+    }
   };
 
   return (
@@ -709,6 +732,52 @@ export default function Dashboard() {
           <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#f7f4f0", marginBottom: 2 }}>Re-aplicar el Índice</div>
           <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#888780" }}>Mide tu progreso esta semana</div>
         </div>
+      </div>
+
+      <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 100 }}>
+        {showFeedbackModal && (
+          <div style={{ marginBottom: 8, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 20, width: 280, boxShadow: "0 4px 24px rgba(26,23,20,0.08)" }}>
+            {feedbackEnviado ? (
+              <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#3d7a65", margin: 0, textAlign: "center" }}>
+                Gracias — lo leemos todo.
+              </p>
+            ) : (
+              <>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 12 }}>
+                  ¿Algo que mejorar?
+                </div>
+                <textarea
+                  value={feedbackTexto}
+                  onChange={(e) => setFeedbackTexto(e.target.value)}
+                  placeholder="Escribe lo que quieras — bug, sugerencia, lo que sea..."
+                  rows={3}
+                  style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "10px 12px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 13, resize: "none", outline: "none", lineHeight: 1.6, marginBottom: 10 }}
+                />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <button
+                    onClick={() => { setShowFeedbackModal(false); setFeedbackTexto(""); }}
+                    style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleFeedbackFlotante}
+                    disabled={!feedbackTexto.trim()}
+                    style={{ background: feedbackTexto.trim() ? "#1a1714" : "#ede9e3", color: feedbackTexto.trim() ? "#f7f4f0" : "#a09890", border: "none", padding: "8px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: feedbackTexto.trim() ? "pointer" : "default", borderRadius: 2 }}
+                  >
+                    Enviar →
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        <button
+          onClick={() => setShowFeedbackModal(!showFeedbackModal)}
+          style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "10px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+        >
+          {showFeedbackModal ? "× Cerrar" : "¿Feedback?"}
+        </button>
       </div>
     </div>
   );

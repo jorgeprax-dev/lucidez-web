@@ -33,6 +33,24 @@ async function saveRespuestasCualitativas({ userId, momento, dimension, pregunta
   }
 }
 
+async function saveFeedback({ userId, momento, utilidad, valioso, mejora }) {
+  try {
+    const payload = {
+      user_id: userId || null,
+      momento,
+      utilidad: utilidad || null,
+      valioso: valioso || null,
+      mejora: mejora || null,
+    };
+    const { error } = await supabase.from("feedback").insert([payload]);
+    if (error) console.error("Error guardando feedback:", error);
+    return !error;
+  } catch (e) {
+    console.error("Error guardando feedback:", e);
+    return false;
+  }
+}
+
 async function generateAIReport(scores, nombre) {
   const dimTexts = [
     { id: "presencia", label: "Presencia", score: scores.presencia },
@@ -476,6 +494,11 @@ function ResultsScreen({ scores, user, session }) {
   const [preguntasDinamicas, setPreguntasDinamicas] = useState([]);
   const [respuestas, setRespuestas] = useState(["", "", ""]);
   const [preguntasGuardadas, setPreguntasGuardadas] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackGuardado, setFeedbackGuardado] = useState(false);
+  const [utilidad, setUtilidad] = useState(null);
+  const [valioso, setValioso] = useState("");
+  const [mejora, setMejora] = useState("");
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -781,7 +804,90 @@ function ResultsScreen({ scores, user, session }) {
         </div>
       )}
 
-      {showReport && !loadingReport && preguntasGuardadas && (
+      {showReport && !loadingReport && preguntasGuardadas && !feedbackGuardado && (
+        <div style={{ marginTop: 24, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 28 }}>
+          <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 16, display: "block" }}>
+            Una última cosa
+          </span>
+
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 14, fontFamily: "Georgia, serif" }}>
+              ¿Qué tan útil te pareció el reporte?
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              {[1,2,3,4,5,6,7,8,9,10].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setUtilidad(n)}
+                  style={{
+                    width: 36, height: 36, borderRadius: 2,
+                    border: `0.5px solid ${utilidad === n ? "#1a1714" : "rgba(26,23,20,0.22)"}`,
+                    background: utilidad === n ? "#1a1714" : "#f7f4f0",
+                    color: utilidad === n ? "#f7f4f0" : "#1a1714",
+                    fontFamily: "'Courier New', monospace", fontSize: 11,
+                    cursor: "pointer", flexShrink: 0,
+                  }}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 10, fontFamily: "Georgia, serif" }}>
+              ¿Qué fue lo más valioso para ti?
+            </div>
+            <textarea
+              value={valioso}
+              onChange={(e) => setValioso(e.target.value)}
+              placeholder="Escribe libremente..."
+              rows={2}
+              style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+            />
+          </div>
+
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 10, fontFamily: "Georgia, serif" }}>
+              ¿Qué mejorarías?
+            </div>
+            <textarea
+              value={mejora}
+              onChange={(e) => setMejora(e.target.value)}
+              placeholder="Cualquier cosa que no funcionó o que faltó..."
+              rows={2}
+              style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+            />
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <button
+              onClick={() => setFeedbackGuardado(true)}
+              style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+            >
+              Omitir
+            </button>
+            <button
+              onClick={async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                await saveFeedback({
+                  userId: session?.user?.id || null,
+                  momento: "post_indice",
+                  utilidad,
+                  valioso,
+                  mejora,
+                });
+                setFeedbackGuardado(true);
+              }}
+              style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+            >
+              Enviar →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showReport && !loadingReport && preguntasGuardadas && feedbackGuardado && (
         <div style={{ marginTop: 16, textAlign: "center" }}>
           <a href="/dashboard" style={{ fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#1a1714", textDecoration: "none" }}>
             Ir a mi dashboard →
