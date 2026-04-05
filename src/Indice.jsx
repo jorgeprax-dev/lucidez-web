@@ -536,16 +536,20 @@ function ResultsScreen({ scores, user, session }) {
       reporte: generateLocalReport(scores, user),
       fecha: new Date().toISOString(),
     };
-    if (!session?.user?.id) {
-      localStorage.setItem("indice_anonimo", JSON.stringify(payload));
-      await supabase.auth.signInWithOtp({
-        email: resolvedEmailFinal,
-        options: { emailRedirectTo: window.location.origin + '/dashboard' }
-      });
-    } else {
-      payload.user_id = session.user.id;
-      await saveToSupabase(payload);
-    }
+     const { data: { session: currentSession } } = await supabase.auth.getSession();
+     const resolvedUserId = currentSession?.user?.id || null;
+
+     if (!resolvedUserId) {
+       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
+       const { error: otpError } = await supabase.auth.signInWithOtp({
+         email: resolvedEmailFinal,
+         options: { emailRedirectTo: window.location.origin + '/dashboard' }
+       });
+       if (otpError) console.error("OTP error:", otpError);
+     } else {
+       payload.user_id = resolvedUserId;
+       await saveToSupabase(payload);
+     }
 
     await supabase.functions.invoke("send-welcome-email", {
       body: {
