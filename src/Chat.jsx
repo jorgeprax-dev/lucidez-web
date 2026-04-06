@@ -1,19 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
-
-const mono = "'Courier New', monospace";
-const serif = "Georgia, 'Times New Roman', serif";
-const C = {
-  cream: "#f7f4f0",
-  creamDark: "#ede9e3",
-  ink: "#1a1714",
-  inkMuted: "#6b6460",
-  inkFaint: "#a09890",
-  border: "rgba(26,23,20,0.12)",
-  borderStrong: "rgba(26,23,20,0.22)",
-  teal: "#3d7a65",
-};
+import { theme } from "./theme";
 
 async function loadPerfil(userId) {
   const [indiceRes, evaluacionesRes, respuestasRes] = await Promise.all([
@@ -232,30 +220,30 @@ export default function Chat() {
 
   if (iniciando) {
     return (
-      <div style={{ minHeight: "100vh", background: C.cream, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em" }}>
+      <div style={{ minHeight: "100vh", background: theme.bg, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: theme.mono, fontSize: 12, color: theme.inkFaint, letterSpacing: "0.08em" }}>
         Cargando tu perfil...
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: C.cream, fontFamily: serif, color: C.ink, display: "flex", flexDirection: "column" }}>
-      <nav style={{ borderBottom: `0.5px solid ${C.border}`, background: C.cream, position: "sticky", top: 0, zIndex: 10 }}>
+    <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: theme.serif, color: theme.ink, display: "flex", flexDirection: "column" }}>
+      <nav style={{ borderBottom: `0.5px solid ${theme.border}`, background: theme.bg, position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: 720, margin: "0 auto", padding: "16px 28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="/" style={{ textDecoration: "none", fontFamily: serif, fontSize: 17, color: C.ink }}>lucidez</a>
-          <span style={{ fontFamily: mono, fontSize: 10, color: C.inkFaint, letterSpacing: "0.08em", textTransform: "uppercase" }}>Acompañante</span>
-          <a href="/dashboard" style={{ fontFamily: mono, fontSize: 10, color: C.inkFaint, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none" }}>← Dashboard</a>
+          <a href="/" style={{ textDecoration: "none", fontFamily: theme.serif, fontSize: 17, color: theme.ink }}>lucidez</a>
+          <span style={{ fontFamily: theme.mono, fontSize: 10, color: theme.inkFaint, letterSpacing: "0.08em", textTransform: "uppercase" }}>Acompañante</span>
+          <a href="/dashboard" style={{ fontFamily: theme.mono, fontSize: 10, color: theme.inkFaint, letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "none" }}>← Dashboard</a>
         </div>
       </nav>
 
       <div style={{ flex: 1, maxWidth: 720, width: "100%", margin: "0 auto", padding: "32px 28px 120px", display: "flex", flexDirection: "column", gap: 16 }}>
         {messages.map((m, i) => (
           <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
-            <div style={{ fontFamily: mono, fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 5 }}>
+            <div style={{ fontFamily: theme.mono, fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 5 }}>
               {m.role === "user" ? nombre : "Acompañante"}
             </div>
-            <div style={{ maxWidth: "85%", padding: "14px 16px", borderRadius: m.role === "user" ? "8px 2px 8px 8px" : "2px 8px 8px 8px", background: m.role === "user" ? C.ink : "#ffffff", border: m.role === "user" ? "none" : `0.5px solid ${C.border}` }}>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.75, color: m.role === "user" ? C.cream : C.inkMuted }}>
+            <div style={{ maxWidth: "85%", padding: "14px 16px", borderRadius: m.role === "user" ? "8px 2px 8px 8px" : "2px 8px 8px 8px", background: m.role === "user" ? theme.ink : "#ffffff", border: m.role === "user" ? "none" : `0.5px solid ${theme.border}` }}>
+              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.75, color: m.role === "user" ? theme.bg : theme.inkMuted }}>
                 {m.content}
               </p>
             </div>
@@ -264,16 +252,16 @@ export default function Chat() {
 
         {loading && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-            <div style={{ fontFamily: mono, fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 5 }}>Acompañante</div>
-            <div style={{ padding: "14px 16px", borderRadius: "2px 8px 8px 8px", background: "#ffffff", border: `0.5px solid ${C.border}` }}>
-              <p style={{ margin: 0, fontSize: 14, color: C.inkFaint, fontFamily: mono, letterSpacing: "0.04em" }}>···</p>
+            <div style={{ fontFamily: theme.mono, fontSize: 9, letterSpacing: "0.08em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 5 }}>Acompañante</div>
+            <div style={{ padding: "14px 16px", borderRadius: "2px 8px 8px 8px", background: "#ffffff", border: `0.5px solid ${theme.border}` }}>
+              <p style={{ margin: 0, fontSize: 14, color: theme.inkFaint, fontFamily: theme.mono, letterSpacing: "0.04em" }}>···</p>
             </div>
           </div>
         )}
         <div ref={bottomRef} />
       </div>
 
-      <div style={{ position: "sticky", bottom: 0, background: C.cream, borderTop: `0.5px solid ${C.border}`, padding: "16px 28px" }}>
+      <div style={{ position: "sticky", bottom: 0, background: theme.bg, borderTop: `0.5px solid ${theme.border}`, padding: "16px 28px" }}>
         <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", gap: 10, alignItems: "flex-end" }}>
           <textarea
             value={input}
@@ -281,17 +269,17 @@ export default function Chat() {
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
             placeholder="Escribe aquí..."
             rows={2}
-            style={{ flex: 1, padding: "12px 14px", background: "#ffffff", color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 4, fontFamily: serif, fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+            style={{ flex: 1, padding: "12px 14px", background: "#ffffff", color: theme.ink, border: `0.5px solid ${theme.borderStrong}`, borderRadius: 4, fontFamily: theme.serif, fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            style={{ background: loading || !input.trim() ? C.creamDark : C.ink, color: loading || !input.trim() ? C.inkFaint : C.cream, border: "none", padding: "12px 20px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: loading || !input.trim() ? "default" : "pointer", borderRadius: 2, flexShrink: 0 }}
+            style={{ background: loading || !input.trim() ? theme.bgTertiary : theme.ink, color: loading || !input.trim() ? theme.inkFaint : theme.bg, border: "none", padding: "12px 20px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: loading || !input.trim() ? "default" : "pointer", borderRadius: 2, flexShrink: 0 }}
           >
             →
           </button>
         </div>
-        <div style={{ maxWidth: 720, margin: "8px auto 0", fontFamily: mono, fontSize: 9, color: C.inkFaint, letterSpacing: "0.04em" }}>
+        <div style={{ maxWidth: 720, margin: "8px auto 0", fontFamily: theme.mono, fontSize: 9, color: theme.inkFaint, letterSpacing: "0.04em" }}>
           Enter para enviar · Shift+Enter para nueva línea
         </div>
       </div>

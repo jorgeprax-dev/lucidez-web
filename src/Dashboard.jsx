@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { ESCALAS } from "./escalas";
 import { generarReportePublico } from "./utils";
+import { theme } from "./theme";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -22,12 +23,6 @@ function zona(score) {
   return "rojo";
 }
 
-function colorZona(z) {
-  if (z === "verde") return "#639922";
-  if (z === "ambar") return "#EF9F27";
-  return "#E24B4A";
-}
-
 function labelZona(score) {
   if (score >= 80) return "Funcional";
   if (score >= 60) return "Trabajando";
@@ -39,7 +34,7 @@ function labelZona(score) {
 const S = {
   page: {
     minHeight: "100vh",
-    backgroundColor: "#FAF7F2",
+    backgroundColor: theme.bgSecondary,
     fontFamily: "Georgia, serif",
   },
   nav: {
@@ -48,12 +43,12 @@ const S = {
     alignItems: "center",
     padding: "20px 24px 16px",
     borderBottom: "0.5px solid rgba(0,0,0,0.1)",
-    backgroundColor: "#FAF7F2",
+    backgroundColor: theme.bgSecondary,
   },
   navLogo: {
     fontSize: "13px",
     letterSpacing: "0.1em",
-    color: "#1A1A1A",
+    color: theme.inkFaint,
   },
   navRight: {
     display: "flex",
@@ -62,12 +57,12 @@ const S = {
   },
   navUser: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
   },
   signOut: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     background: "none",
     border: "none",
     cursor: "pointer",
@@ -78,7 +73,7 @@ const S = {
     display: "flex",
     borderBottom: "0.5px solid rgba(0,0,0,0.1)",
     padding: "0 24px",
-    backgroundColor: "#FAF7F2",
+    backgroundColor: theme.bgSecondary,
   },
   tab: (active) => ({
     padding: "12px 0",
@@ -101,12 +96,12 @@ const S = {
     fontSize: "11px",
     letterSpacing: "0.1em",
     textTransform: "uppercase",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     marginBottom: "14px",
     fontFamily: "Georgia, serif",
   },
   heroCard: {
-    backgroundColor: "#F0EBE3",
+    backgroundColor: theme.bgTertiary,
     borderRadius: "12px",
     padding: "24px",
     marginBottom: "24px",
@@ -117,31 +112,31 @@ const S = {
   heroNumber: {
     fontSize: "52px",
     fontWeight: "400",
-    color: "#1A1A1A",
+    color: theme.ink,
     lineHeight: 1,
     fontFamily: "Georgia, serif",
   },
   heroSub: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     marginTop: "6px",
   },
   heroLabel: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     marginBottom: "6px",
   },
   heroGoal: {
     fontSize: "22px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     textAlign: "right",
   },
   heroGoalLabel: {
     fontSize: "11px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     marginBottom: "4px",
     textAlign: "right",
@@ -154,7 +149,7 @@ const S = {
   },
   dimName: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     width: "140px",
     flexShrink: 0,
@@ -162,13 +157,13 @@ const S = {
   dimBarWrap: {
     flex: 1,
     height: "6px",
-    backgroundColor: "#E8E2D9",
+    backgroundColor: theme.bgTertiary,
     borderRadius: "3px",
     overflow: "hidden",
   },
   dimVal: {
     fontSize: "12px",
-    color: "#1A1A1A",
+    color: theme.ink,
     fontFamily: "Georgia, serif",
     width: "32px",
     textAlign: "right",
@@ -185,7 +180,7 @@ const S = {
     alignItems: "center",
     gap: "5px",
     fontSize: "11px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
   },
   divider: {
@@ -198,18 +193,18 @@ const S = {
     borderRadius: "12px",
     padding: "18px 20px",
     marginBottom: "10px",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.bg,
     cursor: "pointer",
   },
   ctaTitle: {
     fontSize: "14px",
-    color: "#1A1A1A",
+    color: theme.ink,
     marginBottom: "5px",
     fontFamily: "Georgia, serif",
   },
   ctaDesc: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     lineHeight: "1.5",
   },
@@ -240,17 +235,17 @@ const S = {
     width: "8px",
     height: "8px",
     borderRadius: "50%",
-    backgroundColor: "#639922",
+    backgroundColor: theme.green,
     flexShrink: 0,
   },
   chatText: {
     fontSize: "14px",
-    color: "#1A1A1A",
+    color: theme.ink,
     fontFamily: "Georgia, serif",
   },
   chatSub: {
     fontSize: "12px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     marginTop: "2px",
   },
@@ -292,13 +287,13 @@ const S = {
   },
   emptyTitle: {
     fontSize: "18px",
-    color: "#1A1A1A",
+    color: theme.ink,
     fontFamily: "Georgia, serif",
     marginBottom: "10px",
   },
   emptySub: {
     fontSize: "13px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     lineHeight: "1.7",
     marginBottom: "24px",
@@ -306,8 +301,8 @@ const S = {
   btnPrimary: {
     display: "inline-block",
     padding: "14px 32px",
-    backgroundColor: "#1A1A1A",
-    color: "#FAF7F2",
+    backgroundColor: theme.ink,
+    color: theme.bgSecondary,
     border: "none",
     borderRadius: "6px",
     fontSize: "14px",
@@ -323,14 +318,14 @@ const S = {
     borderRadius: "12px",
     padding: "20px",
     fontSize: "13px",
-    color: "#4A4540",
+    color: theme.inkMuted,
     fontFamily: "Georgia, serif",
     lineHeight: "1.8",
     whiteSpace: "pre-wrap",
   },
   fechaLabel: {
     fontSize: "11px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
     marginBottom: "12px",
   },
@@ -338,7 +333,7 @@ const S = {
     textAlign: "center",
     padding: "60px 24px",
     fontSize: "13px",
-    color: "#8A7F74",
+    color: theme.inkFaint,
     fontFamily: "Georgia, serif",
   },
 };
@@ -346,21 +341,7 @@ const S = {
 // ─── Componente principal ─────────────────────────────────────────────────────
 
 async function generateMapaCompleto(scores, indiceScores) {
-  const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({
-      model: "claude-haiku-4-5",
-      max_tokens: 1024,
-      messages: [{
-        role: "user",
-        content: `Eres un terapeuta con 25 años de experiencia clínica. Has visto miles 
+  const prompt = `Eres un terapeuta con 25 años de experiencia clínica. Has visto miles 
 de perfiles. Sabes leer entre líneas. No explicas — observas y diriges.
 
 Esta persona acaba de completar una evaluación psicométrica completa.
@@ -413,12 +394,18 @@ Tono: terapeuta experimentado anglosajón — directo, sin rodeos,
 sin crueldad, sin motivación vacía. Como si llevaras 3 sesiones 
 con esta persona y por fin fueras a decirle lo que realmente ves.
 Prohibido: mayúsculas en el texto del párrafo, jerga clínica, 
-frases de autoayuda, adjetivos vacíos.`
-      }]
-    })
+frases de autoayuda, adjetivos vacíos.`;
+
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/claude-proxy`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({ prompt }),
   });
   const data = await response.json();
-  return data.content?.[0]?.text || null;
+  return data.text || null;
 }
 
 export default function Dashboard() {
@@ -435,6 +422,12 @@ export default function Dashboard() {
   const [feedbackEnviado, setFeedbackEnviado] = useState(false);
   const [slugIndice, setSlugIndice] = useState(null);
   const [generandoSlug, setGenerandoSlug] = useState(false);
+
+  function colorZona(z) {
+    if (z === "verde") return theme.green;
+    if (z === "ambar") return theme.zonaAmbar.color;
+    return theme.zonaRoja.color;
+  }
 
   useEffect(() => {
     const handle = () => setIsMobile(window.innerWidth < 768);
@@ -587,24 +580,24 @@ export default function Dashboard() {
   return (
     <div style={S.page}>
       {/* 1 — Nav */}
-      <nav style={{ background: "#FAF7F2", padding: navPad, borderBottom: "0.5px solid rgba(0,0,0,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: "Georgia, serif", fontSize: 16, color: "#1a1714" }}>lucidez</span>
+      <nav style={{ background: theme.bgSecondary, padding: navPad, borderBottom: "0.5px solid rgba(0,0,0,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: "Georgia, serif", fontSize: 16, color: theme.ink }}>lucidez</span>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <span style={{ background: "#ede9e3", fontFamily: "'Courier New', monospace", fontSize: 11, borderRadius: 20, padding: "4px 10px", color: "#8A7F74" }}>
+          <span style={{ background: theme.bgTertiary, fontFamily: "'Courier New', monospace", fontSize: 11, borderRadius: 20, padding: "4px 10px", color: theme.inkFaint }}>
             {diasDesdeInicio > 0 ? `${nombre} · día ${diasDesdeInicio}` : nombre}
           </span>
-          <button style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#8A7F74", background: "none", border: "none", cursor: "pointer" }} onClick={handleSignOut}>Salir</button>
+          <button style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: theme.inkFaint, background: "none", border: "none", cursor: "pointer" }} onClick={handleSignOut}>Salir</button>
         </div>
       </nav>
 
       {/* 2 — Score hero */}
-      <div style={{ padding: isMobile ? "24px 20px 20px" : "24px 40px 20px", background: "#fff", borderBottom: "0.5px solid #ede9e3" }}>
-        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 8 }}>
+      <div style={{ padding: isMobile ? "24px 20px 20px" : "24px 40px 20px", background: theme.bg, borderBottom: `0.5px solid ${theme.border}` }}>
+        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginBottom: 8 }}>
           ÍNDICE DE LUCIDEZ · {fechaLabel}
         </div>
         <div>
           <div style={{ fontFamily: "Georgia, serif", fontSize: 72, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
-          <div style={{ height: 6, borderRadius: 3, background: "#ede9e3", marginTop: 12, width: "100%", overflow: "hidden" }}>
+          <div style={{ height: 6, borderRadius: 3, background: theme.bgTertiary, marginTop: 12, width: "100%", overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${overall}%`, background: colorZona(zona(overall)), borderRadius: 3 }} />
           </div>
         </div>
@@ -614,11 +607,11 @@ export default function Dashboard() {
               <input
                 readOnly
                 value={`${window.location.origin}/r/${slugIndice}`}
-                style={{ flex: 1, padding: "8px 12px", background: "#ffffff", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "'Courier New', monospace", fontSize: 11, outline: "none" }}
+                style={{ flex: 1, padding: "8px 12px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 4, fontFamily: "'Courier New', monospace", fontSize: 11, outline: "none" }}
               />
               <button
                 onClick={() => navigator.clipboard.writeText(`${window.location.origin}/r/${slugIndice}`)}
-                style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2, flexShrink: 0 }}
+                style={{ background: theme.ink, color: theme.bg, border: "none", padding: "8px 14px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2, flexShrink: 0 }}
               >
                 Copiar →
               </button>
@@ -640,7 +633,7 @@ export default function Dashboard() {
                 setGenerandoSlug(false);
               }}
               disabled={generandoSlug}
-              style={{ background: generandoSlug ? "#ede9e3" : "#1a1714", color: generandoSlug ? "#a09890" : "#f7f4f0", border: "none", padding: "8px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: generandoSlug ? "default" : "pointer", borderRadius: 2 }}
+              style={{ background: generandoSlug ? theme.bgTertiary : theme.ink, color: generandoSlug ? theme.inkFaint : theme.bg, border: "none", padding: "8px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: generandoSlug ? "default" : "pointer", borderRadius: 2 }}
             >
               {generandoSlug ? "Generando..." : "Compartir mi Índice →"}
             </button>
@@ -650,7 +643,7 @@ export default function Dashboard() {
 
       {/* 3 — Dimensiones */}
       <div style={{ padding: secPad }}>
-        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 12 }}>
+        <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginBottom: 12 }}>
           TUS DIMENSIONES · {evaluadas} de 6 evaluadas
         </div>
         {DIMENSIONES.map((d) => {
@@ -660,14 +653,14 @@ export default function Dashboard() {
           const zDeep = hasDeepEval ? zona(deepScore) : null;
           const cDeep = hasDeepEval ? colorZona(zDeep) : null;
           return (
-            <div key={d.key} style={{ background: hasDeepEval ? "#fff" : "#FAFAF7", borderRadius: 10, border: hasDeepEval ? "0.5px solid #9FE1CB" : "0.5px solid #D3D1C7", padding: "14px 16px", marginBottom: 10 }}>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#1A1A1A", marginBottom: 2 }}>
+            <div key={d.key} style={{ background: hasDeepEval ? theme.bg : theme.bgSecondary, borderRadius: 10, border: hasDeepEval ? `0.5px solid ${theme.green}80` : `0.5px solid ${theme.border}`, padding: "14px 16px", marginBottom: 10 }}>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 14, color: theme.ink, marginBottom: 2 }}>
                 {d.label}
               </div>
-              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 10 }}>
+              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginBottom: 10 }}>
                 {ESCALA_DESC[d.key]}
               </div>
-              <div style={{ height: 3, background: "#ede9e3", borderRadius: 2, marginBottom: 10, overflow: "hidden" }}>
+              <div style={{ height: 3, background: theme.bgTertiary, borderRadius: 2, marginBottom: 10, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${hasDeepEval ? deepScore : s}%`, background: hasDeepEval ? cDeep : colorZona(zona(s)), borderRadius: 2 }} />
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -675,7 +668,7 @@ export default function Dashboard() {
                   <span style={{ fontFamily: "'Courier New', monospace", fontSize: 20, color: hasDeepEval ? cDeep : colorZona(zona(s)) }}>
                     {hasDeepEval ? deepScore : s}
                   </span>
-                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginLeft: 6 }}>
+                  <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginLeft: 6 }}>
                     {hasDeepEval ? `índice: ${s}` : "solo Índice"}
                   </span>
                 </div>
@@ -683,13 +676,13 @@ export default function Dashboard() {
                   <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                     <button
                       onClick={() => navigate(`/evaluacion/${d.key}?modo=reporte`)}
-                      style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: theme.green, background: "none", border: "none", cursor: "pointer", padding: 0 }}
                     >
                       Ver mi reporte →
                     </button>
                     <button
                       onClick={() => navigate(`/evaluacion/${d.key}`)}
-                      style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#a09890", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: theme.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0 }}
                     >
                       Repetir →
                     </button>
@@ -697,7 +690,7 @@ export default function Dashboard() {
                 ) : (
                   <button
                     onClick={() => navigate(`/evaluacion/${d.key}`)}
-                    style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: "#5BA08A", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                    style={{ fontFamily: "'Courier New', monospace", fontSize: 11, color: theme.green, background: "none", border: "none", cursor: "pointer", padding: 0 }}
                   >
                     Realizar evaluación →
                   </button>
@@ -723,9 +716,9 @@ export default function Dashboard() {
               width: "100%",
               fontFamily: "'Courier New', monospace",
               fontSize: 12,
-              color: "#5BA08A",
-              background: "#f0f4f2",
-              border: "1px solid #9FE1CB",
+              color: theme.green,
+              background: theme.greenLight,
+              border: `1px solid ${theme.green}`,
               borderRadius: 8,
               padding: "14px 16px",
               cursor: loadingMapa ? "not-allowed" : "pointer",
@@ -741,8 +734,8 @@ export default function Dashboard() {
       {/* 3.6 — Mapa completo */}
       {mapaCompleto && (
         <div style={{ padding: secPad }}>
-          <div style={{ background: "#ffffff", border: "1px solid #5BA08A", borderRadius: 6, padding: 28 }}>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+          <div style={{ background: theme.bg, border: `1px solid ${theme.green}`, borderRadius: 6, padding: 28 }}>
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               TU MAPA COMPLETO · {fechaLabel}
             </div>
             {mapaCompleto.split("\n\n").map((block, i) => {
@@ -751,10 +744,10 @@ export default function Dashboard() {
               const texto = lines.slice(1).join("\n").trim();
               return (
                 <div key={i} style={{ marginBottom: i < 3 ? 24 : 0 }}>
-                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#5BA08A", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.green, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     {label}
                   </div>
-                  <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#4A4540", lineHeight: 1.8, margin: 0 }}>
+                  <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: theme.inkMuted, lineHeight: 1.8, margin: 0 }}>
                     {texto}
                   </p>
                 </div>
@@ -768,23 +761,23 @@ export default function Dashboard() {
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
         <div
           onClick={() => navigate("/indice")}
-          style={{ background: "#1a1714", borderRadius: 8, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
+          style={{ background: theme.ink, borderRadius: 8, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
         >
-          <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#f7f4f0", marginBottom: 2 }}>Re-aplicar el Índice</div>
-          <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#888780" }}>Mide tu progreso esta semana</div>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: theme.bg, marginBottom: 2 }}>Re-aplicar el Índice</div>
+          <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint }}>Mide tu progreso esta semana</div>
         </div>
       </div>
 
       <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 100 }}>
         {showFeedbackModal && (
-          <div style={{ marginBottom: 8, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 20, width: 280, boxShadow: "0 4px 24px rgba(26,23,20,0.08)" }}>
+          <div style={{ marginBottom: 8, background: theme.bg, border: `0.5px solid ${theme.border}`, borderRadius: 6, padding: 20, width: 280, boxShadow: "0 4px 24px rgba(26,23,20,0.08)" }}>
             {feedbackEnviado ? (
-              <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#3d7a65", margin: 0, textAlign: "center" }}>
+              <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: theme.green, margin: 0, textAlign: "center" }}>
                 Gracias — lo leemos todo.
               </p>
             ) : (
               <>
-                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 12 }}>
+                <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 12 }}>
                   ¿Algo que mejorar?
                 </div>
                 <textarea
@@ -792,19 +785,19 @@ export default function Dashboard() {
                   onChange={(e) => setFeedbackTexto(e.target.value)}
                   placeholder="Escribe lo que quieras — bug, sugerencia, lo que sea..."
                   rows={3}
-                  style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "10px 12px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 13, resize: "none", outline: "none", lineHeight: 1.6, marginBottom: 10 }}
+                  style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "10px 12px", background: theme.bgSecondary, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 13, resize: "none", outline: "none", lineHeight: 1.6, marginBottom: 10 }}
                 />
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <button
                     onClick={() => { setShowFeedbackModal(false); setFeedbackTexto(""); }}
-                    style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+                    style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
                   >
                     Cancelar
                   </button>
                   <button
                     onClick={handleFeedbackFlotante}
                     disabled={!feedbackTexto.trim()}
-                    style={{ background: feedbackTexto.trim() ? "#1a1714" : "#ede9e3", color: feedbackTexto.trim() ? "#f7f4f0" : "#a09890", border: "none", padding: "8px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: feedbackTexto.trim() ? "pointer" : "default", borderRadius: 2 }}
+                    style={{ background: feedbackTexto.trim() ? theme.ink : theme.bgTertiary, color: feedbackTexto.trim() ? theme.bg : theme.inkFaint, border: "none", padding: "8px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: feedbackTexto.trim() ? "pointer" : "default", borderRadius: 2 }}
                   >
                     Enviar →
                   </button>
@@ -815,7 +808,7 @@ export default function Dashboard() {
         )}
         <button
           onClick={() => setShowFeedbackModal(!showFeedbackModal)}
-          style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "10px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+          style={{ background: theme.ink, color: theme.bg, border: "none", padding: "10px 16px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
         >
           {showFeedbackModal ? "× Cerrar" : "¿Feedback?"}
         </button>
