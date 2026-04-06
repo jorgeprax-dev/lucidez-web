@@ -129,6 +129,12 @@ Responde SOLO con los 4 párrafos. Sin títulos.`;
   }
 }
 
+function colorZona(score) {
+  if (score >= 80) return theme.green;
+  if (score >= 60) return theme.zonaAmbar.color;
+  return theme.zonaRoja.color;
+}
+
 export default function Evaluacion() {
   const { dimension } = useParams();
   const [searchParams] = useSearchParams();
@@ -327,7 +333,7 @@ export default function Evaluacion() {
     return (
       <div style={{ minHeight: "100vh", background: theme.bgSecondary, fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ fontSize: "clamp(48px, 12vw, 72px)", fontWeight: 300, color: theme.green, marginBottom: 16 }}>
+          <div style={{ fontSize: "clamp(48px, 12vw, 72px)", fontWeight: 300, color: colorZona(visibleOverall), marginBottom: 16 }}>
             {visibleOverall}%
           </div>
           <h1 style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 400, margin: "0 0 24px", color: "#1a1a1a" }}>
@@ -410,7 +416,7 @@ export default function Evaluacion() {
             </div>
           )}
 
-          <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 28px", background: theme.green, border: "none", borderRadius: 8, color: "#fff", fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
+          <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 28px", background: theme.ink, border: "none", borderRadius: 8, color: theme.bg, fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
             Volver al dashboard →
           </button>
           <div>
