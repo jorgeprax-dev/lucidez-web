@@ -718,8 +718,8 @@ export default function Dashboard() {
       {/* 3.6 — Mapa completo */}
       {mapaCompleto && (
         <div style={{ padding: secPad }}>
-          <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 6, padding: 28 }}>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+          <div style={{ background: theme.bg, border: "1px solid #5BA08A", borderRadius: 6, padding: 28 }}>
+            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#a09890", marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               TU MAPA COMPLETO · {fechaLabel}
             </div>
             {mapaCompleto.split("\n\n").map((block, i) => {
@@ -728,10 +728,10 @@ export default function Dashboard() {
               const texto = lines.slice(1).join("\n").trim();
               return (
                 <div key={i} style={{ marginBottom: i < 3 ? 24 : 0 }}>
-                  <div style={{ fontFamily: theme.mono, fontSize: 10, color: theme.inkFaint, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
+                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: "#5BA08A", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     {label}
                   </div>
-                  <p style={{ fontFamily: theme.serif, fontSize: 15, color: theme.inkMuted, lineHeight: 1.8, margin: 0 }}>
+                  <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#4A4540", lineHeight: 1.8, margin: 0 }}>
                     {texto}
                   </p>
                 </div>
