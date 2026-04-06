@@ -350,55 +350,11 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
     return () => window.removeEventListener("resize", handle);
   }, []);
 
-  const dimProgress = DIMS.map((d) => {
-    const idxs = allQuestions.map((qq, i) => d.questions.some((dq) => dq.id === qq.id) ? i : -1).filter((i) => i >= 0);
-    const done = idxs.every((i) => answers[allQuestions[i].id] !== undefined);
-    const active = d.questions.some((dq) => dq.id === q.id);
-    return { ...d, done, active };
-  });
-
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 32 }}>
-      <div style={{ display: isMobile ? "flex" : "grid", flexDirection: isMobile ? "column" : undefined, gridTemplateColumns: isMobile ? undefined : "200px 1fr 220px", gap: 0, alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
-        {!isMobile && (
-        <div style={{ padding: "32px 20px", borderRight: `0.5px solid ${C.border}` }}>
-          <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
-            Dimensiones
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {dimProgress.map((d) => {
-              const color = d.active ? C.cream : d.done ? C.inkMuted : C.inkFaint;
-              const background = d.active ? C.ink : d.done ? "#edf4f0" : "transparent";
-              return (
-                <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 4, background }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.active ? C.cream : d.color, flexShrink: 0 }} />
-                  <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
-                    {d.label.split(" ")[0]}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        )}
+      <div style={{ display: isMobile ? "flex" : "grid", flexDirection: isMobile ? "column" : undefined, gridTemplateColumns: isMobile ? undefined : "1fr 220px", gap: 0, alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
 
         <div style={{ padding: isMobile ? "24px 20px" : "40px 48px" }}>
-          {isMobile && (
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
-              {dimProgress.map((d) => {
-                const color = d.active ? C.cream : d.done ? C.inkMuted : C.inkFaint;
-                const background = d.active ? C.ink : d.done ? "#edf4f0" : "transparent";
-                return (
-                  <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderRadius: 4, background }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.active ? C.cream : d.color, flexShrink: 0 }} />
-                    <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
-                      {d.label.split(" ")[0]}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
             <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
             <span style={{ fontFamily: theme.mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
@@ -413,19 +369,27 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
             <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
               {[1, 2, 3, 4, 5].map((v) => {
                 const sel = answers[q.id] === v;
+                const sizes = [64, 56, 48, 56, 64];
+                const size = sizes[v - 1];
+                const borderColor = sel
+                  ? v <= 2 ? theme.green : v >= 4 ? theme.purple : dim.color
+                  : v <= 2 ? theme.green : v >= 4 ? theme.purpleMid : "rgba(100,100,180,0.25)";
+                const bgColor = sel
+                  ? v <= 2 ? theme.green : v >= 4 ? theme.purple : dim.color
+                  : theme.bg;
                 return (
                   <button
                     key={v}
                     onClick={() => onAnswer(q.id, v)}
                     style={{
-                      width: 56,
-                      height: 56,
+                      width: size,
+                      height: size,
                       borderRadius: "50%",
-                      border: `2px solid ${sel ? dim.color : theme.borderStrong}`,
-                      background: sel ? dim.color : theme.bg,
-                      color: sel ? "#ffffff" : theme.ink,
+                      border: `2px solid ${borderColor}`,
+                      background: bgColor,
+                      color: sel ? "#ffffff" : theme.inkMuted,
                       fontFamily: theme.mono,
-                      fontSize: 15,
+                      fontSize: 14,
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
@@ -440,9 +404,9 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
                 );
               })}
             </div>
-            <div style={{ width: 290, display: "flex", justifyContent: "space-between", fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.04em" }}>
-              <span style={{ width: 50, textAlign: "center" }}>De acuerdo</span>
-              <span style={{ width: 50, textAlign: "center" }}>En desacuerdo</span>
+            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", maxWidth: 340, fontFamily: theme.mono, fontSize: 11, marginTop: 8 }}>
+              <span style={{ color: theme.green }}>De acuerdo</span>
+              <span style={{ color: theme.purple }}>En desacuerdo</span>
             </div>
           </div>
 
