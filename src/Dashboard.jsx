@@ -714,16 +714,14 @@ export default function Dashboard() {
             disabled={loadingMapa}
             style={{
               width: "100%",
-              fontFamily: "'Courier New', monospace",
-              fontSize: 12,
-              color: theme.green,
-              background: theme.greenLight,
-              border: `1px solid ${theme.green}`,
+              fontFamily: theme.serif,
+              fontSize: 14,
+              color: loadingMapa ? theme.inkFaint : theme.bg,
+              background: loadingMapa ? theme.bgTertiary : theme.ink,
+              border: `1px solid ${theme.border}`,
               borderRadius: 8,
               padding: "14px 16px",
               cursor: loadingMapa ? "not-allowed" : "pointer",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
             }}
           >
             {loadingMapa ? "Generando mapa..." : "Generar mi mapa completo →"}
