@@ -360,34 +360,20 @@ Cómo actúa:
 - Agencia: ${scores.agencia}/100
 
 Escribe exactamente 4 secciones con este formato:
-[EYEBROW EN MAYÚSCULAS]
-párrafo
+Título: [título de la sección en minúsculas]
+[párrafo]
 
-Las 4 secciones:
+Las 4 secciones son:
+lo que veo
+el patrón que lo sostiene
+tu estrella polar
+esta semana
 
-LO QUE VEO
-Lo que esta persona vive por dentro que nadie le ha sabido nombrar. 
-No describas los scores — describe la experiencia. Algo tan específico 
-que cuando lo lea piense "¿cómo supo?". Una contradicción que carga 
-sin haberla identificado. 2-3 oraciones. Sin jerga.
-
-EL PATRÓN QUE LO SOSTIENE
-Por qué sigue así. No por falta de voluntad — sino qué mecanismo 
-interno lo mantiene en ese lugar. El loop que se repite. 
-2-3 oraciones. Que suene a insight, no a diagnóstico.
-
-TU ESTRELLA POLAR
-Una sola dirección. No un plan — una orientación. 
-Si esta persona solo pudiera cambiar una cosa, cuál sería y por qué 
-esa específica mueve todo lo demás. Que sea valiente. Que no sea obvia.
-2-3 oraciones.
-
-ESTA SEMANA
-Una sola acción concreta. Específica para este perfil — 
-no genérica. Algo que pueda hacer en los próximos 7 días 
-que venga directamente de su patrón. No "medita más" ni 
-"lleva un diario". Algo que, si lo hace, va a notar algo diferente.
-2-3 oraciones.
+Reglas de formato:
+- El título va en minúsculas, sin #, sin corchetes, sin mayúsculas
+- El párrafo va en minúsculas también, sin mayúsculas sostenidas
+- Separa cada sección con una línea en blanco
+- No uses markdown, no uses #, no uses asteriscos
 
 Voz: segunda persona directa. Tutéame.
 Tono: terapeuta experimentado anglosajón — directo, sin rodeos, 
@@ -732,7 +718,7 @@ export default function Dashboard() {
       {/* 3.6 — Mapa completo */}
       {mapaCompleto && (
         <div style={{ padding: secPad }}>
-          <div style={{ background: theme.bg, border: `1px solid ${theme.green}`, borderRadius: 6, padding: 28 }}>
+          <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 6, padding: 28 }}>
             <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.inkFaint, marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.08em" }}>
               TU MAPA COMPLETO · {fechaLabel}
             </div>
@@ -742,10 +728,10 @@ export default function Dashboard() {
               const texto = lines.slice(1).join("\n").trim();
               return (
                 <div key={i} style={{ marginBottom: i < 3 ? 24 : 0 }}>
-                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, color: theme.green, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
+                  <div style={{ fontFamily: theme.mono, fontSize: 10, color: theme.inkFaint, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     {label}
                   </div>
-                  <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: theme.inkMuted, lineHeight: 1.8, margin: 0 }}>
+                  <p style={{ fontFamily: theme.serif, fontSize: 15, color: theme.inkMuted, lineHeight: 1.8, margin: 0 }}>
                     {texto}
                   </p>
                 </div>
