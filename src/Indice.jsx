@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 import { generarReportePublico } from "./utils";
+import { theme } from "./theme";
 
 async function saveToSupabase(data) {
   try {
@@ -275,17 +276,14 @@ function generateLocalReport(scores, user) {
 
 // ─── Estilos base ───
 const C = {
-  cream: "#f7f4f0",
-  creamDark: "#ede9e3",
-  ink: "#1a1714",
-  inkMuted: "#6b6460",
-  inkFaint: "#a09890",
-  border: "rgba(26,23,20,0.12)",
-  borderStrong: "rgba(26,23,20,0.22)",
+  cream: theme.bg,
+  creamDark: theme.bgSecondary,
+  ink: theme.ink,
+  inkMuted: theme.inkMuted,
+  inkFaint: theme.inkFaint,
+  border: theme.border,
+  borderStrong: theme.borderStrong,
 };
-
-const mono = "'Courier New', monospace";
-const serif = "Georgia, 'Times New Roman', serif";
 
 // ─── Radar chart ───
 function Radar({ scores }) {
@@ -304,7 +302,7 @@ function Radar({ scores }) {
       {dataPoints.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={4} fill={DIMS[i].color} />)}
       {DIMS.map((d, i) => {
         const lp = pt(i, 1.28);
-        return <text key={i} x={lp.x} y={lp.y} textAnchor="middle" dominantBaseline="middle" fill={C.inkFaint} fontSize={8} fontFamily={mono}>{d.label.split(" ")[0]}</text>;
+        return <text key={i} x={lp.x} y={lp.y} textAnchor="middle" dominantBaseline="middle" fill={C.inkFaint} fontSize={8} fontFamily={theme.mono}>{d.label.split(" ")[0]}</text>;
       })}
     </svg>
   );
@@ -314,7 +312,7 @@ function Radar({ scores }) {
 function NameScreen({ nombre, onChange, onStart }) {
   return (
     <div style={{ maxWidth: 680, margin: "0 auto", paddingTop: 48 }}>
-      <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 20, display: "block" }}>
+      <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 20, display: "block" }}>
         Índice de Lucidez
       </span>
       <div style={{ fontSize: 26, fontWeight: "normal", lineHeight: 1.35, marginBottom: 28, color: C.ink }}>
@@ -326,11 +324,11 @@ function NameScreen({ nombre, onChange, onStart }) {
         onChange={(e) => onChange(e.target.value)}
         placeholder="Tu nombre"
         autoFocus
-        style={{ display: "block", width: "100%", padding: "14px 0", background: "transparent", color: C.ink, border: "none", borderBottom: `1px solid ${C.borderStrong}`, fontFamily: serif, fontSize: 22, outline: "none", marginBottom: 32 }}
+        style={{ display: "block", width: "100%", padding: "14px 0", background: "transparent", color: C.ink, border: "none", borderBottom: `1px solid ${C.borderStrong}`, fontFamily: theme.serif, fontSize: 22, outline: "none", marginBottom: 32 }}
       />
       <button
         onClick={onStart}
-        style={{ background: C.ink, color: C.cream, border: "none", padding: "13px 28px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+        style={{ background: C.ink, color: C.cream, border: "none", padding: "13px 28px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
       >
         Comenzar →
       </button>
@@ -364,7 +362,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
       <div style={{ display: isMobile ? "flex" : "grid", flexDirection: isMobile ? "column" : undefined, gridTemplateColumns: isMobile ? undefined : "200px 1fr 220px", gap: 0, alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
         {!isMobile && (
         <div style={{ padding: "32px 20px", borderRight: `0.5px solid ${C.border}` }}>
-          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
+          <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
             Dimensiones
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -374,7 +372,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
               return (
                 <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 4, background }}>
                   <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.active ? C.cream : d.color, flexShrink: 0 }} />
-                  <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
+                  <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
                     {d.label.split(" ")[0]}
                   </div>
                 </div>
@@ -393,7 +391,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
                 return (
                   <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 10px", borderRadius: 4, background }}>
                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: d.active ? C.cream : d.color, flexShrink: 0 }} />
-                    <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
+                    <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.05em", textTransform: "uppercase", color }}>
                       {d.label.split(" ")[0]}
                     </div>
                   </div>
@@ -403,8 +401,8 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
           )}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
             <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
-            <span style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
-            <span style={{ fontFamily: mono, fontSize: 10, color: C.inkFaint, marginLeft: "auto" }}>{currentIdx + 1} / {total}</span>
+            <span style={{ fontFamily: theme.mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
+            <span style={{ fontFamily: theme.mono, fontSize: 10, color: C.inkFaint, marginLeft: "auto" }}>{currentIdx + 1} / {total}</span>
           </div>
 
           <div style={{ fontSize: 20, fontWeight: "normal", lineHeight: 1.5, marginBottom: 36, color: C.ink, minHeight: 72 }}>
@@ -419,30 +417,46 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
                   <button
                     key={v}
                     onClick={() => onAnswer(q.id, v)}
-                    style={{ width: 50, height: 50, borderRadius: "50%", border: `1px solid ${sel ? dim.color : C.borderStrong}`, background: sel ? dim.color : C.cream, color: sel ? C.cream : C.ink, fontFamily: mono, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s", padding: 0 }}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: "50%",
+                      border: `2px solid ${sel ? dim.color : theme.borderStrong}`,
+                      background: sel ? dim.color : theme.bg,
+                      color: sel ? "#ffffff" : theme.ink,
+                      fontFamily: theme.mono,
+                      fontSize: 15,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      transition: "all 0.15s",
+                      padding: 0,
+                    }}
                   >
                     {v}
                   </button>
                 );
               })}
             </div>
-            <div style={{ width: 290, display: "flex", justifyContent: "space-between", fontFamily: mono, fontSize: 9, color: C.inkFaint, letterSpacing: "0.04em" }}>
-              <span style={{ width: 50, textAlign: "center" }}>Nunca</span>
-              <span style={{ width: 50, textAlign: "center" }}>Siempre</span>
+            <div style={{ width: 290, display: "flex", justifyContent: "space-between", fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.04em" }}>
+              <span style={{ width: 50, textAlign: "center" }}>De acuerdo</span>
+              <span style={{ width: 50, textAlign: "center" }}>En desacuerdo</span>
             </div>
           </div>
 
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <button
               onClick={onBack}
-              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: C.cream, color: C.inkMuted, border: `1px solid ${C.borderStrong}`, padding: "12px 20px", fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: C.cream, color: C.inkMuted, border: `1px solid ${C.borderStrong}`, padding: "12px 20px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
             >
               ← Anterior
             </button>
             <button
               onClick={onNext}
               disabled={!answered}
-              style={{ background: answered ? C.ink : C.creamDark, color: answered ? C.cream : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: answered ? "pointer" : "default", borderRadius: 2, opacity: answered ? 1 : 0.5 }}
+              style={{ background: answered ? C.ink : C.creamDark, color: answered ? C.cream : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: answered ? "pointer" : "default", borderRadius: 2, opacity: answered ? 1 : 0.5 }}
             >
               {currentIdx === total - 1 ? "Ver mi reporte →" : "Siguiente →"}
             </button>
@@ -451,7 +465,7 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
 
         {!isMobile && (
         <div style={{ padding: "32px 20px", borderLeft: `0.5px solid ${C.border}`, background: "#faf8f5" }}>
-          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
+          <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12 }}>
             Esta dimensión
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
@@ -462,14 +476,14 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
             {dim.desc}
           </div>
           <hr style={{ border: "none", borderTop: `0.5px solid ${C.border}`, margin: "16px 0" }} />
-          <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 8 }}>
+          <div style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 8 }}>
             Escalas validadas
           </div>
           <div>
             {DIMS.map((d) => {
               const active = d.id === dim.id;
               return (
-                <div key={d.id} style={{ fontFamily: mono, fontSize: 11, lineHeight: 2, color: active ? C.ink : C.inkFaint }}>
+                <div key={d.id} style={{ fontFamily: theme.mono, fontSize: 11, lineHeight: 2, color: active ? C.ink : C.inkFaint }}>
                   {d.escalaLabel}
                 </div>
               );
@@ -585,16 +599,16 @@ function ResultsScreen({ scores, user, session }) {
       {isMobile ? (
         <div>
           <div style={{ marginBottom: 36 }}>
-            <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
+            <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
               Tu Índice de Lucidez
             </span>
             <div style={{ fontSize: 80, fontWeight: "normal", lineHeight: 1, color: zona.color, letterSpacing: "-0.03em", marginBottom: 4 }}>
               {overall}
             </div>
-            <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
+            <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
               {zona.label}
             </div>
-            <div style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint }}>
+            <div style={{ fontFamily: theme.mono, fontSize: 11, color: C.inkFaint }}>
               {user.nombre} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
             </div>
           </div>
@@ -602,11 +616,11 @@ function ResultsScreen({ scores, user, session }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
             {DIMS.map((d) => (
               <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
+                <div style={{ fontFamily: theme.mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
                 <div style={{ flex: 1, height: 6, background: C.creamDark, borderRadius: 3, overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3 }} />
                 </div>
-                <div style={{ fontFamily: mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
+                <div style={{ fontFamily: theme.mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
               </div>
             ))}
           </div>
@@ -620,7 +634,7 @@ function ResultsScreen({ scores, user, session }) {
                 value={emailOpcional}
                 onChange={(e) => setEmailOpcional(e.target.value)}
                 placeholder="tu@correo.com"
-                style={{ display: "block", width: "100%", maxWidth: "100%", boxSizing: "border-box", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
+                style={{ display: "block", width: "100%", maxWidth: "100%", boxSizing: "border-box", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: theme.serif, fontSize: 15, outline: "none", marginBottom: 10 }}
               />
               {!emailOpcional.trim() && (
                 <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
@@ -629,7 +643,7 @@ function ResultsScreen({ scores, user, session }) {
               )}
               <button
                 onClick={handleShowReport}
-                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
               >
                 Ver mi reporte completo →
               </button>
@@ -642,13 +656,13 @@ function ResultsScreen({ scores, user, session }) {
 
           {showReport && (
             <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 24 }}>
-              <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+              <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
               {loadingReport ? (
                 <div style={{ textAlign: "center", padding: "24px 0" }}>
-                  <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
+                  <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
                     Analizando tu perfil...
                   </p>
-                  <p style={{ fontFamily: serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
+                  <p style={{ fontFamily: theme.serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
                     Esto toma unos segundos. Claude está leyendo tus 6 dimensiones.
                   </p>
                 </div>
@@ -657,11 +671,11 @@ function ResultsScreen({ scores, user, session }) {
                   <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
                 ))
               )}
-              <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
+              <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                 Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
               </p>
               {session && (
-                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
                   Ir al dashboard →
                 </a>
               )}
@@ -672,16 +686,16 @@ function ResultsScreen({ scores, user, session }) {
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: 40, alignItems: "start" }}>
           <div>
             <div style={{ marginBottom: 36 }}>
-              <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
+              <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 12, display: "block" }}>
                 Tu Índice de Lucidez
               </span>
               <div style={{ fontSize: 80, fontWeight: "normal", lineHeight: 1, color: zona.color, letterSpacing: "-0.03em", marginBottom: 4 }}>
                 {overall}
               </div>
-              <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
+              <div style={{ display: "inline-block", padding: "4px 12px", background: zona.bg, color: zona.color, fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: 2, marginBottom: 8 }}>
                 {zona.label}
               </div>
-              <div style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint }}>
+              <div style={{ fontFamily: theme.mono, fontSize: 11, color: C.inkFaint }}>
                 {user.nombre} · {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
               </div>
             </div>
@@ -689,11 +703,11 @@ function ResultsScreen({ scores, user, session }) {
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
               {DIMS.map((d) => (
                 <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ fontFamily: mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
+                  <div style={{ fontFamily: theme.mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.06em", color: C.inkMuted, width: 130, flexShrink: 0 }}>{d.label.split(" ")[0]}</div>
                   <div style={{ flex: 1, height: 6, background: C.creamDark, borderRadius: 3, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${scores[d.id]}%`, background: d.color, borderRadius: 3 }} />
                   </div>
-                  <div style={{ fontFamily: mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
+                  <div style={{ fontFamily: theme.mono, fontSize: 12, color: C.ink, width: 30, textAlign: "right", flexShrink: 0 }}>{scores[d.id]}</div>
                 </div>
               ))}
             </div>
@@ -713,7 +727,7 @@ function ResultsScreen({ scores, user, session }) {
                   value={emailOpcional}
                   onChange={(e) => setEmailOpcional(e.target.value)}
                   placeholder="tu@correo.com"
-                  style={{ display: "block", width: "100%", maxWidth: "100%", boxSizing: "border-box", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: serif, fontSize: 15, outline: "none", marginBottom: 10 }}
+                  style={{ display: "block", width: "100%", maxWidth: "100%", boxSizing: "border-box", padding: "12px 14px", background: C.cream, color: C.ink, border: `0.5px solid ${C.borderStrong}`, borderRadius: 2, fontFamily: theme.serif, fontSize: 15, outline: "none", marginBottom: 10 }}
                 />
                 {!emailOpcional.trim() && (
                   <p style={{ fontSize: 12, color: "#9a5e2e", fontFamily: "'Courier New', monospace", marginBottom: 8 }}>
@@ -722,20 +736,20 @@ function ResultsScreen({ scores, user, session }) {
                 )}
                 <button
                   onClick={handleShowReport}
-                  style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                  style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
                 >
                   Ver mi reporte completo →
                 </button>
               </div>
             ) : (
               <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
-                <span style={{ fontFamily: mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+                <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
                 {loadingReport ? (
                   <div style={{ textAlign: "center", padding: "24px 0" }}>
-                    <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
+                    <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
                       Analizando tu perfil...
                     </p>
-                    <p style={{ fontFamily: serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
+                    <p style={{ fontFamily: theme.serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
                       Esto toma unos segundos. Claude está leyendo tus 6 dimensiones.
                     </p>
                   </div>
@@ -744,11 +758,11 @@ function ResultsScreen({ scores, user, session }) {
                     <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
                   ))
                 )}
-                <p style={{ fontFamily: mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
+                <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                   Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
                 </p>
                 {session && (
-                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
                     Ir al dashboard →
                   </a>
                 )}
@@ -1040,15 +1054,15 @@ export default function Indice() {
   const pct = screen === "questions" ? Math.round(((currentQ + 1) / allQuestions.length) * 100) : screen === "results" ? 100 : 0;
 
   return (
-    <div ref={topRef} style={{ background: C.cream, minHeight: "100vh", fontFamily: serif, color: C.ink, fontSize: 15, lineHeight: 1.6 }}>
+    <div ref={topRef} style={{ background: C.cream, minHeight: "100vh", fontFamily: theme.serif, color: C.ink, fontSize: 15, lineHeight: 1.6 }}>
 
       <nav style={{ borderBottom: `0.5px solid ${C.border}`, background: C.cream, position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "16px 28px", display: "flex", alignItems: "center" }}>
-          <a href="/" style={{ textDecoration: "none", fontFamily: serif, fontSize: 17, color: C.ink, letterSpacing: "0.04em", flexShrink: 0 }}>lucidez</a>
+          <a href="/" style={{ textDecoration: "none", fontFamily: theme.serif, fontSize: 17, color: C.ink, letterSpacing: "0.04em", flexShrink: 0 }}>lucidez</a>
           <div style={{ flex: 1, margin: "0 40px", height: 2, background: C.border, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${pct}%`, background: C.ink, transition: "width 0.4s ease" }} />
           </div>
-          <span style={{ fontFamily: mono, fontSize: 11, color: C.inkFaint, letterSpacing: "0.06em", flexShrink: 0 }}>
+          <span style={{ fontFamily: theme.mono, fontSize: 11, color: C.inkFaint, letterSpacing: "0.06em", flexShrink: 0 }}>
             {screen === "questions" ? `${pct}% completado` : screen === "results" ? "Índice completado" : "Índice de Lucidez"}
           </span>
         </div>
