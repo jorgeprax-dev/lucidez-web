@@ -366,10 +366,10 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
           </div>
 
           <div style={{ marginBottom: 32 }}>
-            <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+            <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center", flexWrap: "nowrap", overflowX: "auto" }}>
               {[1, 2, 3, 4, 5].map((v) => {
                 const sel = answers[q.id] === v;
-                const sizes = [64, 56, 48, 56, 64];
+                const sizes = isMobile ? [52, 46, 40, 46, 52] : [64, 56, 48, 56, 64];
                 const size = sizes[v - 1];
                 const borderColor = sel
                   ? v <= 2 ? theme.green : v >= 4 ? theme.purple : dim.color
