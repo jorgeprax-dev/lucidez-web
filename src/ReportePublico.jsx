@@ -44,6 +44,34 @@ export default function ReportePublico() {
       });
   }, [slug]);
 
+  useEffect(() => {
+    if (!reporte) return;
+
+    const titulo = `Mi Índice de Lucidez: ${reporte.overall}`;
+    const descripcion = `Presencia · Claridad · Regulación · Valores · Autoconocimiento · Agencia. Conoce el tuyo en lucidez.app`;
+
+    document.title = titulo;
+
+    const setMeta = (property, content, isName = false) => {
+      const attr = isName ? "name" : "property";
+      let el = document.querySelector(`meta[${attr}="${property}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    setMeta("og:title", titulo);
+    setMeta("og:description", descripcion);
+    setMeta("og:url", window.location.href);
+    setMeta("og:type", "website");
+    setMeta("twitter:card", "summary", true);
+    setMeta("twitter:title", titulo, true);
+    setMeta("twitter:description", descripcion, true);
+  }, [reporte]);
+
   if (loading) {
     return (
       <div style={{ minHeight: "100vh", background: C.cream, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em" }}>
