@@ -68,9 +68,14 @@ async function generateAIReport(scores, nombre) {
   const overall = Math.round(dimTexts.reduce((s, d) => s + d.score, 0) / 6);
   const zona = overall >= 80 ? "verde" : overall >= 60 ? "ámbar" : "roja";
 
-  const prompt = `Eres un clínico experto en psicología basada en evidencia. Vas a escribir un reporte personalizado para ${nombre} basado en su Índice de Lucidez.
+  const prompt = `Eres un intérprete de perfiles psicológicos. 
+Tu marco de referencia: el comportamiento humano como respuesta 
+adaptativa, la desconexión del cuerpo y las emociones como raíz 
+del sufrimiento, la compasión radical sin juicio.
+Tu voz: poética, directa, un poco oscura, sin miedo a nombrar 
+lo que duele, con imágenes concretas en lugar de abstracciones.
 
-Datos del perfil:
+Este es el perfil psicométrico de ${nombre}:
 - Score general: ${overall}/100 (zona ${zona})
 - Presencia: ${scores.presencia}/100
 - Claridad Cognitiva: ${scores.claridad}/100
@@ -81,30 +86,40 @@ Datos del perfil:
 - Dimensión más alta: ${top.label} (${top.score}/100)
 - Dimensión más baja: ${low.label} (${low.score}/100)
 
-Escribe un reporte en español de 4 párrafos con este formato exacto:
+Escribe un reporte en español de 4 párrafos en segunda persona.
+Sin títulos, sin secciones, sin bullets. Solo 4 párrafos seguidos.
 
-Párrafo 1 — Apertura personal: La primera palabra del reporte debe ser el nombre '${nombre}' seguido de una coma. Obligatorio. Ejemplo exacto del formato: '${nombre}, tu perfil muestra...'. Nunca empieces con otra palabra. Máximo 3 oraciones.
+Párrafo 1: La primera palabra debe ser el nombre '${nombre}' 
+seguido de una coma. Obligatorio. Lo que el perfil revela — 
+la contradicción central. No describas los números, describe 
+la experiencia de vivir con este perfil.
 
-Párrafo 2 — El patrón: Qué significa la combinación de scores. Qué está pasando en la vida de alguien con este perfil. Concreto y clínico. Máximo 3 oraciones.
+Párrafo 2: De dónde viene ese patrón — el mecanismo, no el 
+diagnóstico. Por qué sigue así, qué lo sostiene. El loop 
+que se repite.
 
-Párrafo 3 — La fortaleza: Qué tiene ${nombre} que ya funciona y cómo puede usarlo. Menciona la dimensión más alta específicamente.
+Párrafo 3: Lo que tiene ${nombre} a su favor — el recurso real, 
+no el elogio vacío. Menciona la dimensión más alta 
+específicamente pero sin decir el número.
 
-Párrafo 4 — La pregunta abierta: Termina con algo que el Índice no puede responder y que solo la evaluación profunda de ${low.label} puede resolver. Genera curiosidad sin ser manipulador.
+Párrafo 4: Una sola cosa concreta para esta semana. Específica 
+para este perfil. Que venga del patrón, no de un manual.
 
-Después de los 4 párrafos, en una línea completamente separada, genera UNA pregunta cualitativa adicional precedida exactamente por el texto "PREGUNTA_DINAMICA:" (sin espacio antes, sin salto de línea antes del prefijo).
+Después de los 4 párrafos, en una línea completamente separada, 
+genera UNA pregunta cualitativa adicional precedida exactamente 
+por el texto "PREGUNTA_DINAMICA:" (sin espacio antes).
 
 La pregunta debe:
-- Ser específica a la dimensión más baja: ${low.label} (${low.score}/100)
-- Preguntar cómo se manifiesta esa dimensión en la vida concreta del usuario
-- Pedir un ejemplo reciente, no una descripción general
+- Ser específica a la dimensión más baja: ${low.label}
+- Pedir un ejemplo reciente concreto
 - Máximo 25 palabras
 - No mencionar nombres de escalas ni acrónimos
 
-Voz: segunda persona directa en todo el reporte. Nunca tercera persona. No escribas 'Jorge presenta' ni 'su perfil' — escribe 'tu perfil', 'presentas', 'tu dimensión'. El reporte le habla a ${nombre} directamente, no habla sobre él.
-
-Tono: directo, clínico, sin jerga terapéutica, sin frases de autoayuda. Como Epicteto escribiría un reporte clínico.
-Longitud total: máximo 200 palabras.
-Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`;
+Voz: segunda persona siempre. Tutéame.
+Tono: poético y directo — imágenes concretas, sin jerga clínica, 
+sin frases de autoayuda, sin adjetivos vacíos.
+Máximo 220 palabras en los 4 párrafos.
+Responde SOLO con los 4 párrafos y la PREGUNTA_DINAMICA.`;
 
   try {
     const response = await fetch(
