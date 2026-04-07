@@ -201,7 +201,7 @@ const DIMS = [
   },
 ];
 
-const SCALE_LABELS = ["Casi nunca", "Raramente", "A veces", "Con frecuencia", "Casi siempre"];
+const SCALE_LABELS = ["Casi nunca", "Pocas veces", "Algunas veces", "Con frecuencia", "Casi siempre"];
 
 function computeScores(answers) {
   const scores = {};
@@ -355,72 +355,74 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
       <div style={{ display: isMobile ? "flex" : "grid", flexDirection: isMobile ? "column" : undefined, gridTemplateColumns: isMobile ? undefined : "1fr 220px", gap: 0, alignItems: "stretch", border: `0.5px solid ${C.border}`, borderRadius: 6, overflow: "hidden", background: C.cream }}>
 
         <div style={{ padding: isMobile ? "24px 20px" : "40px 48px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: dim.color, flexShrink: 0 }} />
-            <span style={{ fontFamily: theme.mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: C.inkMuted }}>{dim.label}</span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
+            <div style={{ display: "inline-block", background: theme.purpleLight, color: theme.purple, fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 20, marginBottom: 12 }}>
+              {dim.label}
+            </div>
             <span style={{ fontFamily: theme.mono, fontSize: 10, color: C.inkFaint, marginLeft: "auto" }}>{currentIdx + 1} / {total}</span>
           </div>
 
-          <div style={{ fontSize: 20, fontWeight: "normal", lineHeight: 1.5, marginBottom: 36, color: C.ink, minHeight: 72 }}>
+          <div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 600, fontFamily: theme.sans, lineHeight: 1.5, letterSpacing: "-0.3px", marginBottom: 36, color: C.ink, minHeight: 72 }}>
             {q.text}
           </div>
 
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center", flexWrap: "nowrap", overflowX: "auto" }}>
-              {[1, 2, 3, 4, 5].map((v) => {
-                const sel = answers[q.id] === v;
-                const sizes = isMobile ? [52, 46, 40, 46, 52] : [64, 56, 48, 56, 64];
-                const size = sizes[v - 1];
-                const borderColor = sel
-                  ? v <= 2 ? theme.green : v >= 4 ? theme.purple : dim.color
-                  : v <= 2 ? theme.green : v >= 4 ? theme.purpleMid : "rgba(100,100,180,0.25)";
-                const bgColor = sel
-                  ? v <= 2 ? theme.green : v >= 4 ? theme.purple : dim.color
-                  : theme.bg;
-                return (
-                  <button
-                    key={v}
-                    onClick={() => onAnswer(q.id, v)}
-                    style={{
-                      width: size,
-                      height: size,
-                      borderRadius: "50%",
-                      border: `2px solid ${borderColor}`,
-                      background: bgColor,
-                      color: sel ? "#ffffff" : theme.inkMuted,
-                      fontFamily: theme.mono,
-                      fontSize: 14,
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                      transition: "all 0.15s",
-                      padding: 0,
-                    }}
-                  >
-                    {v}
-                  </button>
-                );
-              })}
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", maxWidth: 340, fontFamily: theme.mono, fontSize: 11, marginTop: 8 }}>
-              <span style={{ color: theme.green }}>De acuerdo</span>
-              <span style={{ color: theme.purple }}>En desacuerdo</span>
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+            {SCALE_LABELS.map((label, idx) => {
+              const val = idx + 1;
+              const sel = answers[q.id] === val;
+              return (
+                <div
+                  key={val}
+                  onClick={() => onAnswer(q.id, val)}
+                  style={{
+                    background: sel ? theme.purple : theme.bgSecondary,
+                    borderRadius: 12,
+                    padding: "16px 18px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 14,
+                    cursor: "pointer",
+                  }}
+                >
+                  <div style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: "50%",
+                    border: sel ? "1.5px solid rgba(255,255,255,0.5)" : `1.5px solid ${theme.border}`,
+                    background: sel ? "rgba(255,255,255,0.25)" : theme.bg,
+                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}>
+                    {sel && (
+                      <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FFFFFF" }} />
+                    )}
+                  </div>
+                  <span style={{
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: sel ? "#FFFFFF" : theme.ink,
+                    fontFamily: theme.sans,
+                  }}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <button
               onClick={onBack}
-              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: C.cream, color: C.inkMuted, border: `1px solid ${C.borderStrong}`, padding: "12px 20px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: theme.bg, color: C.inkMuted, border: `0.5px solid ${theme.border}`, padding: "12px 20px", fontFamily: theme.sans, fontSize: 15, cursor: "pointer", borderRadius: 12 }}
             >
               ← Anterior
             </button>
             <button
               onClick={onNext}
               disabled={!answered}
-              style={{ background: answered ? C.ink : C.creamDark, color: answered ? C.cream : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: answered ? "pointer" : "default", borderRadius: 2, opacity: answered ? 1 : 0.5 }}
+              style={{ background: answered ? theme.purple : C.creamDark, color: answered ? "#FFFFFF" : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: theme.sans, fontSize: 15, cursor: answered ? "pointer" : "default", borderRadius: 12, opacity: answered ? 1 : 0.5 }}
             >
               {currentIdx === total - 1 ? "Ver mi reporte →" : "Siguiente →"}
             </button>
