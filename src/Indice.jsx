@@ -129,7 +129,7 @@ Responde SOLO con los 4 párrafos. Sin títulos, sin explicaciones adicionales.`
 const DIMS = [
   {
     id: "presencia", label: "Presencia", tool: "MAAS", autor: "Brown & Ryan, 2003",
-    color: "#3d7a65",
+    color: theme.dims.presencia,
     desc: "Tu capacidad de estar aquí, ahora",
     fortaleza: "Vives con atención genuina al momento presente. Tienes una capacidad natural de notar lo que está pasando — en tu cuerpo, en tus emociones, en el entorno — antes de que te rebase.",
     crecimiento: "Tu mente tiende a estar en otro lado. El pasado o el futuro ocupan más espacio que el presente. Esto no es un defecto — es el punto de partida del trabajo de mindfulness.",
@@ -141,7 +141,7 @@ const DIMS = [
   },
   {
     id: "claridad", label: "Claridad Cognitiva", tool: "ATQ", autor: "Hollon & Kendall, 1980",
-    color: "#9a5e2e",
+    color: theme.dims.claridad,
     desc: "El ruido vs. la señal en tu mente",
     fortaleza: "Tu mente no te sabotea constantemente. Puedes pensar con relativa claridad incluso en momentos de estrés, y los pensamientos autocríticos no dominan tu narrativa interna.",
     crecimiento: "Hay mucho ruido cognitivo — pensamientos automáticos negativos que aparecen solos y distorsionan cómo ves las situaciones y a ti mismo. El trabajo de CBT es exactamente para esto.",
@@ -153,7 +153,7 @@ const DIMS = [
   },
   {
     id: "regulacion", label: "Regulación Emocional", tool: "DERS", autor: "Gratz & Roemer, 2004",
-    color: "#6a3d82",
+    color: theme.dims.regulacion,
     desc: "Tu relación con lo que sientes",
     fortaleza: "Puedes sentir emociones intensas sin que te desborden. Tienes recursos internos para volver a un estado funcional cuando algo te perturba — eso es una fortaleza clínica real.",
     crecimiento: "Las emociones intensas te desbordan con frecuencia. Cuando algo te perturba, cuesta volver al centro. Esto es el área de trabajo más directa del programa — y la que más cambia la calidad de vida.",
@@ -165,7 +165,7 @@ const DIMS = [
   },
   {
     id: "valores", label: "Alineación de Valores", tool: "VQ", autor: "Wilson et al., 2010",
-    color: "#2d6382",
+    color: theme.dims.valores,
     desc: "Vivir lo que dices que importa",
     fortaleza: "Hay coherencia entre lo que dices que importa y cómo te comportas. Tomas decisiones desde tus valores reales, no solo desde la comodidad o el miedo. Eso da dirección y propósito.",
     crecimiento: "Hay una brecha entre lo que valoras y cómo vives. El miedo, la comodidad o el piloto automático dictan más tus decisiones de lo que quisieras. Cerrar esa brecha es el corazón del programa.",
@@ -177,7 +177,7 @@ const DIMS = [
   },
   {
     id: "autoconocimiento", label: "Autoconocimiento", tool: "SCS-Neff", autor: "Neff, 2003",
-    color: "#4d6d2a",
+    color: theme.dims.autoconocimiento,
     desc: "Cómo te ves y te tratas a ti mismo",
     fortaleza: "Te tratas con una generosidad real cuando fallas. Puedes ver tus errores sin exagerarlos ni minimizarlos, y no te sientes completamente solo cuando sufres. Eso es autocompasión funcional.",
     crecimiento: "La autocrítica es fuerte y la autocompasión escasa. Cuando fallas, la voz interna es dura. Aprender a tratarte como tratarías a alguien que quieres es uno de los cambios más profundos del programa.",
@@ -189,7 +189,7 @@ const DIMS = [
   },
   {
     id: "agencia", label: "Agencia", tool: "SCS-Tangney", autor: "Tangney et al., 2004",
-    color: "#7a6520",
+    color: theme.dims.agencia,
     desc: "Tu capacidad de elegir conscientemente",
     fortaleza: "Puedes traducir tus intenciones en acciones con consistencia. Cuando decides algo, lo sostienes. Esa capacidad de autocontrol consciente es el músculo que hace posible cualquier cambio real.",
     crecimiento: "La brecha entre lo que quieres hacer y lo que terminas haciendo es grande. Las tentaciones, la dificultad o el cansancio ganan con frecuencia. Fortalecer este músculo es esencial para sostener la recuperación.",
@@ -616,7 +616,7 @@ function ResultsScreen({ scores, user, session }) {
               )}
               <button
                 onClick={handleShowReport}
-                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 17, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
+                style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: theme.purple, color: C.cream, border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 17, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
               >
                 Ver mi reporte completo →
               </button>
@@ -709,7 +709,7 @@ function ResultsScreen({ scores, user, session }) {
                 )}
                 <button
                   onClick={handleShowReport}
-                  style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: C.ink, color: C.cream, border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 17, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
+                  style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", background: theme.purple, color: C.cream, border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 17, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
                 >
                   Ver mi reporte completo →
                 </button>
