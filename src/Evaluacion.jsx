@@ -84,30 +84,43 @@ async function generateDeepReport(dimension, escala, scores, overall) {
   const nivel = overall >= 70 ? "alto" : overall >= 40 ? "medio" : "bajo";
   const interpretacion = escala.interpretacion?.[nivel] || "";
 
-  const prompt = `Eres un clínico experto en psicología basada en evidencia. 
-Escribe un reporte personalizado basado en la evaluación de ${escala.label}.
+  const prompt = `Eres un intérprete de perfiles psicológicos entrenado en ACT, CBT y psicología positiva clínica.
+Tu trabajo: leer cómo la dimensión focal interactúa con las otras 5 dimensiones y nombrar el patrón real — no describir el score en aislamiento.
 
-Datos:
-- Dimensión: ${escala.label}
-- Score: ${overall}/100
-- Zona: ${zona}
-- Interpretación clínica base: ${interpretacion}
+Dimensión focal: ${escala.label}
+Score focal: ${overall}/100 (zona ${zona})
 
-Escribe un reporte en español de 4 párrafos:
+Perfil completo de las 6 dimensiones:
+- Presencia: ${scores.presencia}/100
+- Claridad Cognitiva: ${scores.claridad}/100
+- Regulación Emocional: ${scores.regulacion}/100
+- Alineación de Valores: ${scores.valores}/100
+- Autoconocimiento: ${scores.autoconocimiento}/100
+- Agencia: ${scores.agencia}/100
 
-Párrafo 1 — El diagnóstico: Qué revela exactamente este score en ${escala.label}. Concreto, específico, sin generalidades.
-Párrafo 2 — El patrón: Cómo se manifiesta esto en la vida diaria de alguien con este perfil.
-Párrafo 3 — El recurso: Qué tiene esta persona que puede usar como punto de apoyo.
-Párrafo 4 — El siguiente paso: Una acción concreta y específica para esta semana. No genérica.
+PASO 1 — LEER LA CONFIGURACIÓN:
+Antes de escribir, identifica internamente cómo el score de ${escala.label} se explica por la combinación de las otras dimensiones. Busca:
+- ¿Qué dimensiones altas o bajas amplifican o amortiguan este score?
+- ¿Hay una dimensión que claramente lo causa o lo sostiene?
+- ¿El patrón tiene nombre? (piloto automático, desregulación encubierta, intelectualización, valores sin tracción, agencia desanclada, colapso de identidad)
 
-Voz: segunda persona directa en todo el reporte. Nunca tercera persona.
-No escribas "Su puntuación" ni "esta persona" — escribe "tu puntuación", "tu atención", "tienes".
-El reporte le habla directamente al usuario, no habla sobre él.
+PASO 2 — ESCRIBIR EL REPORTE:
+Escribe en español, segunda persona, 4 párrafos. Sin títulos, sin bullets.
 
-Tono: directo, clínico, sin jerga terapéutica, sin frases de autoayuda. Como Epicteto escribiría un reporte clínico.
-No menciones nombres de escalas ni acrónimos (MAAS, DERS, ATQ, etc.) en el reporte.
-Longitud: máximo 180 palabras.
-Responde SOLO con los 4 párrafos. Sin títulos.`;
+Párrafo 1: Lo que revela este score en ${escala.label} — no el número, sino la experiencia de vivir con este patrón. Conecta con al menos una dimensión relacionada del perfil completo.
+
+Párrafo 2: El mecanismo — por qué este patrón se sostiene solo. El loop específico que lo perpetúa, usando el contexto de las otras dimensiones.
+
+Párrafo 3: El recurso real disponible — menciona la dimensión más alta del perfil sin decir el número. No elogios vacíos.
+
+Párrafo 4: Una sola acción concreta para esta semana. Específica para este patrón, no genérica.
+
+VOZ: poética y directa. Imágenes concretas. Sin jerga clínica. Sin frases de autoayuda. Sin adjetivos vacíos.
+Segunda persona siempre. Nunca "esta persona" ni "su puntuación".
+No menciones nombres de escalas ni acrónimos (MAAS, DERS, ATQ, VQ, SCS, BSCS).
+Escribe con mayúsculas normales en español. Mayúscula al inicio de cada oración y en nombres propios.
+Máximo 200 palabras en los 4 párrafos.
+Responde SOLO con los 4 párrafos.`;
 
   try {
     const response = await fetch(
