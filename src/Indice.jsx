@@ -415,17 +415,17 @@ function QuestionScreen({ allQuestions, currentIdx, answers, onAnswer, onNext, o
             })}
           </div>
 
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <button
               onClick={onBack}
-              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: theme.bg, color: C.inkMuted, border: `0.5px solid ${theme.border}`, padding: "12px 20px", fontFamily: theme.sans, fontSize: 15, cursor: "pointer", borderRadius: 12 }}
+              style={{ visibility: currentIdx === 0 ? "hidden" : "visible", background: theme.bgSecondary, color: theme.ink, border: "none", padding: "14px 24px", fontFamily: theme.sans, fontSize: 15, fontWeight: 500, cursor: "pointer", borderRadius: 14, flex: 1 }}
             >
               ← Anterior
             </button>
             <button
               onClick={onNext}
               disabled={!answered}
-              style={{ background: answered ? theme.purple : C.creamDark, color: answered ? "#FFFFFF" : C.inkFaint, border: "none", padding: "12px 24px", fontFamily: theme.sans, fontSize: 15, cursor: answered ? "pointer" : "default", borderRadius: 12, opacity: answered ? 1 : 0.5 }}
+              style={{ background: answered ? theme.purple : theme.bgTertiary, color: answered ? "#FFFFFF" : theme.inkFaint, border: "none", padding: "14px 24px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: answered ? "pointer" : "default", borderRadius: 14, flex: 1, opacity: 1 }}
             >
               {currentIdx === total - 1 ? "Ver mi reporte →" : "Siguiente →"}
             </button>
