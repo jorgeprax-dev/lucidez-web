@@ -618,7 +618,7 @@ export default function Dashboard() {
                 setGenerandoSlug(false);
               }}
               disabled={generandoSlug}
-              style={{ background: generandoSlug ? theme.bgTertiary : theme.ink, color: generandoSlug ? theme.inkFaint : theme.bg, border: "none", padding: "14px 24px", fontFamily: theme.sans, fontWeight: 600, fontSize: 15, cursor: generandoSlug ? "default" : "pointer", borderRadius: 12 }}
+              style={{ background: generandoSlug ? theme.bgTertiary : theme.purple, color: generandoSlug ? theme.inkFaint : theme.bg, border: "none", padding: "14px 24px", fontFamily: theme.sans, fontWeight: 600, fontSize: 15, cursor: generandoSlug ? "default" : "pointer", borderRadius: 12 }}
             >
               {generandoSlug ? "Generando..." : "Compartir mi Índice"}
             </button>
@@ -702,7 +702,7 @@ export default function Dashboard() {
               fontFamily: theme.sans,
               fontSize: 14,
               color: loadingMapa ? theme.inkFaint : theme.bg,
-              background: loadingMapa ? theme.bgTertiary : theme.ink,
+              background: loadingMapa ? theme.bgTertiary : theme.purple,
               border: `1px solid ${theme.border}`,
               borderRadius: 8,
               padding: "14px 16px",
@@ -744,7 +744,7 @@ export default function Dashboard() {
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
         <div
           onClick={() => navigate("/indice")}
-          style={{ background: theme.ink, borderRadius: 12, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
+          style={{ background: theme.purple, borderRadius: 12, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
         >
           <div style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 600, color: theme.bg, marginBottom: 2 }}>Re-aplicar el Índice</div>
           <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint }}>Mide tu progreso esta semana</div>
@@ -791,7 +791,7 @@ export default function Dashboard() {
         )}
         <button
           onClick={() => setShowFeedbackModal(!showFeedbackModal)}
-          style={{ background: theme.ink, color: theme.bg, border: "none", padding: "10px 18px", fontFamily: theme.sans, fontSize: 14, cursor: "pointer", borderRadius: 20 }}
+          style={{ background: theme.purple, color: theme.bg, border: "none", padding: "10px 18px", fontFamily: theme.sans, fontSize: 14, cursor: "pointer", borderRadius: 20 }}
         >
           {showFeedbackModal ? "× Cerrar" : "¿Feedback?"}
         </button>
