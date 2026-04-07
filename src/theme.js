@@ -1,46 +1,31 @@
 export const theme = {
-  // Fondos
-  bg: "#ffffff",
-  bgSecondary: "#f8f8fc",
-  bgTertiary: "#f0f0f8",
-
-  // Texto
-  ink: "#1a1a2e",
-  inkMuted: "#4a4a6a",
-  inkFaint: "#8888aa",
-
-  // Bordes
-  border: "rgba(100,100,180,0.15)",
-  borderStrong: "rgba(100,100,180,0.30)",
-
-  // Púrpura — acento principal
-  purple: "#534AB7",
-  purpleLight: "#EEEDFE",
-  purpleMid: "#7F77DD",
-  purpleHover: "#3d37a0",
-  purpleText: "#3C3489",
-
-  // Verde — De acuerdo
-  green: "#1D9E75",
-  greenLight: "#e1f5ee",
-
-  // Tipografía
+  bg: "#FFFFFF",
+  bgSecondary: "#F2F2F7",
+  bgTertiary: "#E5E5EA",
+  ink: "#000000",
+  inkMuted: "#3C3C43",
+  inkFaint: "#6C6C70",
+  border: "rgba(60,60,67,0.18)",
+  borderStrong: "rgba(60,60,67,0.36)",
+  purple: "#007AFF",
+  purpleLight: "#E8F1FF",
+  purpleMid: "#409CFF",
+  purpleHover: "#0062CC",
+  purpleText: "#0051A8",
+  green: "#34C759",
+  greenLight: "#E8F8ED",
   mono: "'Courier New', monospace",
-  serif: "Georgia, 'Times New Roman', serif",
-  sans: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-
-  // Zonas psicométricas
-  zonaVerde: { color: "#1D9E75", bg: "#e1f5ee", label: "Zona verde" },
-  zonaAmbar: { color: "#BA7517", bg: "#FAEEDA", label: "Zona ámbar" },
-  zonaRoja: { color: "#A32D2D", bg: "#FCEBEB", label: "Zona roja" },
-
-  // Dimensiones
+  serif: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif",
+  sans: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif",
+  zonaVerde: { color: "#34C759", bg: "#E8F8ED", label: "Zona verde" },
+  zonaAmbar: { color: "#FF9500", bg: "#FFF3E0", label: "Zona ámbar" },
+  zonaRoja: { color: "#FF3B30", bg: "#FFE8E7", label: "Zona roja" },
   dims: {
-    presencia:        "#3d7a65",
-    claridad:         "#9a5e2e",
-    regulacion:       "#6a3d82",
-    valores:          "#2d6382",
-    autoconocimiento: "#4d6d2a",
-    agencia:          "#7a6520",
+    presencia:        "#34C759",
+    claridad:         "#FF9500",
+    regulacion:       "#AF52DE",
+    valores:          "#007AFF",
+    autoconocimiento: "#5AC8FA",
+    agencia:          "#FF2D55",
   },
 };
