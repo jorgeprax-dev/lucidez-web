@@ -360,10 +360,10 @@ export default function Evaluacion() {
               </span>
               {(PREGUNTAS_POR_DIMENSION[dimension] || []).map((pregunta, i) => (
                 <div key={i} style={{ marginBottom: 20 }}>
-                  <div style={{ fontFamily: theme.sans, fontSize: 12, letterSpacing: "0.06em", color: theme.inkFaint, marginBottom: 6 }}>
+                  <div style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, letterSpacing: "0.06em", color: theme.inkFaint, marginBottom: 6 }}>
                     Pregunta {i + 1} de 2
                   </div>
-                  <div style={{ fontSize: 16, color: theme.ink, lineHeight: 1.5, marginBottom: 10, fontFamily: theme.sans }}>
+                  <div style={{ fontSize: 20, fontWeight: 600, color: theme.ink, lineHeight: 1.5, marginBottom: 10, fontFamily: theme.sans, textAlign: "left" }}>
                     {pregunta}
                   </div>
                   <textarea
@@ -375,14 +375,14 @@ export default function Evaluacion() {
                     }}
                     placeholder="Escribe con libertad..."
                     rows={3}
-                    style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 15, resize: "none", outline: "none", lineHeight: 1.6 }}
+                    style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 16px", background: theme.bg, color: theme.ink, border: `1px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 16, resize: "none", outline: "none", lineHeight: 1.6 }}
                   />
                 </div>
               ))}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
                 <button
                   onClick={() => setCualGuardadas(true)}
-                  style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: theme.sans, fontSize: 15, cursor: "pointer", padding: 0 }}
+                  style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: theme.sans, fontSize: 14, cursor: "pointer", padding: 0 }}
                 >
                   Ahora no
                 </button>
@@ -416,13 +416,13 @@ export default function Evaluacion() {
             </div>
           )}
 
-          <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 24px", background: theme.purple, border: "none", borderRadius: 12, color: "#FFFFFF", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer" }}>
+          <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 24px", background: theme.purple, border: "none", borderRadius: 14, color: "#FFFFFF", fontFamily: theme.sans, fontSize: 17, fontWeight: 600, cursor: "pointer" }}>
             Volver al dashboard →
           </button>
           <div>
             <button
               onClick={() => navigate(`/evaluacion/${dimension}`)}
-              style={{ marginTop: 14, padding: "12px 24px", background: "transparent", border: `1px solid ${theme.border}`, borderRadius: 8, color: theme.purple, fontFamily: theme.sans, fontSize: 15, cursor: "pointer" }}
+              style={{ marginTop: 14, padding: "12px 24px", background: theme.bgSecondary, border: "none", borderRadius: 12, color: theme.purple, fontFamily: theme.sans, fontSize: 15, fontWeight: 500, cursor: "pointer" }}
             >
               Repetir evaluación →
             </button>
