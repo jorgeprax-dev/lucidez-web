@@ -378,6 +378,7 @@ Voz: segunda persona directa. Tutéame.
 Tono: terapeuta experimentado anglosajón — directo, sin rodeos, 
 sin crueldad, sin motivación vacía. Como si llevaras 3 sesiones 
 con esta persona y por fin fueras a decirle lo que realmente ves.
+Escribe con mayúsculas normales en español. Usa mayúscula al inicio de cada oración y en nombres propios. No escribas todo en minúsculas.
 Prohibido: mayúsculas en el texto del párrafo, jerga clínica, 
 frases de autoayuda, adjetivos vacíos.`;
 
