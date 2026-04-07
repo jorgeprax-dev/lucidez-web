@@ -311,11 +311,11 @@ function Radar({ scores }) {
 // ─── Pantalla de nombre ───
 function NameScreen({ nombre, onChange, onStart }) {
   return (
-    <div style={{ maxWidth: 680, margin: "0 auto", paddingTop: 48 }}>
-      <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 20, display: "block" }}>
+    <div style={{ maxWidth: 480, margin: "0 auto", paddingTop: 48, paddingBottom: 48 }}>
+      <div style={{ display: "inline-block", background: theme.purpleLight, color: theme.purple, fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 20, marginBottom: 24 }}>
         Índice de Lucidez
-      </span>
-      <div style={{ fontSize: 26, fontWeight: "normal", lineHeight: 1.35, marginBottom: 28, color: C.ink }}>
+      </div>
+      <div style={{ fontSize: 28, fontWeight: 700, lineHeight: 1.2, marginBottom: 32, color: theme.ink, letterSpacing: "-0.5px", fontFamily: theme.sans }}>
         ¿Cómo te llamas?
       </div>
       <input
@@ -324,14 +324,17 @@ function NameScreen({ nombre, onChange, onStart }) {
         onChange={(e) => onChange(e.target.value)}
         placeholder="Tu nombre"
         autoFocus
-        style={{ display: "block", width: "100%", padding: "14px 0", background: "transparent", color: C.ink, border: "none", borderBottom: `1px solid ${C.borderStrong}`, fontFamily: theme.serif, fontSize: 22, outline: "none", marginBottom: 32 }}
+        style={{ display: "block", width: "100%", padding: "16px 18px", background: theme.bgSecondary, color: theme.ink, border: "none", borderRadius: 12, fontFamily: theme.sans, fontSize: 17, outline: "none", marginBottom: 16 }}
       />
       <button
         onClick={onStart}
-        style={{ background: C.ink, color: C.cream, border: "none", padding: "13px 28px", fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+        style={{ width: "100%", background: theme.purple, color: "#FFFFFF", border: "none", padding: "16px 32px", fontFamily: theme.sans, fontSize: 17, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
       >
         Comenzar →
       </button>
+      <div style={{ fontSize: 12, color: "#8E8E93", marginTop: 10, textAlign: "center", fontFamily: theme.sans }}>
+        18 preguntas · 8 minutos
+      </div>
     </div>
   );
 }
