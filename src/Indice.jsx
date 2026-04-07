@@ -644,26 +644,26 @@ function ResultsScreen({ scores, user, session }) {
 
           {showReport && (
             <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 24 }}>
-              <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+              <span style={{ fontFamily: theme.sans, fontSize: 13, fontWeight: 500, color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
               {loadingReport ? (
                 <div style={{ textAlign: "center", padding: "24px 0" }}>
-                  <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
+                  <p style={{ fontFamily: theme.sans, fontSize: 12, color: C.inkFaint, marginBottom: 8 }}>
                     Analizando tu perfil...
                   </p>
-                  <p style={{ fontFamily: theme.serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
+                  <p style={{ fontFamily: theme.sans, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
                     Esto toma unos segundos. Claude está leyendo tus 6 dimensiones.
                   </p>
                 </div>
               ) : (
                 reporteTexto.split("\n\n").map((p, i) => (
-                  <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
+                  <p key={i} style={{ color: theme.inkMuted, fontFamily: theme.sans, fontSize: 15, lineHeight: 1.7, margin: "0 0 16px" }}>{p}</p>
                 ))
               )}
-              <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
+              <p style={{ fontFamily: theme.sans, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                 Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
               </p>
               {session && (
-                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: theme.purple, color: C.cream, fontFamily: theme.sans, fontSize: 15, fontWeight: 600, borderRadius: 14, textDecoration: "none" }}>
                   Ir al dashboard →
                 </a>
               )}
@@ -731,26 +731,26 @@ function ResultsScreen({ scores, user, session }) {
               </div>
             ) : (
               <div style={{ background: "#ffffff", border: `0.5px solid ${C.border}`, borderRadius: 6, padding: 28 }}>
-                <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
+                <span style={{ fontFamily: theme.sans, fontSize: 13, fontWeight: 500, color: C.inkFaint, marginBottom: 16, display: "block" }}>Tu reporte clínico</span>
                 {loadingReport ? (
                   <div style={{ textAlign: "center", padding: "24px 0" }}>
-                    <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, letterSpacing: "0.08em", marginBottom: 8 }}>
+                    <p style={{ fontFamily: theme.sans, fontSize: 12, color: C.inkFaint, marginBottom: 8 }}>
                       Analizando tu perfil...
                     </p>
-                    <p style={{ fontFamily: theme.serif, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
+                    <p style={{ fontFamily: theme.sans, fontSize: 14, color: C.inkMuted, lineHeight: 1.7 }}>
                       Esto toma unos segundos. Claude está leyendo tus 6 dimensiones.
                     </p>
                   </div>
                 ) : (
                   reporteTexto.split("\n\n").map((p, i) => (
-                    <p key={i} style={{ color: "#6b6460", fontFamily: "Georgia, serif", fontSize: 15, lineHeight: 1.8, margin: "0 0 16px" }}>{p}</p>
+                    <p key={i} style={{ color: theme.inkMuted, fontFamily: theme.sans, fontSize: 15, lineHeight: 1.7, margin: "0 0 16px" }}>{p}</p>
                   ))
                 )}
-                <p style={{ fontFamily: theme.mono, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
+                <p style={{ fontFamily: theme.sans, fontSize: 12, color: C.inkFaint, textAlign: "center", marginTop: 24, lineHeight: 1.6 }}>
                   Te enviamos un enlace a {emailFinal}. Un clic y entras a tu cuenta — sin contraseña.
                 </p>
                 {session && (
-                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: C.ink, color: C.cream, fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", borderRadius: 2, textDecoration: "none" }}>
+                  <a href="/dashboard" style={{ display: "inline-block", padding: "12px 24px", background: theme.purple, color: C.cream, fontFamily: theme.sans, fontSize: 15, fontWeight: 600, borderRadius: 14, textDecoration: "none" }}>
                     Ir al dashboard →
                   </a>
                 )}
@@ -761,12 +761,12 @@ function ResultsScreen({ scores, user, session }) {
       )}
 
       {showReport && !loadingReport && (
-        <div style={{ marginTop: 16, padding: "20px 28px", background: "#f7f4f0", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ marginTop: 16, padding: "20px 28px", background: theme.bgSecondary, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div>
-            <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 4 }}>
+            <div style={{ fontFamily: theme.sans, fontSize: 13, fontWeight: 500, color: theme.inkFaint, marginBottom: 4 }}>
               Comparte tu Índice
             </div>
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#6b6460", lineHeight: 1.5 }}>
+            <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.inkFaint, lineHeight: 1.5 }}>
               Genera un link anónimo para compartir tus resultados.
             </div>
           </div>
@@ -775,13 +775,13 @@ function ResultsScreen({ scores, user, session }) {
               <input
                 readOnly
                 value={`${window.location.origin}/r/${slug}`}
-                style={{ padding: "8px 12px", background: "#ffffff", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "'Courier New', monospace", fontSize: 11, width: 200, outline: "none" }}
+                style={{ padding: "8px 12px", background: theme.bg, color: "#1a1714", border: `0.5px solid ${theme.border}`, borderRadius: 10, fontFamily: theme.sans, fontSize: 11, width: 200, outline: "none" }}
               />
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/r/${slug}`);
                 }}
-                style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                style={{ background: theme.purple, color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: theme.sans, fontSize: 13, cursor: "pointer", borderRadius: 10 }}
               >
                 Copiar →
               </button>
@@ -800,7 +800,7 @@ function ResultsScreen({ scores, user, session }) {
                 setGenerandoLink(false);
               }}
               disabled={generandoLink}
-              style={{ background: generandoLink ? "#ede9e3" : "#1a1714", color: generandoLink ? "#a09890" : "#f7f4f0", border: "none", padding: "10px 20px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: generandoLink ? "default" : "pointer", borderRadius: 2, flexShrink: 0 }}
+              style={{ background: generandoLink ? theme.bgTertiary : theme.purple, color: generandoLink ? theme.inkFaint : "#f7f4f0", border: "none", padding: "10px 20px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: generandoLink ? "default" : "pointer", borderRadius: 14, flexShrink: 0 }}
             >
               {generandoLink ? "Generando..." : "Generar link →"}
             </button>
@@ -809,16 +809,16 @@ function ResultsScreen({ scores, user, session }) {
       )}
 
       {showReport && !showPreguntas && !loadingReport && !preguntasGuardadas && preguntasDinamicas.length > 0 && (
-        <div style={{ marginTop: 24, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 28 }}>
-          <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 16, display: "block" }}>
+        <div style={{ marginTop: 24, background: theme.bgSecondary, borderRadius: 16, padding: 28 }}>
+          <span style={{ fontFamily: theme.sans, fontSize: 13, fontWeight: 500, color: theme.inkFaint, marginBottom: 16, display: "block" }}>
             Tres preguntas · para conocerte mejor
           </span>
           {preguntasDinamicas.map((pregunta, i) => (
             <div key={i} style={{ marginBottom: 20 }}>
-              <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.10em", textTransform: "uppercase", color: "#a09890", marginBottom: 6 }}>
+              <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint, marginBottom: 6 }}>
                 Pregunta {i + 1} de {preguntasDinamicas.length}
               </div>
-              <div style={{ fontSize: 16, color: "#1a1714", lineHeight: 1.5, marginBottom: 10, fontFamily: "Georgia, serif" }}>
+              <div style={{ fontSize: 17, fontWeight: 600, color: theme.ink, lineHeight: 1.5, marginBottom: 10, fontFamily: theme.sans }}>
                 {pregunta}
               </div>
               <textarea
@@ -830,14 +830,14 @@ function ResultsScreen({ scores, user, session }) {
                 }}
                 placeholder="Escribe con libertad..."
                 rows={3}
-                style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+                style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 15, resize: "none", outline: "none", lineHeight: 1.6 }}
               />
             </div>
           ))}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
             <button
               onClick={() => setPreguntasGuardadas(true)}
-              style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+              style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: theme.sans, fontSize: 15, cursor: "pointer", padding: 0 }}
             >
               Ahora no
             </button>
@@ -855,7 +855,7 @@ function ResultsScreen({ scores, user, session }) {
                 }
                 setPreguntasGuardadas(true);
               }}
-              style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+              style={{ background: theme.purple, color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
             >
               Guardar y continuar →
             </button>
@@ -864,13 +864,13 @@ function ResultsScreen({ scores, user, session }) {
       )}
 
       {showReport && !loadingReport && preguntasGuardadas && !feedbackGuardado && (
-        <div style={{ marginTop: 24, background: "#ffffff", border: "0.5px solid rgba(26,23,20,0.12)", borderRadius: 6, padding: 28 }}>
-          <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 16, display: "block" }}>
+        <div style={{ marginTop: 24, background: theme.bgSecondary, borderRadius: 16, padding: 28 }}>
+          <span style={{ fontFamily: theme.sans, fontSize: 13, fontWeight: 500, color: theme.inkFaint, marginBottom: 16, display: "block" }}>
             Una última cosa
           </span>
 
           <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 14, fontFamily: "Georgia, serif" }}>
+            <div style={{ fontSize: 15, color: theme.ink, marginBottom: 14, fontFamily: theme.sans }}>
               ¿Qué tan útil te pareció el reporte?
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -879,11 +879,11 @@ function ResultsScreen({ scores, user, session }) {
                   key={n}
                   onClick={() => setUtilidad(n)}
                   style={{
-                    width: 36, height: 36, borderRadius: 2,
+                    width: 36, height: 36, borderRadius: 8,
                     border: `0.5px solid ${utilidad === n ? "#1a1714" : "rgba(26,23,20,0.22)"}`,
-                    background: utilidad === n ? "#1a1714" : "#f7f4f0",
+                    background: utilidad === n ? theme.purple : theme.bgSecondary,
                     color: utilidad === n ? "#f7f4f0" : "#1a1714",
-                    fontFamily: "'Courier New', monospace", fontSize: 11,
+                    fontFamily: theme.sans, fontSize: 11,
                     cursor: "pointer", flexShrink: 0,
                   }}
                 >
@@ -894,7 +894,7 @@ function ResultsScreen({ scores, user, session }) {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 10, fontFamily: "Georgia, serif" }}>
+            <div style={{ fontSize: 15, color: theme.ink, marginBottom: 10, fontFamily: theme.sans }}>
               ¿Qué fue lo más valioso para ti?
             </div>
             <textarea
@@ -902,12 +902,12 @@ function ResultsScreen({ scores, user, session }) {
               onChange={(e) => setValioso(e.target.value)}
               placeholder="Escribe libremente..."
               rows={2}
-              style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+              style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
             />
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 15, color: "#1a1714", marginBottom: 10, fontFamily: "Georgia, serif" }}>
+            <div style={{ fontSize: 15, color: theme.ink, marginBottom: 10, fontFamily: theme.sans }}>
               ¿Qué mejorarías?
             </div>
             <textarea
@@ -915,7 +915,7 @@ function ResultsScreen({ scores, user, session }) {
               onChange={(e) => setMejora(e.target.value)}
               placeholder="Cualquier cosa que no funcionó o que faltó..."
               rows={2}
-              style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+              style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
             />
           </div>
 
@@ -928,7 +928,7 @@ function ResultsScreen({ scores, user, session }) {
                 onChange={(e) => setQuiereEntrevista(e.target.checked)}
                 style={{ marginTop: 3, cursor: "pointer", flexShrink: 0 }}
               />
-              <label htmlFor="entrevista" style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#6b6460", lineHeight: 1.6, cursor: "pointer" }}>
+              <label htmlFor="entrevista" style={{ fontFamily: theme.sans, fontSize: 14, color: theme.inkMuted, lineHeight: 1.6, cursor: "pointer" }}>
                 ¿Tendrías 15 minutos para contarme cómo te fue? Estoy construyendo Lucidez y cada conversación me ayuda a mejorarlo. Sin agenda, sin venta.
               </label>
             </div>
@@ -938,7 +938,7 @@ function ResultsScreen({ scores, user, session }) {
                 value={emailEntrevista}
                 onChange={(e) => setEmailEntrevista(e.target.value)}
                 placeholder="Tu email o WhatsApp"
-                style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "10px 14px", background: "#f7f4f0", color: "#1a1714", border: "0.5px solid rgba(26,23,20,0.20)", borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, outline: "none" }}
+                style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "10px 14px", background: theme.bg, color: "#1a1714", border: `0.5px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 14, outline: "none" }}
               />
             )}
           </div>
@@ -946,7 +946,7 @@ function ResultsScreen({ scores, user, session }) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <button
               onClick={() => setFeedbackGuardado(true)}
-              style={{ background: "transparent", color: "#a09890", border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+              style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: theme.sans, fontSize: 15, cursor: "pointer", padding: 0 }}
             >
               Omitir
             </button>
@@ -970,7 +970,7 @@ function ResultsScreen({ scores, user, session }) {
                 }
                 setFeedbackGuardado(true);
               }}
-              style={{ background: "#1a1714", color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+              style={{ background: theme.purple, color: "#f7f4f0", border: "none", padding: "12px 24px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
             >
               Enviar →
             </button>
@@ -980,7 +980,7 @@ function ResultsScreen({ scores, user, session }) {
 
       {showReport && !loadingReport && preguntasGuardadas && feedbackGuardado && (
         <div style={{ marginTop: 16, textAlign: "center" }}>
-          <a href="/dashboard" style={{ fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#1a1714", textDecoration: "none" }}>
+          <a href="/dashboard" style={{ fontFamily: theme.sans, fontSize: 15, color: theme.purple, textDecoration: "none" }}>
             Ir a mi dashboard →
           </a>
         </div>
