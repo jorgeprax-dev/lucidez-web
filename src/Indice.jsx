@@ -68,56 +68,47 @@ async function generateAIReport(scores, nombre) {
   const overall = Math.round(dimTexts.reduce((s, d) => s + d.score, 0) / 6);
   const zona = overall >= 80 ? "verde" : overall >= 60 ? "ámbar" : "roja";
 
-  const prompt = `Eres un intérprete de perfiles psicológicos. 
-Tu marco de referencia: el comportamiento humano como respuesta 
-adaptativa, la desconexión del cuerpo y las emociones como raíz 
-del sufrimiento, la compasión radical sin juicio.
-Tu voz: poética, directa, un poco oscura, sin miedo a nombrar 
-lo que duele, con imágenes concretas en lugar de abstracciones.
+  const prompt = `Eres un intérprete de perfiles psicológicos entrenado en ACT, CBT y psicología positiva clínica.
+Tu trabajo: leer la configuración de 6 dimensiones y nombrar el patrón real que emerge — no describir cada número por separado.
 
-Este es el perfil psicométrico de ${nombre}:
-- Score general: ${overall}/100 (zona ${zona})
+Perfil psicométrico de ${nombre}:
 - Presencia: ${scores.presencia}/100
 - Claridad Cognitiva: ${scores.claridad}/100
 - Regulación Emocional: ${scores.regulacion}/100
 - Alineación de Valores: ${scores.valores}/100
 - Autoconocimiento: ${scores.autoconocimiento}/100
 - Agencia: ${scores.agencia}/100
+- Score general: ${overall}/100 (zona ${zona})
 - Dimensión más alta: ${top.label} (${top.score}/100)
 - Dimensión más baja: ${low.label} (${low.score}/100)
 
-Escribe un reporte en español de 4 párrafos en segunda persona.
-Sin títulos, sin secciones, sin bullets. Solo 4 párrafos seguidos.
+PASO 1 — IDENTIFICAR EL PATRÓN DE CONFIGURACIÓN:
+Antes de escribir, identifica internamente cuál de estos patrones describe mejor esta combinación de scores:
 
-Párrafo 1: La primera palabra debe ser el nombre '${nombre}' 
-seguido de una coma. Obligatorio. Lo que el perfil revela — 
-la contradicción central. No describas los números, describe 
-la experiencia de vivir con este perfil.
+- PILOTO AUTOMÁTICO FUNCIONAL: Presencia baja + todo lo demás medio. Vive en automático, el sistema no colapsa pero no crece.
+- DESREGULACIÓN ENCUBIERTA: Presencia baja + Regulación baja + Agencia media. Funciona pero con costo emocional alto invisible.
+- INTELECTUALIZACIÓN COMO DEFENSA: Claridad alta + Regulación baja + Autoconocimiento bajo. Analiza en lugar de sentir.
+- VALORES SIN TRACCIÓN: Valores altos + Agencia baja + Presencia baja. Sabe lo que importa pero no puede actuar desde ahí.
+- AGENCIA DESANCLADA: Agencia alta + Valores bajos + Claridad baja. Mucho movimiento, poca dirección.
+- COLAPSO DE IDENTIDAD: Autoconocimiento bajo + Valores bajos + Presencia baja. Desestructuración real.
+- Si ninguno encaja exactamente, nombra el patrón que mejor describe la configuración.
 
-Párrafo 2: De dónde viene ese patrón — el mecanismo, no el 
-diagnóstico. Por qué sigue así, qué lo sostiene. El loop 
-que se repite.
+PASO 2 — ESCRIBIR EL REPORTE:
+Escribe en español, segunda persona, 4 párrafos. Sin títulos, sin bullets, sin secciones.
 
-Párrafo 3: Lo que tiene ${nombre} a su favor — el recurso real, 
-no el elogio vacío. Menciona la dimensión más alta 
-específicamente pero sin decir el número.
+Párrafo 1: Empieza con el nombre '${nombre},' obligatorio. Nombra el patrón de configuración directamente — no describas números, describe la experiencia de vivir con este patrón específico. Sé concreto y sin miedo.
 
-Párrafo 4: Una sola cosa concreta para esta semana. Específica 
-para este perfil. Que venga del patrón, no de un manual.
+Párrafo 2: El mecanismo — por qué este patrón se sostiene solo, el loop que lo perpetúa. No el diagnóstico, sino la dinámica.
 
-Después de los 4 párrafos, en una línea completamente separada, 
-genera UNA pregunta cualitativa adicional precedida exactamente 
-por el texto "PREGUNTA_DINAMICA:" (sin espacio antes).
+Párrafo 3: El recurso real que tiene ${nombre} — menciona la dimensión más alta sin decir el número. No elogios vacíos — el recurso específico que este patrón tiene disponible.
 
-La pregunta debe:
-- Ser específica a la dimensión más baja: ${low.label}
-- Pedir un ejemplo reciente concreto
-- Máximo 25 palabras
-- No mencionar nombres de escalas ni acrónimos
+Párrafo 4: Una sola acción concreta para esta semana. Que venga del patrón identificado, no de un manual genérico.
 
-Voz: segunda persona siempre. Tutéame.
-Tono: poético y directo — imágenes concretas, sin jerga clínica, 
-sin frases de autoayuda, sin adjetivos vacíos.
+Después de los 4 párrafos, en línea separada, escribe exactamente:
+PREGUNTA_DINAMICA: [una pregunta específica a la dimensión más baja: ${low.label}, que pida un ejemplo reciente concreto, máximo 25 palabras, sin mencionar nombres de escalas]
+
+VOZ: poética y directa. Imágenes concretas. Sin jerga clínica. Sin frases de autoayuda. Sin adjetivos vacíos.
+Escribe con mayúsculas normales en español. Mayúscula al inicio de cada oración y en nombres propios.
 Máximo 220 palabras en los 4 párrafos.
 Responde SOLO con los 4 párrafos y la PREGUNTA_DINAMICA.`;
 
