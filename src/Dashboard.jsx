@@ -730,7 +730,7 @@ export default function Dashboard() {
                   <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.purple, marginBottom: 10, letterSpacing: "0.04em", fontWeight: 600 }}>
                     {label}
                   </div>
-                  <p style={{ fontFamily: theme.sans, fontSize: 14, color: theme.inkMuted, lineHeight: 1.8, margin: 0 }}>
+                  <p style={{ fontFamily: theme.sans, fontSize: 14, color: theme.ink, lineHeight: 1.8, margin: 0 }}>
                     {texto}
                   </p>
                 </div>
