@@ -379,6 +379,7 @@ Tono: terapeuta experimentado anglosajón — directo, sin rodeos,
 sin crueldad, sin motivación vacía. Como si llevaras 3 sesiones 
 con esta persona y por fin fueras a decirle lo que realmente ves.
 Escribe con mayúsculas normales en español. Usa mayúscula al inicio de cada oración y en nombres propios. No escribas todo en minúsculas.
+Los títulos de cada sección también deben tener mayúscula en la primera letra. Por ejemplo: 'Lo que veo', 'El patrón que lo sostiene', 'Tu estrella polar'.
 Prohibido: mayúsculas en el texto del párrafo, jerga clínica, 
 frases de autoayuda, adjetivos vacíos.`;
 
@@ -719,7 +720,7 @@ export default function Dashboard() {
       {mapaCompleto && (
         <div style={{ padding: secPad }}>
           <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: 28 }}>
-            <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint, marginBottom: 24, letterSpacing: "0.06em", fontWeight: 500 }}>
+            <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.ink, marginBottom: 24, letterSpacing: "0.06em", fontWeight: 500 }}>
               TU MAPA COMPLETO · {fechaLabel}
             </div>
             {mapaCompleto.split("\n\n").map((block, i) => {
@@ -728,7 +729,7 @@ export default function Dashboard() {
               const texto = lines.slice(1).join("\n").trim();
               return (
                 <div key={i} style={{ marginBottom: i < 3 ? 24 : 0 }}>
-                  <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.purple, marginBottom: 10, letterSpacing: "0.04em", fontWeight: 600 }}>
+                  <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.ink, marginBottom: 10, letterSpacing: "0.04em", fontWeight: 600 }}>
                     {label}
                   </div>
                   <p style={{ fontFamily: theme.sans, fontSize: 14, color: theme.ink, lineHeight: 1.8, margin: 0 }}>
