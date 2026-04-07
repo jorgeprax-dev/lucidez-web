@@ -305,10 +305,10 @@ export default function Evaluacion() {
 
   if (!escala) {
     return (
-      <div style={{ minHeight: "100vh", background: theme.bgSecondary, fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
+      <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: theme.sans, color: theme.ink, padding: "40px 24px" }}>
         <h1>Dimensión no encontrada</h1>
         <p>Revisa que la ruta tenga una dimensión válida.</p>
-        <button onClick={() => navigate("/")} style={{ marginTop: 16, padding: "10px 16px", border: "none", background: theme.green, color: "#fff", cursor: "pointer", borderRadius: 6 }}>
+        <button onClick={() => navigate("/")} style={{ marginTop: 16, padding: "14px 24px", border: "none", background: theme.purple, color: "#FFFFFF", cursor: "pointer", borderRadius: 12, fontFamily: theme.sans, fontWeight: 600, fontSize: 15 }}>
           Volver al home
         </button>
       </div>
@@ -317,7 +317,7 @@ export default function Evaluacion() {
 
   if (modoReporte && !reporteGuardado) {
     return (
-      <div style={{ minHeight: "100vh", background: theme.bgSecondary, fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
+      <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: theme.sans, color: theme.ink, padding: "40px 24px" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
           <p style={{ fontSize: 16, color: theme.inkMuted }}>Cargando tu reporte...</p>
         </div>
@@ -331,39 +331,39 @@ export default function Evaluacion() {
     const interpretacion = escala.interpretacion[nivel];
     const reporte = aiReport;
     return (
-      <div style={{ minHeight: "100vh", background: theme.bgSecondary, fontFamily: "Georgia, serif", color: "#1a1a1a", padding: "40px 24px" }}>
+      <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: theme.sans, color: theme.ink, padding: "40px 24px" }}>
         <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ fontSize: "clamp(48px, 12vw, 72px)", fontWeight: 300, color: colorZona(visibleOverall), marginBottom: 16 }}>
+          <div style={{ fontFamily: theme.sans, fontSize: "clamp(48px, 12vw, 72px)", fontWeight: 700, color: colorZona(visibleOverall), marginBottom: 16 }}>
             {visibleOverall}%
           </div>
-          <h1 style={{ fontSize: "clamp(24px, 5vw, 32px)", fontWeight: 400, margin: "0 0 24px", color: "#1a1a1a" }}>
+          <h1 style={{ fontFamily: theme.sans, fontSize: 22, fontWeight: 600, margin: "0 0 24px", color: theme.ink }}>
             {escala.label}
           </h1>
-          <p style={{ fontSize: 18, lineHeight: 1.6, color: "#444", margin: "0 0 32px" }}>
+          <p style={{ fontFamily: theme.sans, fontSize: 17, lineHeight: 1.6, color: theme.inkMuted, margin: "0 0 32px", textAlign: "left" }}>
             {interpretacion}
           </p>
 
           <div style={{ textAlign: "left", margin: "0 0 32px" }}>
-            <p style={{ fontFamily: "'Courier New', monospace", fontSize: 10, textTransform: "uppercase", color: theme.inkFaint, letterSpacing: "0.08em", margin: "0 0 12px" }}>Tu reporte clínico</p>
+            <p style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, color: theme.inkFaint, letterSpacing: "0.06em", margin: "0 0 12px" }}>TU REPORTE</p>
             {loadingReport && (
-              <p style={{ fontFamily: "'Courier New', monospace", fontSize: 12, color: "#a09890" }}>Analizando tu evaluación...</p>
+              <p style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint }}>Analizando tu evaluación...</p>
             )}
             {aiReport && aiReport.split("\n\n").map((para, i) => (
-              <p key={i} style={{ fontFamily: "Georgia, serif", fontSize: 14, color: theme.inkMuted, lineHeight: 1.8, margin: "0 0 16px" }}>{para}</p>
+              <p key={i} style={{ fontFamily: theme.sans, fontSize: 16, color: theme.ink, lineHeight: 1.6, margin: "0 0 16px" }}>{para}</p>
             ))}
           </div>
 
           {reporte && !cualGuardadas && (
             <div style={{ marginTop: 24, background: theme.bg, border: `0.5px solid ${theme.border}`, borderRadius: 6, padding: 28 }}>
-              <span style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 16, display: "block" }}>
+              <span style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, letterSpacing: "0.06em", color: theme.inkFaint, marginBottom: 16, display: "block" }}>
                 Dos preguntas · para profundizar
               </span>
               {(PREGUNTAS_POR_DIMENSION[dimension] || []).map((pregunta, i) => (
                 <div key={i} style={{ marginBottom: 20 }}>
-                  <div style={{ fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.10em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 6 }}>
+                  <div style={{ fontFamily: theme.sans, fontSize: 12, letterSpacing: "0.06em", color: theme.inkFaint, marginBottom: 6 }}>
                     Pregunta {i + 1} de 2
                   </div>
-                  <div style={{ fontSize: 16, color: theme.ink, lineHeight: 1.5, marginBottom: 10, fontFamily: "Georgia, serif" }}>
+                  <div style={{ fontSize: 16, color: theme.ink, lineHeight: 1.5, marginBottom: 10, fontFamily: theme.sans }}>
                     {pregunta}
                   </div>
                   <textarea
@@ -375,14 +375,14 @@ export default function Evaluacion() {
                     }}
                     placeholder="Escribe con libertad..."
                     rows={3}
-                    style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: theme.bgSecondary, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 4, fontFamily: "Georgia, serif", fontSize: 14, resize: "none", outline: "none", lineHeight: 1.6 }}
+                    style={{ display: "block", width: "100%", boxSizing: "border-box", padding: "12px 14px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 15, resize: "none", outline: "none", lineHeight: 1.6 }}
                   />
                 </div>
               ))}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
                 <button
                   onClick={() => setCualGuardadas(true)}
-                  style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: "'Courier New', monospace", fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", padding: 0 }}
+                  style={{ background: "transparent", color: theme.inkFaint, border: "none", fontFamily: theme.sans, fontSize: 15, cursor: "pointer", padding: 0 }}
                 >
                   Ahora no
                 </button>
@@ -400,7 +400,7 @@ export default function Evaluacion() {
                     }
                     setCualGuardadas(true);
                   }}
-                  style={{ background: theme.ink, color: theme.bg, border: "none", padding: "12px 24px", fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", borderRadius: 2 }}
+                  style={{ background: theme.purple, color: "#FFFFFF", border: "none", padding: "14px 24px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", borderRadius: 12 }}
                 >
                   Guardar y continuar →
                 </button>
@@ -410,19 +410,19 @@ export default function Evaluacion() {
 
           {reporte && cualGuardadas && (
             <div style={{ marginTop: 16, textAlign: "center" }}>
-              <a href="/dashboard" style={{ fontFamily: "'Courier New', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#1a1714", textDecoration: "none" }}>
+              <a href="/dashboard" style={{ fontFamily: theme.sans, fontSize: 15, color: theme.purple, textDecoration: "none" }}>
                 Volver al dashboard →
               </a>
             </div>
           )}
 
-          <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 28px", background: theme.ink, border: "none", borderRadius: 8, color: theme.bg, fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
+          <button onClick={() => navigate("/dashboard")} style={{ padding: "14px 24px", background: theme.purple, border: "none", borderRadius: 12, color: "#FFFFFF", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer" }}>
             Volver al dashboard →
           </button>
           <div>
             <button
               onClick={() => navigate(`/evaluacion/${dimension}`)}
-              style={{ marginTop: 14, padding: "12px 24px", background: "transparent", border: `1px solid ${theme.border}`, borderRadius: 8, color: theme.inkMuted, fontFamily: "Georgia, serif", fontSize: 15, cursor: "pointer" }}
+              style={{ marginTop: 14, padding: "12px 24px", background: "transparent", border: `1px solid ${theme.border}`, borderRadius: 8, color: theme.purple, fontFamily: theme.sans, fontSize: 15, cursor: "pointer" }}
             >
               Repetir evaluación →
             </button>
@@ -433,12 +433,12 @@ export default function Evaluacion() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: theme.bgSecondary, fontFamily: "Georgia, serif", color: "#1a1a1a" }}>
+    <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: theme.sans, color: theme.ink }}>
       <div style={{ maxWidth: 620, margin: "0 auto", padding: "32px 20px 60px" }}>
-        <div style={{ marginBottom: 20 }}>
-          <h1 style={{ margin: 0, fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(28px, 4vw, 36px)", fontWeight: 300, color: "#1a1a1a" }}>{escala.label}</h1>
-          <p style={{ margin: "8px 0", color: "#8a7f74", fontSize: 14 }}>{escalaLabels[dimension] || escala.escala}</p>
-          <p style={{ margin: 0, color: "#666", fontSize: 14 }}>{escala.instruccion}</p>
+        <div style={{ marginBottom: 20, borderBottom: `1px solid ${theme.border}`, paddingBottom: 14 }}>
+          <h1 style={{ margin: 0, fontFamily: theme.sans, fontSize: 22, fontWeight: 600, color: theme.ink }}>{escala.label}</h1>
+          <p style={{ margin: "8px 0", color: theme.inkFaint, fontSize: 14, fontFamily: theme.sans }}>{escalaLabels[dimension] || escala.escala}</p>
+          <p style={{ margin: 0, color: theme.inkMuted, fontSize: 17, textAlign: "left", fontFamily: theme.sans }}>{escala.instruccion}</p>
         </div>
 
         <div style={{ marginBottom: 18, height: 8, background: theme.bgTertiary, borderRadius: 4, overflow: "hidden" }}>
@@ -446,7 +446,7 @@ export default function Evaluacion() {
         </div>
 
         <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 12, padding: "20px 22px" }}>
-          <p style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>Pregunta {questionIndex + 1} de {questions.length}</p>
+          <p style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: theme.ink }}>Pregunta {questionIndex + 1} de {questions.length}</p>
           <p style={{ margin: "0 0 18px", fontSize: 16, color: theme.inkMuted }}>{currentQ.texto}</p>
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -463,8 +463,8 @@ export default function Evaluacion() {
                       borderRadius: "50%",
                       border: selected ? `2.5px solid ${theme.purple}` : `1.5px solid ${theme.border}`,
                       background: selected ? theme.purple : "transparent",
-                      color: selected ? "#fff" : "#333",
-                      fontFamily: "Georgia, serif",
+                      color: selected ? "#FFFFFF" : theme.ink,
+                      fontFamily: theme.sans,
                       fontSize: 16,
                       cursor: "pointer",
                     }}
@@ -476,7 +476,7 @@ export default function Evaluacion() {
                       marginTop: 4,
                       visibility: idx === 0 || idx === escala.opciones.length - 1 ? "visible" : "hidden",
                       fontSize: 9,
-                      fontFamily: "'DM Mono', monospace",
+                      fontFamily: theme.sans,
                       color: theme.inkFaint,
                       textAlign: "center",
                       width: 50,
@@ -500,9 +500,9 @@ export default function Evaluacion() {
                 background: "transparent",
                 border: `1px solid ${theme.border}`,
                 borderRadius: 6,
-                color: questionIndex === 0 ? theme.inkFaint : "#8a7f74",
+                color: questionIndex === 0 ? theme.inkFaint : theme.purple,
                 cursor: questionIndex === 0 ? "not-allowed" : "pointer",
-                fontFamily: "Georgia, serif",
+                fontFamily: theme.sans,
               }}
             >
               ← Anterior
@@ -511,7 +511,7 @@ export default function Evaluacion() {
             {questionIndex < questions.length - 1 ? (
               <button
                 onClick={onNext}
-                style={{ padding: "10px 16px", background: theme.purple, border: "none", borderRadius: 6, color: "#fff", cursor: "pointer", fontFamily: "Georgia, serif" }}
+                style={{ padding: "14px 24px", background: theme.purple, border: "none", borderRadius: 12, color: "#FFFFFF", cursor: "pointer", fontFamily: theme.sans, fontWeight: 600, fontSize: 15 }}
               >
                 Siguiente →
               </button>
@@ -519,14 +519,14 @@ export default function Evaluacion() {
               <button
                 onClick={onSubmit}
                 disabled={loading}
-                style={{ padding: "10px 16px", background: theme.ink, border: "none", borderRadius: 6, color: "#fff", cursor: "pointer", fontFamily: "Georgia, serif" }}
+                style={{ padding: "14px 24px", background: theme.purple, border: "none", borderRadius: 12, color: "#FFFFFF", cursor: "pointer", fontFamily: theme.sans, fontWeight: 600, fontSize: 15 }}
               >
                 {loading ? "Guardando…" : "Guardar evaluación"}
               </button>
             )}
           </div>
 
-          <p style={{ marginTop: 18, fontSize: 13, color: theme.inkFaint, fontFamily: "'DM Mono', monospace" }}>
+          <p style={{ marginTop: 18, fontSize: 13, color: theme.inkFaint, fontFamily: theme.sans }}>
             Progreso actual: {progress}% · Score global estimado: {overall}%
           </p>
         </div>
