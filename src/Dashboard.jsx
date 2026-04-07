@@ -719,8 +719,8 @@ export default function Dashboard() {
       {/* 3.6 — Mapa completo */}
       {mapaCompleto && (
         <div style={{ padding: secPad }}>
-          <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: 28 }}>
-            <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.ink, marginBottom: 24, letterSpacing: "0.06em", fontWeight: 500 }}>
+          <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+            <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint, marginBottom: 20, letterSpacing: "0.06em", fontWeight: 500 }}>
               TU MAPA COMPLETO · {fechaLabel}
             </div>
             {mapaCompleto.split("\n\n").map((block, i) => {
@@ -728,11 +728,11 @@ export default function Dashboard() {
               const label = lines[0];
               const texto = lines.slice(1).join("\n").trim();
               return (
-                <div key={i} style={{ marginBottom: i < 3 ? 24 : 0 }}>
-                  <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.ink, marginBottom: 10, letterSpacing: "0.04em", fontWeight: 600 }}>
+                <div key={i} style={{ marginBottom: 24 }}>
+                  <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.ink, marginBottom: 4, letterSpacing: "0.01em", fontWeight: 600 }}>
                     {label}
                   </div>
-                  <p style={{ fontFamily: theme.sans, fontSize: 14, color: theme.ink, lineHeight: 1.8, margin: 0 }}>
+                  <p style={{ fontFamily: theme.sans, fontSize: 15, color: theme.inkMuted, lineHeight: 1.65, marginBottom: 0, marginTop: 0 }}>
                     {texto}
                   </p>
                 </div>
