@@ -7,7 +7,7 @@ const tests = [
     sigla: "MAAS",
     nombre: "Escala de Atención Consciente",
     dimension: "Presencia",
-    color: "#3d7a65",
+    color: theme.dims.presencia,
     que_mide: "Qué tan presente estás en tu propia vida.",
     para_que: "¿Vives el momento o tu mente siempre está en otro lado? Conocer esto te permite dejar de vivir en piloto automático y empezar a elegir dónde pones tu atención.",
   },
@@ -15,7 +15,7 @@ const tests = [
     sigla: "ATQ",
     nombre: "Cuestionario de Pensamientos Automáticos",
     dimension: "Claridad cognitiva",
-    color: "#9a5e2e",
+    color: theme.dims.claridad,
     que_mide: "El ruido interno — los pensamientos negativos que aparecen solos.",
     para_que: "Conocer tus pensamientos automáticos es el primer paso para no dejar que dicten cómo te ves a ti mismo y cómo interpretas lo que te pasa.",
   },
@@ -23,7 +23,7 @@ const tests = [
     sigla: "DERS",
     nombre: "Escala de Regulación Emocional",
     dimension: "Regulación emocional",
-    color: "#6a3d82",
+    color: theme.dims.regulacion,
     que_mide: "Cómo manejas lo que sientes cuando las cosas se ponen difíciles.",
     para_que: "Entender tu regulación emocional explica por qué a veces actúas diferente a lo que habías decidido — y qué hacer para que eso cambie.",
   },
@@ -31,7 +31,7 @@ const tests = [
     sigla: "VQ",
     nombre: "Cuestionario de Valores",
     dimension: "Alineación de valores",
-    color: "#2d6382",
+    color: theme.dims.valores,
     que_mide: "La brecha entre lo que dices que importa y cómo realmente vives.",
     para_que: "Cerrar esa brecha es la diferencia entre una vida con dirección y una vida en reacción. Primero tienes que verla con claridad.",
   },
@@ -39,7 +39,7 @@ const tests = [
     sigla: "SCS",
     nombre: "Escala de Autocompasión",
     dimension: "Autoconocimiento",
-    color: "#4d6d2a",
+    color: theme.dims.autoconocimiento,
     que_mide: "Cómo te tratas a ti mismo cuando fallas.",
     para_que: "Las personas que se conocen bien saben que la autocrítica destructiva no mejora nada. Este test te muestra exactamente cómo te hablas cuando más te necesitas.",
   },
@@ -47,7 +47,7 @@ const tests = [
     sigla: "BSCS",
     nombre: "Escala Breve de Autocontrol",
     dimension: "Agencia",
-    color: "#7a6520",
+    color: theme.dims.agencia,
     que_mide: "Tu capacidad real de hacer lo que decides hacer.",
     para_que: "No es fuerza de voluntad — es un músculo medible. Conocer tu nivel de agencia te dice exactamente dónde empieza la brecha entre tus intenciones y tus acciones.",
   },
@@ -79,17 +79,17 @@ export default function Home() {
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 32px", borderBottom: `0.5px solid ${theme.border}`, background: theme.bg, position: "sticky", top: 0, zIndex: 10 }}>
         <span style={{ fontFamily: theme.serif, fontSize: 18, fontWeight: "normal", letterSpacing: "0.04em", color: theme.ink }}>lucidez</span>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          <button onClick={() => navigate("/indice")} style={{ fontFamily: theme.mono, fontSize: 12, color: theme.inkMuted, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none" }}>El Índice</button>
-          <button onClick={() => navigate("/login")} style={{ fontFamily: theme.mono, fontSize: 12, color: theme.ink, cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", border: "none", background: "none", padding: 0 }}>Entrar →</button>
+          <button onClick={() => navigate("/indice")} style={{ fontFamily: theme.sans, fontSize: 15, color: theme.inkMuted, cursor: "pointer", border: "none", background: "none" }}>El Índice</button>
+          <button onClick={() => navigate("/login")} style={{ fontFamily: theme.sans, fontSize: 15, color: theme.purple, cursor: "pointer", border: "none", background: "none", padding: 0 }}>Entrar →</button>
         </div>
       </nav>
 
       {/* Hero */}
       <section style={{ maxWidth: 800, margin: "0 auto", padding: isMobile ? "60px 28px 48px" : "80px 48px 60px", textAlign: "center" }}>
-        <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.purpleText, background: theme.purpleLight, marginBottom: 24 }}>
+        <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.purple, background: theme.bgSecondary, borderRadius: 20, padding: "4px 14px", display: "inline-block", marginBottom: 24 }}>
           Autoconocimiento · Basado en ciencia · Con inteligencia artificial
         </p>
-        <h1 style={{ fontSize: isMobile ? 32 : 48, fontWeight: "normal", lineHeight: 1.2, marginBottom: 20, color: theme.ink, letterSpacing: "-0.01em" }}>
+        <h1 style={{ fontSize: isMobile ? 32 : 48, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, color: theme.ink, letterSpacing: "-0.01em" }}>
           ¿Quieres conocerte a ti mismo de una manera que nunca habías imaginado?
         </h1>
         <p style={{ fontSize: 17, color: theme.inkMuted, lineHeight: 1.7, maxWidth: 600, margin: "0 auto 32px" }}>
@@ -97,11 +97,11 @@ export default function Home() {
         </p>
         <button
           onClick={() => navigate("/indice")}
-          style={{ background: theme.purple, color: "#ffffff", border: "none", padding: "16px 32px", fontFamily: theme.mono, fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 32, marginBottom: 12 }}
+          style={{ background: theme.purple, color: "#ffffff", border: "none", padding: "16px 32px", fontFamily: theme.sans, fontWeight: 600, fontSize: 13, cursor: "pointer", borderRadius: 32, marginBottom: 12 }}
         >
           Comenzar mi autoconocimiento →
         </button>
-        <div style={{ fontFamily: theme.mono, fontSize: 11, color: theme.inkFaint, letterSpacing: "0.04em" }}>
+        <div style={{ fontFamily: theme.sans, fontSize: 11, color: theme.inkFaint }}>
           Gratis · Sin cuenta · A tu ritmo
         </div>
       </section>
@@ -113,12 +113,12 @@ export default function Home() {
         <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 8 }}>
           Seis instrumentos psicológicos validados
         </p>
-        <h2 style={{ fontSize: isMobile ? 24 : 32, fontWeight: "normal", marginBottom: 40, color: theme.ink, lineHeight: 1.3 }}>
+        <h2 style={{ fontSize: isMobile ? 24 : 32, fontWeight: 700, marginBottom: 40, color: theme.ink, lineHeight: 1.3 }}>
           Una imagen completa de cómo funciona tu mente
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap: 20 }}>
           {tests.map((t) => (
-            <div key={t.sigla} style={{ background: "#ffffff", border: `0.5px solid ${theme.border}`, borderRadius: 6, padding: 24 }}>
+            <div key={t.sigla} style={{ background: "#ffffff", border: `0.5px solid ${theme.border}`, borderRadius: 12, padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: t.color, flexShrink: 0 }} />
                 <span style={{ fontFamily: theme.mono, fontSize: 10, letterSpacing: "0.10em", textTransform: "uppercase", color: t.color }}>{t.dimension}</span>
@@ -141,7 +141,7 @@ export default function Home() {
         <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 8 }}>
           Lo que cambia cuando te conoces
         </p>
-        <h2 style={{ fontSize: isMobile ? 24 : 32, fontWeight: "normal", marginBottom: 20, color: theme.ink, lineHeight: 1.3 }}>
+        <h2 style={{ fontSize: isMobile ? 24 : 32, fontWeight: 700, marginBottom: 20, color: theme.ink, lineHeight: 1.3 }}>
           Conocerte cambia todo.
         </h2>
         <p style={{ fontSize: 16, color: theme.inkMuted, lineHeight: 1.8, marginBottom: 16 }}>
@@ -162,13 +162,13 @@ export default function Home() {
         <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 8 }}>
           Cómo funciona
         </p>
-        <h2 style={{ fontSize: isMobile ? 24 : 32, fontWeight: "normal", marginBottom: 40, color: theme.ink }}>
+        <h2 style={{ fontSize: isMobile ? 24 : 32, fontWeight: 700, marginBottom: 40, color: theme.ink }}>
           Tu análisis, no una descripción genérica.
         </h2>
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(4, 1fr)", gap: 0, border: `0.5px solid ${theme.border}`, borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(4, 1fr)", gap: 0, border: `0.5px solid ${theme.border}`, borderRadius: 12, overflow: "hidden" }}>
           {pasos.map((s, i) => (
             <div key={s.num} style={{ padding: "24px 20px", borderRight: !isMobile && i < pasos.length - 1 ? `0.5px solid ${theme.border}` : "none", borderBottom: isMobile && i < pasos.length - 1 ? `0.5px solid ${theme.border}` : "none", background: "#ffffff" }}>
-              <div style={{ fontFamily: theme.mono, fontSize: 11, color: theme.inkFaint, letterSpacing: "0.06em", marginBottom: 12 }}>{s.num}</div>
+              <div style={{ fontFamily: theme.mono, fontSize: 11, color: theme.purple, letterSpacing: "0.06em", marginBottom: 12 }}>{s.num}</div>
               <strong style={{ display: "block", fontSize: 14, fontWeight: "normal", marginBottom: 8, color: theme.ink }}>{s.title}</strong>
               <p style={{ fontSize: 13, color: theme.inkMuted, lineHeight: 1.6 }}>{s.desc}</p>
             </div>
@@ -178,10 +178,10 @@ export default function Home() {
 
       {/* CTA final */}
       <div style={{ background: theme.ink, padding: "60px 32px", textAlign: "center" }}>
-        <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: "#a09890", marginBottom: 16 }}>
+        <p style={{ fontFamily: theme.mono, fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: theme.inkFaint, marginBottom: 16 }}>
           El mapa más preciso de cómo funciona tu mente
         </p>
-        <h2 style={{ fontSize: isMobile ? 26 : 36, fontWeight: "normal", marginBottom: 12, color: theme.bg, lineHeight: 1.3 }}>
+        <h2 style={{ fontSize: isMobile ? 26 : 36, fontWeight: 700, marginBottom: 12, color: theme.bg, lineHeight: 1.3 }}>
           En español. Con datos. Gratis.
         </h2>
         <p style={{ fontSize: 15, color: "#b8b0a8", marginBottom: 32, maxWidth: 500, margin: "0 auto 32px" }}>
@@ -189,7 +189,7 @@ export default function Home() {
         </p>
         <button
           onClick={() => navigate("/indice")}
-          style={{ background: theme.bg, color: theme.ink, border: "none", padding: "16px 32px", fontFamily: theme.mono, fontSize: 13, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", borderRadius: 32 }}
+          style={{ background: theme.bg, color: theme.ink, border: "none", padding: "16px 32px", fontFamily: theme.sans, fontWeight: 600, fontSize: 13, cursor: "pointer", borderRadius: 32 }}
         >
           Comenzar mi autoconocimiento →
         </button>
