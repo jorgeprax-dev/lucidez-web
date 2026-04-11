@@ -616,7 +616,11 @@ export default function Dashboard() {
                   const url = esMobile
                     ? "whatsapp://send?text=" + mensaje
                     : "https://wa.me/?text=" + mensaje;
-                  window.open(url, "_blank");
+                  if (esMobile) {
+                    window.location.href = url;
+                  } else {
+                    window.open(url, "_blank");
+                  }
                 }
               }
               setGenerandoSlug(false);
