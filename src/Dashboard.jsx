@@ -610,16 +610,13 @@ export default function Dashboard() {
                 });
                 if (slug) {
                   setSlugIndice(slug);
-                  window.open(
-                    "https://wa.me/?text=" +
-                      encodeURIComponent(
-                        "Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " +
-                          window.location.origin +
-                          "/r/" +
-                          slug
-                      ),
-                    "_blank"
-                  );
+                  const slugGenerado = slug;
+                  const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slugGenerado);
+                  const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                  const url = esMobile
+                    ? "whatsapp://send?text=" + mensaje
+                    : "https://wa.me/?text=" + mensaje;
+                  window.open(url, "_blank");
                 }
               }
               setGenerandoSlug(false);
