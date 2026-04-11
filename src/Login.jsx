@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "./supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { theme } from "./theme";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -34,22 +35,22 @@ export default function Login() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#F7F4F0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: "Georgia, serif" }}>
-      <div style={{ background: "#FAFAF7", border: "1px solid #E8E2D9", borderRadius: "16px", padding: "44px 40px", width: "100%", maxWidth: 400 }}>
+    <div style={{ minHeight: "100vh", background: theme.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: theme.sans }}>
+      <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.08)", padding: "40px 32px", width: "100%", maxWidth: 400 }}>
 
         <div style={{ marginBottom: 32, textAlign: "center" }}>
-          <div style={{ fontSize: 22, letterSpacing: "0.08em", color: "#1A1A1A", marginBottom: 8 }}>lucidez</div>
-          <div style={{ fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0A89E", fontFamily: "'Courier New', monospace" }}>PERCIBIR · PROCESAR · ACTUAR</div>
+          <div style={{ fontFamily: theme.sans, fontWeight: 700, fontSize: 28, color: theme.ink, textAlign: "center", marginBottom: 8 }}>lucidez</div>
+          <div style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, color: theme.inkFaint, letterSpacing: "0.04em" }}>Ver claro · Actuar bien · Vivir bien</div>
         </div>
 
         {sent ? (
           <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: 16, color: "#1A1A1A", marginBottom: 12 }}>Revisa tu correo</p>
-            <p style={{ fontSize: 13, color: "#8A7F74", lineHeight: 1.6 }}>Te enviamos un enlace a <strong>{email}</strong>. Un clic y entras — sin contraseña.</p>
+            <p style={{ fontFamily: theme.sans, fontSize: 16, color: theme.ink, marginBottom: 12 }}>Revisa tu correo</p>
+            <p style={{ fontFamily: theme.sans, fontSize: 13, color: theme.inkFaint, lineHeight: 1.6 }}>Te enviamos un enlace a <strong>{email}</strong>. Un clic y entras — sin contraseña.</p>
           </div>
         ) : (
           <>
-            <button type="button" onClick={handleGoogleSignIn} disabled={loading} style={{ width: "100%", padding: "15px", background: "#FFFFFF", color: "#1A1A1A", border: "1px solid #E8E2D9", borderRadius: "8px", fontFamily: "Georgia, serif", fontSize: 14, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: loading ? 0.6 : 1, marginBottom: 20 }}>
+            <button type="button" onClick={handleGoogleSignIn} disabled={loading} style={{ width: "100%", padding: "14px 24px", background: theme.bg, color: theme.ink, border: `1px solid ${theme.border}`, borderRadius: 12, fontFamily: theme.sans, fontSize: 15, fontWeight: 500, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: loading ? 0.6 : 1, marginBottom: 20 }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -60,16 +61,16 @@ export default function Login() {
             </button>
 
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-              <div style={{ flex: 1, height: "1px", background: "#E8E2D9" }}></div>
-              <span style={{ color: "#B0A89E", fontSize: 13 }}>o</span>
-              <div style={{ flex: 1, height: "1px", background: "#E8E2D9" }}></div>
+              <div style={{ flex: 1, height: "1px", background: theme.border }}></div>
+              <span style={{ color: theme.inkFaint, fontFamily: theme.sans, fontSize: 13 }}>o</span>
+              <div style={{ flex: 1, height: "1px", background: theme.border }}></div>
             </div>
 
             <form onSubmit={handleSubmit}>
-              <label style={{ display: "block", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0A89E", marginBottom: 8, fontFamily: "'Courier New', monospace" }}>Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@email.com" required style={{ width: "100%", padding: "12px 0", border: "none", borderBottom: "1.5px solid #D0C8BC", background: "transparent", fontFamily: "Georgia, serif", fontSize: 17, color: "#1A1A1A", marginBottom: 28, display: "block", outline: "none" }} />
-              {error && <p style={{ fontSize: 12, color: "#E24B4A", marginBottom: 16 }}>{error}</p>}
-              <button type="submit" disabled={loading} style={{ width: "100%", padding: "15px", background: "#1A1A1A", color: "#FAF7F2", border: "none", borderRadius: "8px", fontFamily: "Georgia, serif", fontSize: 15, cursor: loading ? "not-allowed" : "pointer", marginBottom: 12, opacity: loading ? 0.7 : 1 }}>
+              <label style={{ display: "block", fontFamily: theme.sans, fontSize: 12, fontWeight: 500, color: theme.inkFaint, letterSpacing: "0.06em", marginBottom: 8 }}>Correo electrónico</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@email.com" required style={{ width: "100%", padding: "14px 16px", border: "none", borderRadius: 12, background: theme.bgSecondary, fontFamily: theme.sans, fontSize: 15, color: theme.ink, marginBottom: 28, display: "block", outline: "none", boxSizing: "border-box" }} />
+              {error && <p style={{ fontFamily: theme.sans, fontSize: 12, color: "#E24B4A", marginBottom: 16 }}>{error}</p>}
+              <button type="submit" disabled={loading} style={{ width: "100%", padding: "16px 24px", background: theme.purple, color: "#FFFFFF", border: "none", borderRadius: 14, fontFamily: theme.sans, fontWeight: 600, fontSize: 17, cursor: loading ? "not-allowed" : "pointer", marginBottom: 12, opacity: loading ? 0.7 : 1 }}>
                 {loading ? "Enviando..." : "Enviar enlace de acceso"}
               </button>
             </form>
@@ -77,7 +78,7 @@ export default function Login() {
         )}
 
         <div style={{ textAlign: "center", marginTop: 16 }}>
-          <button type="button" onClick={() => navigate("/")} style={{ fontFamily: "Georgia, serif", fontSize: 12, color: "#B0A89E", background: "none", border: "none", cursor: "pointer", padding: 0 }}>← Regresar al inicio</button>
+          <button type="button" onClick={() => navigate("/")} style={{ fontFamily: theme.sans, fontSize: 14, color: theme.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0 }}>← Regresar al inicio</button>
         </div>
 
       </div>
