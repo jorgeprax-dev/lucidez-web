@@ -761,58 +761,30 @@ function ResultsScreen({ scores, user, session }) {
               Genera un link anónimo para compartir tus resultados.
             </div>
           </div>
-          {slug ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <input
-                readOnly
-                value={`${window.location.origin}/r/${slug}`}
-                style={{ padding: "8px 12px", background: theme.bg, color: "#1a1714", border: `0.5px solid ${theme.border}`, borderRadius: 10, fontFamily: theme.sans, fontSize: 11, width: 200, outline: "none" }}
-              />
-              <button
-                onClick={() => {
-                  window.open(
-                    "https://wa.me/?text=" +
-                    encodeURIComponent(
-                      "Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " +
-                      window.location.origin +
-                      "/r/" +
-                      slug
-                    ),
-                    "_blank"
-                  );
-                }}
-                style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontSize: 13, fontWeight: 600, padding: "8px 14px", borderRadius: 10, border: "none", cursor: "pointer" }}
-              >
-                WhatsApp →
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/r/${slug}`);
-                }}
-                style={{ background: theme.purple, color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: theme.sans, fontSize: 13, cursor: "pointer", borderRadius: 10 }}
-              >
-                Copiar link
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={async () => {
-                setGenerandoLink(true);
-                const generatedSlug = await generarReportePublico({
-                  scores,
-                  overall,
-                  nivel: zona.label,
-                  aiReport,
-                });
-                if (generatedSlug) setSlug(generatedSlug);
-                setGenerandoLink(false);
-              }}
-              disabled={generandoLink}
-              style={{ background: generandoLink ? theme.bgTertiary : theme.purple, color: generandoLink ? theme.inkFaint : "#f7f4f0", border: "none", padding: "10px 20px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: generandoLink ? "default" : "pointer", borderRadius: 14, flexShrink: 0 }}
-            >
-              {generandoLink ? "Generando..." : "Generar link →"}
-            </button>
-          )}
+          <button
+            onClick={async () => {
+              setGenerandoLink(true);
+              const generatedSlug = await generarReportePublico({
+                scores,
+                overall,
+                nivel: zona.label,
+                aiReport,
+              });
+              if (generatedSlug) {
+                setSlug(generatedSlug);
+                const slugGenerado = generatedSlug;
+                const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slugGenerado);
+                const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const url = esMobile ? "whatsapp://send?text=" + mensaje : "https://wa.me/?text=" + mensaje;
+                if (esMobile) { window.location.href = url; } else { window.open(url, "_blank"); }
+              }
+              setGenerandoLink(false);
+            }}
+            disabled={generandoLink}
+            style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontWeight: 600, fontSize: 15, borderRadius: 14, padding: "10px 20px", border: "none", cursor: generandoLink ? "default" : "pointer" }}
+          >
+            {generandoLink ? "Generando..." : "Compartir por WhatsApp →"}
+          </button>
         </div>
       )}
 
