@@ -770,11 +770,28 @@ function ResultsScreen({ scores, user, session }) {
               />
               <button
                 onClick={() => {
+                  window.open(
+                    "https://wa.me/?text=" +
+                    encodeURIComponent(
+                      "Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " +
+                      window.location.origin +
+                      "/r/" +
+                      slug
+                    ),
+                    "_blank"
+                  );
+                }}
+                style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontSize: 13, fontWeight: 600, padding: "8px 14px", borderRadius: 10, border: "none", cursor: "pointer" }}
+              >
+                WhatsApp →
+              </button>
+              <button
+                onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/r/${slug}`);
                 }}
                 style={{ background: theme.purple, color: "#f7f4f0", border: "none", padding: "8px 14px", fontFamily: theme.sans, fontSize: 13, cursor: "pointer", borderRadius: 10 }}
               >
-                Copiar →
+                Copiar link
               </button>
             </div>
           ) : (
