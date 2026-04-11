@@ -597,59 +597,38 @@ export default function Dashboard() {
           </div>
         </div>
         <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
-          {slugIndice ? (
-            <>
-              <input
-                readOnly
-                value={`${window.location.origin}/r/${slugIndice}`}
-                style={{ flex: 1, padding: "8px 12px", background: theme.bg, color: theme.ink, border: `0.5px solid ${theme.border}`, borderRadius: 10, fontFamily: theme.sans, fontSize: 13, outline: "none" }}
-              />
-              <button
-                onClick={() => {
+          <button
+            onClick={async () => {
+              setGenerandoSlug(true);
+              const ultimoIndice = mediciones?.[mediciones.length - 1];
+              if (ultimoIndice) {
+                const slug = await generarReportePublico({
+                  scores: ultimoIndice.scores,
+                  overall: ultimoIndice.overall,
+                  nivel: ultimoIndice.nivel,
+                  aiReport: ultimoIndice.reporte || null,
+                });
+                if (slug) {
+                  setSlugIndice(slug);
                   window.open(
                     "https://wa.me/?text=" +
-                    encodeURIComponent(
-                      "Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " +
-                      window.location.origin +
-                      "/r/" +
-                      slugIndice
-                    ),
+                      encodeURIComponent(
+                        "Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " +
+                          window.location.origin +
+                          "/r/" +
+                          slug
+                      ),
                     "_blank"
                   );
-                }}
-                style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontSize: 13, fontWeight: 600, padding: "8px 14px", borderRadius: 10, border: "none", cursor: "pointer" }}
-              >
-                WhatsApp →
-              </button>
-              <button
-                onClick={() => navigator.clipboard.writeText(`${window.location.origin}/r/${slugIndice}`)}
-                style={{ background: theme.purple, color: theme.bg, border: "none", padding: "8px 14px", fontFamily: theme.sans, fontSize: 13, cursor: "pointer", borderRadius: 10, flexShrink: 0 }}
-              >
-                Copiar link
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={async () => {
-                setGenerandoSlug(true);
-                const ultimoIndice = mediciones?.[mediciones.length - 1];
-                if (ultimoIndice) {
-                  const slug = await generarReportePublico({
-                    scores: ultimoIndice.scores,
-                    overall: ultimoIndice.overall,
-                    nivel: ultimoIndice.nivel,
-                    aiReport: ultimoIndice.reporte || null,
-                  });
-                  if (slug) setSlugIndice(slug);
                 }
-                setGenerandoSlug(false);
-              }}
-              disabled={generandoSlug}
-              style={{ background: generandoSlug ? theme.bgTertiary : theme.purple, color: generandoSlug ? theme.inkFaint : theme.bg, border: "none", padding: "14px 24px", fontFamily: theme.sans, fontWeight: 600, fontSize: 15, cursor: generandoSlug ? "default" : "pointer", borderRadius: 12 }}
-            >
-              {generandoSlug ? "Generando..." : "Compartir mi Índice"}
-            </button>
-          )}
+              }
+              setGenerandoSlug(false);
+            }}
+            disabled={generandoSlug}
+            style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontWeight: 600, fontSize: 15, borderRadius: 14, padding: "10px 20px", border: "none", cursor: generandoSlug ? "default" : "pointer" }}
+          >
+            {generandoSlug ? "Generando..." : "Compartir por WhatsApp →"}
+          </button>
         </div>
       </div>
 
