@@ -319,27 +319,19 @@ export default function Evaluacion() {
   }, []);
 
   useEffect(() => {
-    if (!saved) return;
-    const cargarOGenerarSlug = async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const userId = sessionData?.session?.user?.id;
-      if (!userId) return;
-      const { data } = await supabase
-        .from("reportes_publicos")
-        .select("slug")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-      if (data?.slug) {
-        setSlugReporte(data.slug);
-      } else {
-        const slug = await generarReportePublico({ userId, reporte: aiReport || "", tipo: "evaluacion" });
-        if (slug) setSlugReporte(slug);
-      }
+    if (!saved || !aiReport) return;
+    const generarSlug = async () => {
+      const nivel = (savedOverall ?? overall) >= 70 ? 'alto' : (savedOverall ?? overall) >= 40 ? 'medio' : 'bajo';
+      const slug = await generarReportePublico({
+        scores: {},
+        overall: savedOverall ?? overall,
+        nivel,
+        aiReport,
+      });
+      if (slug) setSlugReporte(slug);
     };
-    cargarOGenerarSlug();
-  }, [saved]);
+    generarSlug();
+  }, [saved, aiReport]);
 
   if (!escala) {
     return (
