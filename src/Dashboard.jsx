@@ -448,7 +448,11 @@ export default function Dashboard() {
       .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
-    if (!error && data) setMediciones(data);
+    if (!error && data) {
+      setMediciones(data);
+      const ultimo = data[data.length - 1];
+      if (ultimo?.mapa_completo) setMapaCompleto(ultimo.mapa_completo);
+    }
 
     // Carga evaluaciones profundas y las indexa por dimensión
     const { data: deepData, error: deepError } = await supabase
