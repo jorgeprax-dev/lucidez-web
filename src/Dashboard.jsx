@@ -444,7 +444,7 @@ export default function Dashboard() {
 
     const { data, error } = await supabase
       .from("indice_lucidez")
-      .select("id, fecha, scores, overall, nivel, reporte, nombre")
+      .select("id, fecha, scores, overall, nivel, reporte, nombre, mapa_completo")
       .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
@@ -701,6 +701,17 @@ export default function Dashboard() {
               setLoadingMapa(true);
               const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
               setMapaCompleto(mapa);
+              if (mapa) {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user?.id) {
+                  await supabase
+                    .from("indice_lucidez")
+                    .update({ mapa_completo: mapa })
+                    .eq("user_id", session.user.id)
+                    .order("fecha", { ascending: false })
+                    .limit(1);
+                }
+              }
               setLoadingMapa(false);
             }}
             disabled={loadingMapa}
