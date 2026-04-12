@@ -637,6 +637,17 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* 4 — Botón re-aplicar */}
+      <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
+        <div
+          onClick={() => navigate("/indice")}
+          style={{ background: theme.purple, borderRadius: 12, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
+        >
+          <div style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 600, color: theme.bg, marginBottom: 2 }}>Re-aplicar el Índice</div>
+          <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint }}>Mide tu progreso esta semana</div>
+        </div>
+      </div>
+
       {/* 3 — Dimensiones */}
       <div style={{ padding: secPad, background: theme.bgSecondary }}>
         <div style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, letterSpacing: "0.06em", color: theme.inkFaint, marginBottom: 12 }}>
@@ -744,16 +755,7 @@ export default function Dashboard() {
           )}
         </div>
       )}
-      {/* 4 — Botón re-aplicar */}
-      <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
-        <div
-          onClick={() => navigate("/indice")}
-          style={{ background: theme.purple, borderRadius: 12, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
-        >
-          <div style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 600, color: theme.bg, marginBottom: 2 }}>Re-aplicar el Índice</div>
-          <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint }}>Mide tu progreso esta semana</div>
-        </div>
-      </div>
+
 
       <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 100 }}>
         {showFeedbackModal && (
