@@ -163,6 +163,7 @@ export default function Evaluacion() {
   const [reporteGuardado, setReporteGuardado] = useState(null);
   const [respuestasCual, setRespuestasCual] = useState(["", ""]);
   const [cualGuardadas, setCualGuardadas] = useState(false);
+  const [slugReporte, setSlugReporte] = useState(null);
   const autoAdvanceTimeoutRef = useRef(null);
   const modoReporte = searchParams.get("modo") === "reporte";
 
@@ -316,6 +317,24 @@ export default function Evaluacion() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!saved) return;
+    const cargarSlug = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData?.session?.user?.id;
+      if (!userId) return;
+      const { data } = await supabase
+        .from("reportes_publicos")
+        .select("slug")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (data?.slug) setSlugReporte(data.slug);
+    };
+    cargarSlug();
+  }, [saved]);
+
   if (!escala) {
     return (
       <div style={{ minHeight: "100vh", background: theme.bg, fontFamily: theme.sans, color: theme.ink, padding: "40px 24px" }}>
@@ -423,6 +442,21 @@ export default function Evaluacion() {
 
           {reporte && cualGuardadas && (
             <div style={{ marginTop: 16, textAlign: "center" }}>
+              {slugReporte && (
+                <button
+                  onClick={() => {
+                    const mensaje = encodeURIComponent(
+                      "Acabo de evaluar mi " + escala.label + " en Lucidez. Ver mi reporte: " + window.location.origin + "/r/" + slugReporte
+                    );
+                    const esMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+                    const url = esMobile ? "whatsapp://send?text=" + mensaje : "https://wa.me/?text=" + mensaje;
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  }}
+                  style={{ marginBottom: 16, padding: "14px 24px", background: "#25D366", border: "none", borderRadius: 14, color: "#FFFFFF", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", width: "100%" }}
+                >
+                  Compartir por WhatsApp →
+                </button>
+              )}
               <a href="/dashboard" style={{ fontFamily: theme.sans, fontSize: 15, color: theme.purple, textDecoration: "none" }}>
                 Volver al dashboard →
               </a>
