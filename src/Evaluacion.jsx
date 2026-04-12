@@ -66,12 +66,13 @@ function computeOverall(answers, questions, maxOption) {
   return Math.round((total / (questions.length * maxOption)) * 100);
 }
 
-async function saveEvaluation({ userId, dimension, scores, overall }) {
+async function saveEvaluation({ userId, dimension, scores, overall, reporte }) {
   const payload = {
     user_id: userId,
     dimension,
     scores,
     overall,
+    reporte: reporte || null,
     fecha: new Date().toISOString(),
   };
 
@@ -192,7 +193,7 @@ export default function Evaluacion() {
       if (!session || !isMounted) return;
       const { data } = await supabase
         .from("evaluacion_profunda")
-        .select("overall, fecha, scores")
+        .select("overall, fecha, scores, reporte")
         .eq("user_id", session.user.id)
         .eq("dimension", dimension)
         .order("fecha", { ascending: false })
@@ -200,9 +201,14 @@ export default function Evaluacion() {
         .single();
 
       if (data && isMounted) {
-        const report = await generateDeepReport(dimension, escala, data.scores, data.overall);
-        setReporteGuardado(report);
-        setAiReport(report);
+        if (data.reporte) {
+          setReporteGuardado(data.reporte);
+          setAiReport(data.reporte);
+        } else {
+          const report = await generateDeepReport(dimension, escala, data.scores, data.overall);
+          setReporteGuardado(report);
+          setAiReport(report);
+        }
         setSavedOverall(data.overall ?? null);
         setSaved(true);
       }
@@ -286,15 +292,6 @@ export default function Evaluacion() {
       });
 
       // Guardar en Supabase solo si hay sesión activa
-      if (userId) {
-        await saveEvaluation({
-          userId,
-          dimension,
-          scores: formattedScores,
-          overall,
-        });
-      }
-
       // Mostrar reporte aunque no haya sesión
       setSaved(true);
       setSavedOverall(overall);
@@ -302,6 +299,16 @@ export default function Evaluacion() {
       const report = await generateDeepReport(dimension, escala, formattedScores, overall);
       setAiReport(report);
       setLoadingReport(false);
+
+      if (userId) {
+        await saveEvaluation({
+          userId,
+          dimension,
+          scores: formattedScores,
+          overall,
+          reporte: report,
+        });
+      }
     } catch (err) {
       setSaved(false);
       setError(err.message || "Error al generar el reporte.");
