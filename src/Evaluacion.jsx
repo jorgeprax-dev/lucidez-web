@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
+import { generarReportePublico } from "./utils";
 import { ESCALAS } from "./escalas";
 import { theme } from "./theme";
 
@@ -319,7 +320,7 @@ export default function Evaluacion() {
 
   useEffect(() => {
     if (!saved) return;
-    const cargarSlug = async () => {
+    const cargarOGenerarSlug = async () => {
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData?.session?.user?.id;
       if (!userId) return;
@@ -330,9 +331,14 @@ export default function Evaluacion() {
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
-      if (data?.slug) setSlugReporte(data.slug);
+      if (data?.slug) {
+        setSlugReporte(data.slug);
+      } else {
+        const slug = await generarReportePublico({ userId, reporte: aiReport || "", tipo: "evaluacion" });
+        if (slug) setSlugReporte(slug);
+      }
     };
-    cargarSlug();
+    cargarOGenerarSlug();
   }, [saved]);
 
   if (!escala) {
@@ -440,23 +446,24 @@ export default function Evaluacion() {
             </div>
           )}
 
+          {reporte && slugReporte && (
+            <button
+              onClick={() => {
+                const mensaje = encodeURIComponent(
+                  "Acabo de evaluar mi " + escala.label + " en Lucidez. Ver mi reporte: " + window.location.origin + "/r/" + slugReporte
+                );
+                const esMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+                const url = esMobile ? "whatsapp://send?text=" + mensaje : "https://wa.me/?text=" + mensaje;
+                window.open(url, "_blank", "noopener,noreferrer");
+              }}
+              style={{ marginTop: 16, marginBottom: 8, padding: "14px 24px", background: "#25D366", border: "none", borderRadius: 14, color: "#FFFFFF", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", width: "100%" }}
+            >
+              Compartir por WhatsApp →
+            </button>
+          )}
+
           {reporte && cualGuardadas && (
             <div style={{ marginTop: 16, textAlign: "center" }}>
-              {slugReporte && (
-                <button
-                  onClick={() => {
-                    const mensaje = encodeURIComponent(
-                      "Acabo de evaluar mi " + escala.label + " en Lucidez. Ver mi reporte: " + window.location.origin + "/r/" + slugReporte
-                    );
-                    const esMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-                    const url = esMobile ? "whatsapp://send?text=" + mensaje : "https://wa.me/?text=" + mensaje;
-                    window.open(url, "_blank", "noopener,noreferrer");
-                  }}
-                  style={{ marginBottom: 16, padding: "14px 24px", background: "#25D366", border: "none", borderRadius: 14, color: "#FFFFFF", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", width: "100%" }}
-                >
-                  Compartir por WhatsApp →
-                </button>
-              )}
               <a href="/dashboard" style={{ fontFamily: theme.sans, fontSize: 15, color: theme.purple, textDecoration: "none" }}>
                 Volver al dashboard →
               </a>
