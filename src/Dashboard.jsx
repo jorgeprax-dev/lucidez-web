@@ -749,7 +749,6 @@ export default function Dashboard() {
         </div>
       )}
       {/* 4 — Botón re-aplicar */}
-}
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
         <div
           onClick={() => navigate("/indice")}
