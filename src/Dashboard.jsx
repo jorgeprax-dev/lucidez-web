@@ -706,16 +706,12 @@ export default function Dashboard() {
                 setLoadingMapa(true);
                 const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
                 setMapaCompleto(mapa);
-                if (mapa) {
-                  const { data: { session: s } } = await supabase.auth.getSession();
-                  if (s?.user?.id) {
-                    await supabase
-                      .from("indice_lucidez")
-                      .update({ mapa_completo: mapa })
-                      .eq("user_id", s.user.id)
-                      .order("fecha", { ascending: false })
-                      .limit(1);
-                  }
+                if (mapa && mediciones.length > 0) {
+                  const ultimoId = mediciones[mediciones.length - 1].id;
+                  await supabase
+                    .from("indice_lucidez")
+                    .update({ mapa_completo: mapa })
+                    .eq("id", ultimoId);
                 }
                 setLoadingMapa(false);
               }}
