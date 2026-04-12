@@ -697,72 +697,59 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* 3.5 — Botón mapa completo (solo si todas evaluadas) */}
+      {/* 3.5 — Mapa completo */}
       {evaluadas === 6 && (
         <div style={{ padding: secPad }}>
-          <button
-            onClick={async () => {
-              setLoadingMapa(true);
-              const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
-              setMapaCompleto(mapa);
-              if (mapa) {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session?.user?.id) {
-                  await supabase
-                    .from("indice_lucidez")
-                    .update({ mapa_completo: mapa })
-                    .eq("user_id", session.user.id)
-                    .order("fecha", { ascending: false })
-                    .limit(1);
+          {!mapaCompleto ? (
+            <button
+              onClick={async () => {
+                setLoadingMapa(true);
+                const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
+                setMapaCompleto(mapa);
+                if (mapa) {
+                  const { data: { session: s } } = await supabase.auth.getSession();
+                  if (s?.user?.id) {
+                    await supabase
+                      .from("indice_lucidez")
+                      .update({ mapa_completo: mapa })
+                      .eq("user_id", s.user.id)
+                      .order("fecha", { ascending: false })
+                      .limit(1);
+                  }
                 }
-              }
-              setLoadingMapa(false);
-            }}
-            disabled={loadingMapa}
-            style={{
-              width: "100%",
-              fontFamily: theme.sans,
-              fontSize: 14,
-              color: loadingMapa ? theme.inkFaint : theme.bg,
-              background: loadingMapa ? theme.bgTertiary : theme.purple,
-              border: `1px solid ${theme.border}`,
-              borderRadius: 8,
-              padding: "14px 16px",
-              cursor: loadingMapa ? "not-allowed" : "pointer",
-            }}
-          >
-            {loadingMapa ? "Generando mapa..." : "Generar mi mapa completo →"}
-          </button>
-        </div>
-      )}
-
-      {/* 3.6 — Mapa completo */}
-      {mapaCompleto && (
-        <div style={{ padding: secPad }}>
-          <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-            <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint, marginBottom: 20, letterSpacing: "0.06em", fontWeight: 500 }}>
-              TU MAPA COMPLETO · {fechaLabel}
-            </div>
-            {mapaCompleto.split("\n\n").map((block, i) => {
-              const lines = block.split("\n");
-              const label = lines[0];
-              const texto = lines.slice(1).join("\n").trim();
-              return (
-                <div key={i} style={{ marginBottom: 24 }}>
-                  <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.ink, marginBottom: 4, letterSpacing: "0.01em", fontWeight: 600 }}>
-                    {label}
+                setLoadingMapa(false);
+              }}
+              disabled={loadingMapa}
+              style={{ width: "100%", fontFamily: theme.sans, fontSize: 14, color: loadingMapa ? theme.inkFaint : theme.bg, background: loadingMapa ? theme.bgTertiary : theme.purple, border: `1px solid ${theme.border}`, borderRadius: 8, padding: "14px 16px", cursor: loadingMapa ? "not-allowed" : "pointer" }}
+            >
+              {loadingMapa ? "Generando mapa..." : "Generar mi mapa completo →"}
+            </button>
+          ) : (
+            <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: "20px" }}>
+              <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint, marginBottom: 20, letterSpacing: "0.06em", fontWeight: 500 }}>
+                TU MAPA COMPLETO · {fechaLabel}
+              </div>
+              {mapaCompleto.split("\n\n").map((block, i) => {
+                const lines = block.split("\n");
+                const label = lines[0];
+                const texto = lines.slice(1).join("\n").trim();
+                return (
+                  <div key={i} style={{ marginBottom: 24 }}>
+                    <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.ink, marginBottom: 4, letterSpacing: "0.01em", fontWeight: 600 }}>
+                      {label}
+                    </div>
+                    <p style={{ fontFamily: theme.sans, fontSize: 15, color: theme.inkMuted, lineHeight: 1.65, marginBottom: 0, marginTop: 0 }}>
+                      {texto}
+                    </p>
                   </div>
-                  <p style={{ fontFamily: theme.sans, fontSize: 15, color: theme.inkMuted, lineHeight: 1.65, marginBottom: 0, marginTop: 0 }}>
-                    {texto}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
-
       {/* 4 — Botón re-aplicar */}
+}
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
         <div
           onClick={() => navigate("/indice")}
