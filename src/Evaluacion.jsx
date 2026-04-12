@@ -204,13 +204,26 @@ export default function Evaluacion() {
         if (data.reporte) {
           setReporteGuardado(data.reporte);
           setAiReport(data.reporte);
-        } else {
+          setSavedOverall(data.overall ?? null);
+          setSaved(true);
+        } else if (data.scores) {
           const report = await generateDeepReport(dimension, escala, data.scores, data.overall);
-          setReporteGuardado(report);
-          setAiReport(report);
+          if (isMounted) {
+            setReporteGuardado(report);
+            setAiReport(report);
+            setSavedOverall(data.overall ?? null);
+            setSaved(true);
+            if (report && session?.user?.id) {
+              await supabase
+                .from("evaluacion_profunda")
+                .update({ reporte: report })
+                .eq("user_id", session.user.id)
+                .eq("dimension", dimension)
+                .order("fecha", { ascending: false })
+                .limit(1);
+            }
+          }
         }
-        setSavedOverall(data.overall ?? null);
-        setSaved(true);
       }
     });
 
