@@ -637,28 +637,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 3.7 — Botón actualizar mapa */}
-      {mapaCompleto && evaluadas === 6 && (
-        <div style={{ padding: secPad }}>
-          <button
-            onClick={async () => {
-              setLoadingMapa(true);
-              const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
-              setMapaCompleto(mapa);
-              if (mapa && mediciones.length > 0) {
-                const ultimoId = mediciones[mediciones.length - 1].id;
-                await supabase.from("indice_lucidez").update({ mapa_completo: mapa }).eq("id", ultimoId);
-              }
-              setLoadingMapa(false);
-            }}
-            disabled={loadingMapa}
-            style={{ width: "100%", fontFamily: theme.sans, fontSize: 13, color: loadingMapa ? theme.inkFaint : theme.inkMuted, background: "transparent", border: `1px solid ${theme.border}`, borderRadius: 8, padding: "10px 16px", cursor: loadingMapa ? "not-allowed" : "pointer" }}
-          >
-            {loadingMapa ? "Generando..." : "Actualizar mapa →"}
-          </button>
-        </div>
-      )}
-
       {/* 4 — Botón re-aplicar */}
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
         <div
@@ -774,6 +752,22 @@ export default function Dashboard() {
                 );
               })}
             </div>
+            <button
+              onClick={async () => {
+                setLoadingMapa(true);
+                const mapa = await generateMapaCompleto(evaluacionesProfundas, scores);
+                setMapaCompleto(mapa);
+                if (mapa && mediciones.length > 0) {
+                  const ultimoId = mediciones[mediciones.length - 1].id;
+                  await supabase.from("indice_lucidez").update({ mapa_completo: mapa }).eq("id", ultimoId);
+                }
+                setLoadingMapa(false);
+              }}
+              disabled={loadingMapa}
+              style={{ marginTop: 16, width: "100%", fontFamily: theme.sans, fontSize: 13, color: loadingMapa ? theme.inkFaint : "#fff", background: loadingMapa ? theme.bgTertiary : theme.purple, border: "none", borderRadius: 8, padding: "10px 16px", cursor: loadingMapa ? "not-allowed" : "pointer" }}
+            >
+              {loadingMapa ? "Generando..." : "Actualizar mapa →"}
+            </button>
           )}
         </div>
       )}
