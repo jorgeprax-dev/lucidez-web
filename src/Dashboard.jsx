@@ -732,6 +732,7 @@ export default function Dashboard() {
               {loadingMapa ? "Generando mapa..." : "Generar mi mapa completo →"}
             </button>
           ) : (
+            <>
             <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: "20px" }}>
               <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint, marginBottom: 20, letterSpacing: "0.06em", fontWeight: 500 }}>
                 TU MAPA COMPLETO · {fechaLabel}
@@ -768,6 +769,7 @@ export default function Dashboard() {
             >
               {loadingMapa ? "Generando..." : "Actualizar mapa →"}
             </button>
+            </>
           )}
         </div>
       )}
