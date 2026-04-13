@@ -743,12 +743,20 @@ export default function Dashboard() {
                 const texto = lines.slice(1).join("\n").trim();
                 return (
                   <div key={i} style={{ marginBottom: 24 }}>
-                    <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.ink, marginBottom: 4, letterSpacing: "0.01em", fontWeight: 600 }}>
-                      {label}
-                    </div>
-                    <p style={{ fontFamily: theme.sans, fontSize: 15, color: theme.inkMuted, lineHeight: 1.65, marginBottom: 0, marginTop: 0 }}>
-                      {texto}
-                    </p>
+                    {label && texto ? (
+                      <>
+                        <div style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, color: theme.inkFaint, letterSpacing: "0.06em", marginBottom: 6 }}>
+                          {label.toUpperCase()}
+                        </div>
+                        <p style={{ fontFamily: theme.sans, fontSize: 16, color: theme.ink, lineHeight: 1.6, margin: 0 }}>
+                          {texto}
+                        </p>
+                      </>
+                    ) : (
+                      <p style={{ fontFamily: theme.sans, fontSize: 16, color: theme.ink, lineHeight: 1.6, margin: 0 }}>
+                        {block}
+                      </p>
+                    )}
                   </div>
                 );
               })}
