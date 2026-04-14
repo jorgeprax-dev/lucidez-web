@@ -415,6 +415,7 @@ export default function Dashboard() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackTexto, setFeedbackTexto] = useState("");
   const [showReporteIndice, setShowReporteIndice] = useState(false);
+  const ultimoIndice = mediciones?.[mediciones.length - 1] ?? null;
   const [feedbackEnviado, setFeedbackEnviado] = useState(false);
   const [slugIndice, setSlugIndice] = useState(null);
   const [generandoSlug, setGenerandoSlug] = useState(false);
@@ -605,7 +606,6 @@ export default function Dashboard() {
           <button
             onClick={async () => {
               setGenerandoSlug(true);
-              const ultimoIndice = mediciones?.[mediciones.length - 1];
               if (ultimoIndice) {
                 const slug = await generarReportePublico({
                   scores: ultimoIndice.scores,
