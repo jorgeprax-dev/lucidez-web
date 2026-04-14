@@ -560,6 +560,20 @@ function ResultsScreen({ scores, user, session }) {
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
     setAiReport(ai);
+    if (ai && resolvedUserId) {
+      const { data: rows } = await supabase
+        .from("indice_lucidez")
+        .select("id")
+        .eq("user_id", resolvedUserId)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (rows && rows.length > 0) {
+        await supabase
+          .from("indice_lucidez")
+          .update({ reporte: ai })
+          .eq("id", rows[0].id);
+      }
+    }
     if (ai) {
       const match = ai.match(/PREGUNTA_DINAMICA:\s*(.+)/);
       const preguntaDinamica = match ? match[1].trim() : null;
