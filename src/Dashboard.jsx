@@ -414,6 +414,7 @@ export default function Dashboard() {
   const [loadingMapa, setLoadingMapa] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackTexto, setFeedbackTexto] = useState("");
+  const [showReporteIndice, setShowReporteIndice] = useState(false);
   const [feedbackEnviado, setFeedbackEnviado] = useState(false);
   const [slugIndice, setSlugIndice] = useState(null);
   const [generandoSlug, setGenerandoSlug] = useState(false);
@@ -639,6 +640,29 @@ export default function Dashboard() {
 
       {/* 4 — Botón re-aplicar */}
       <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
+        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+          {ultimoIndice?.reporte && (
+            <button
+              onClick={() => setShowReporteIndice(!showReporteIndice)}
+              style={{ flex: 1, fontFamily: theme.sans, fontSize: 14, fontWeight: 500, color: theme.purple, background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
+            >
+              {showReporteIndice ? "Cerrar reporte ↑" : "Ver mi reporte →"}
+            </button>
+          )}
+          <button
+            onClick={() => navigate("/indice")}
+            style={{ flex: 1, fontFamily: theme.sans, fontSize: 14, color: theme.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "right" }}
+          >
+            Repetir el Índice →
+          </button>
+        </div>
+        {showReporteIndice && ultimoIndice?.reporte && (
+          <div style={{ background: theme.bgSecondary, borderRadius: 12, padding: 20, marginBottom: 12 }}>
+            {ultimoIndice.reporte.split("\n\n").map((p, i) => (
+              <p key={i} style={{ fontFamily: theme.sans, fontSize: 15, color: theme.ink, lineHeight: 1.7, marginBottom: 12 }}>{p}</p>
+            ))}
+          </div>
+        )}
         <div
           onClick={() => navigate("/indice")}
           style={{ background: theme.purple, borderRadius: 12, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
