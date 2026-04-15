@@ -96,33 +96,37 @@ export default function ReporteIndice() {
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 12, marginBottom: 0 }}>
-        <button
-          onClick={() => navigate("/indice")}
-          style={{ flex: 1, background: theme.purple, color: "#FFFFFF", border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
-        >
-          Repetir el Índice →
-        </button>
-        <button
-          onClick={async () => {
-            const slug = await generarReportePublico({
-              scores: indice.scores,
-              overall: indice.overall,
-              nivel: indice.nivel,
-              aiReport: indice.reporte || null,
-            });
-            if (slug) {
-              const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slug);
-              const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-              const url = esMobile ? "whatsapp://send?text=" + mensaje : "https://wa.me/?text=" + mensaje;
-              if (esMobile) { window.location.href = url; } else { window.open(url, "_blank"); }
-            }
-          }}
-          style={{ background: "#25D366", color: "#FFFFFF", border: "none", padding: "13px 20px", fontFamily: theme.sans, fontSize: 15, fontWeight: 600, cursor: "pointer", borderRadius: 14 }}
-        >
-          WhatsApp →
-        </button>
-      </div>
+      <button
+        onClick={async () => {
+          const slug = await generarReportePublico({
+            scores: indice.scores,
+            overall: indice.overall,
+            nivel: indice.nivel,
+            aiReport: indice.reporte || null,
+          });
+          if (slug) {
+            const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slug);
+            const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const url = esMobile ? "whatsapp://send?text=" + mensaje : "https://wa.me/?text=" + mensaje;
+            if (esMobile) { window.location.href = url; } else { window.open(url, "_blank"); }
+          }
+        }}
+        style={{ width: "100%", background: "#25D366", color: "#FFFFFF", border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 16, fontWeight: 600, cursor: "pointer", borderRadius: 14, marginBottom: 12 }}
+      >
+        Compartir por WhatsApp →
+      </button>
+      <button
+        onClick={() => navigate("/dashboard")}
+        style={{ width: "100%", background: theme.accent, color: "#FFFFFF", border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 16, fontWeight: 600, cursor: "pointer", borderRadius: 14, marginBottom: 12 }}
+      >
+        Volver al dashboard →
+      </button>
+      <button
+        onClick={() => navigate("/indice")}
+        style={{ width: "100%", background: theme.bgSecondary, color: theme.purple, border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 15, fontWeight: 500, cursor: "pointer", borderRadius: 14 }}
+      >
+        Repetir el Índice →
+      </button>
     </div>
   );
 }
