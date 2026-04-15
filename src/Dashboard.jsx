@@ -592,7 +592,7 @@ export default function Dashboard() {
       </nav>
 
       {/* 2 — Score hero + botones Índice */}
-      <div style={{ padding: isMobile ? "16px 20px" : "16px 40px", background: theme.bg, borderBottom: `1px solid ${theme.border}` }}>
+      <div style={{ padding: isMobile ? "16px 20px" : "16px 40px", background: theme.bgSecondary, borderBottom: `1px solid ${theme.border}` }}>
         <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: "20px 20px 16px", marginBottom: 0 }}>
           <div style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 700, color: theme.ink, marginBottom: 4 }}>Índice de Lucidez</div>
           <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.inkFaint, marginBottom: 14 }}>Medición global · {fechaLabel}</div>
