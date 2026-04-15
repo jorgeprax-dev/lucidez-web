@@ -602,7 +602,7 @@ export default function Dashboard() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div style={{ fontFamily: theme.sans, fontWeight: 700, fontSize: 32, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
               {ultimoIndice?.reporte && (
                 <button
