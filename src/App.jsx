@@ -9,6 +9,7 @@ import Roadmap from "./Roadmap.jsx";
 import Chat from "./Chat.jsx";
 import Login from "./Login.jsx";
 import Evaluacion from "./Evaluacion.jsx";
+import ReporteIndice from "./ReporteIndice.jsx";
 import Curso from "./Curso.jsx";
 import Leccion from "./Leccion.jsx";
 import ReportePublico from "./ReportePublico.jsx";
@@ -69,6 +70,7 @@ export default function App() {
 
         {/* Rutas privadas — requieren sesión */}
         <Route path="/indice" element={<Indice />} />
+        <Route path="/reporte-indice" element={<PrivateRoute><ReporteIndice /></PrivateRoute>} />
         <Route
           path="/dashboard"
           element={

@@ -643,10 +643,10 @@ export default function Dashboard() {
         <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
           {ultimoIndice?.reporte && (
             <button
-              onClick={() => setShowReporteIndice(!showReporteIndice)}
+              onClick={() => navigate("/reporte-indice")}
               style={{ flex: 1, fontFamily: theme.sans, fontSize: 14, fontWeight: 500, color: theme.purple, background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
             >
-              {showReporteIndice ? "Cerrar reporte ↑" : "Ver mi reporte →"}
+              {"Ver mi reporte →"}
             </button>
           )}
           <button
