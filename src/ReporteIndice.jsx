@@ -117,7 +117,7 @@ export default function ReporteIndice() {
       </button>
       <button
         onClick={() => navigate("/dashboard")}
-        style={{ width: "100%", background: theme.accent, color: "#FFFFFF", border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 16, fontWeight: 600, cursor: "pointer", borderRadius: 14, marginBottom: 12 }}
+        style={{ width: "100%", background: theme.purple, color: "#FFFFFF", border: "none", padding: "13px 0", fontFamily: theme.sans, fontSize: 16, fontWeight: 600, cursor: "pointer", borderRadius: 14, marginBottom: 12 }}
       >
         Volver al dashboard →
       </button>
