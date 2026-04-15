@@ -591,84 +591,67 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* 2 — Score hero */}
-      <div style={{ padding: isMobile ? "24px 20px 20px" : "24px 40px 20px", background: theme.bg, borderBottom: `1px solid ${theme.border}` }}>
-        <div style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, letterSpacing: "0.06em", color: theme.inkFaint, marginBottom: 8 }}>
-          ÍNDICE DE LUCIDEZ · {fechaLabel}
-        </div>
-        <div>
-          <div style={{ fontFamily: theme.sans, fontWeight: 700, fontSize: 80, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
-          <div style={{ height: 6, borderRadius: 3, background: theme.bgTertiary, marginTop: 12, width: "100%", overflow: "hidden" }}>
+      {/* 2 — Score hero + botones Índice */}
+      <div style={{ padding: isMobile ? "16px 20px" : "16px 40px", background: theme.bg, borderBottom: `1px solid ${theme.border}` }}>
+        <div style={{ background: theme.bg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: "20px 20px 16px", marginBottom: 0 }}>
+          <div style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 700, color: theme.ink, marginBottom: 4 }}>Índice de Lucidez</div>
+          <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.inkFaint, marginBottom: 14 }}>Medición global · {fechaLabel}</div>
+          <div style={{ height: 6, borderRadius: 3, background: theme.bgTertiary, marginBottom: 8, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${overall}%`, background: colorZona(zona(overall)), borderRadius: 3 }} />
           </div>
-        </div>
-        <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10 }}>
-          <button
-            onClick={async () => {
-              setGenerandoSlug(true);
-              if (ultimoIndice) {
-                const slug = await generarReportePublico({
-                  scores: ultimoIndice.scores,
-                  overall: ultimoIndice.overall,
-                  nivel: ultimoIndice.nivel,
-                  aiReport: ultimoIndice.reporte || null,
-                });
-                if (slug) {
-                  setSlugIndice(slug);
-                  const slugGenerado = slug;
-                  const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slugGenerado);
-                  const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                  const url = esMobile
-                    ? "whatsapp://send?text=" + mensaje
-                    : "https://wa.me/?text=" + mensaje;
-                  if (esMobile) {
-                    window.location.href = url;
-                  } else {
-                    window.open(url, "_blank");
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div style={{ fontFamily: theme.sans, fontWeight: 700, fontSize: 32, lineHeight: 1, color: colorZona(zona(overall)) }}>{overall}</div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              {ultimoIndice?.reporte && (
+                <button
+                  onClick={() => navigate("/reporte-indice")}
+                  style={{ fontFamily: theme.sans, fontSize: 14, fontWeight: 500, color: theme.purple, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                >
+                  Ver mi reporte →
+                </button>
+              )}
+              <button
+                onClick={() => navigate("/indice")}
+                style={{ fontFamily: theme.sans, fontSize: 14, color: theme.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              >
+                Repetir →
+              </button>
+            </div>
+            <button
+              onClick={async () => {
+                setGenerandoSlug(true);
+                if (ultimoIndice) {
+                  const slug = await generarReportePublico({
+                    scores: ultimoIndice.scores,
+                    overall: ultimoIndice.overall,
+                    nivel: ultimoIndice.nivel,
+                    aiReport: ultimoIndice.reporte || null,
+                  });
+                  if (slug) {
+                    setSlugIndice(slug);
+                    const slugGenerado = slug;
+                    const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slugGenerado);
+                    const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    const url = esMobile
+                      ? "whatsapp://send?text=" + mensaje
+                      : "https://wa.me/?text=" + mensaje;
+                    if (esMobile) {
+                      window.location.href = url;
+                    } else {
+                      window.open(url, "_blank");
+                    }
                   }
                 }
-              }
-              setGenerandoSlug(false);
-            }}
-            disabled={generandoSlug}
-            style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontWeight: 600, fontSize: 15, borderRadius: 14, padding: "10px 20px", border: "none", cursor: generandoSlug ? "default" : "pointer" }}
-          >
-            {generandoSlug ? "Generando..." : "Compartir por WhatsApp →"}
-          </button>
-        </div>
-      </div>
-
-      {/* 4 — Botón re-aplicar */}
-      <div style={{ margin: isMobile ? "0 20px 32px" : "0 40px 32px" }}>
-        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-          {ultimoIndice?.reporte && (
-            <button
-              onClick={() => navigate("/reporte-indice")}
-              style={{ flex: 1, fontFamily: theme.sans, fontSize: 14, fontWeight: 500, color: theme.purple, background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}
+                setGenerandoSlug(false);
+              }}
+              disabled={generandoSlug}
+              style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontWeight: 600, fontSize: 13, borderRadius: 12, padding: "8px 14px", border: "none", cursor: generandoSlug ? "default" : "pointer" }}
             >
-              {"Ver mi reporte →"}
+              {generandoSlug ? "Generando..." : "WhatsApp →"}
             </button>
-          )}
-          <button
-            onClick={() => navigate("/indice")}
-            style={{ flex: 1, fontFamily: theme.sans, fontSize: 14, color: theme.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "right" }}
-          >
-            Repetir el Índice →
-          </button>
-        </div>
-        {showReporteIndice && ultimoIndice?.reporte && (
-          <div style={{ background: theme.bgSecondary, borderRadius: 12, padding: 20, marginBottom: 12 }}>
-            {ultimoIndice.reporte.split("\n\n").map((p, i) => (
-              <p key={i} style={{ fontFamily: theme.sans, fontSize: 15, color: theme.ink, lineHeight: 1.7, marginBottom: 12 }}>{p}</p>
-            ))}
           </div>
-        )}
-        <div
-          onClick={() => navigate("/indice")}
-          style={{ background: theme.purple, borderRadius: 12, padding: "13px 16px", textAlign: "center", cursor: "pointer" }}
-        >
-          <div style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 600, color: theme.bg, marginBottom: 2 }}>Re-aplicar el Índice</div>
-          <div style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint }}>Mide tu progreso esta semana</div>
         </div>
       </div>
 
