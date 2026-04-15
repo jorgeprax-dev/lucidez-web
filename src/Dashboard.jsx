@@ -619,38 +619,7 @@ export default function Dashboard() {
                 Repetir →
               </button>
             </div>
-            <button
-              onClick={async () => {
-                setGenerandoSlug(true);
-                if (ultimoIndice) {
-                  const slug = await generarReportePublico({
-                    scores: ultimoIndice.scores,
-                    overall: ultimoIndice.overall,
-                    nivel: ultimoIndice.nivel,
-                    aiReport: ultimoIndice.reporte || null,
-                  });
-                  if (slug) {
-                    setSlugIndice(slug);
-                    const slugGenerado = slug;
-                    const mensaje = encodeURIComponent("Acabo de descubrir cómo funciona mi mente. Mira mi reporte: " + window.location.origin + "/r/" + slugGenerado);
-                    const esMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                    const url = esMobile
-                      ? "whatsapp://send?text=" + mensaje
-                      : "https://wa.me/?text=" + mensaje;
-                    if (esMobile) {
-                      window.location.href = url;
-                    } else {
-                      window.open(url, "_blank");
-                    }
-                  }
-                }
-                setGenerandoSlug(false);
-              }}
-              disabled={generandoSlug}
-              style={{ background: "#25D366", color: "#FFFFFF", fontFamily: theme.sans, fontWeight: 600, fontSize: 13, borderRadius: 12, padding: "8px 14px", border: "none", cursor: generandoSlug ? "default" : "pointer" }}
-            >
-              {generandoSlug ? "Generando..." : "WhatsApp →"}
-            </button>
+
           </div>
         </div>
       </div>
