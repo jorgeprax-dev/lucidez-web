@@ -125,14 +125,17 @@ Párrafo 2: El mecanismo — por qué este patrón se sostiene solo. El loop esp
 
 Párrafo 3: El recurso real disponible — menciona la dimensión más alta del perfil sin decir el número. No elogios vacíos.
 
-Párrafo 4: Una sola acción concreta para esta semana. Específica para este patrón, no genérica.
+Párrafo 3: El recurso real disponible — menciona la dimensión más alta del perfil sin decir el número. No elogios vacíos.
+
+Después de los 3 párrafos, en línea separada, escribe exactamente:
+ESTA_SEMANA: [una sola acción concreta, específica, medible para esta semana. Que venga del patrón identificado. Máximo 30 palabras. Empieza con un verbo en infinitivo.]
 
 VOZ: poética y directa. Imágenes concretas. Sin jerga clínica. Sin frases de autoayuda. Sin adjetivos vacíos.
 Segunda persona siempre. Nunca "esta persona" ni "su puntuación".
 No menciones nombres de escalas ni acrónimos (MAAS, DERS, ATQ, VQ, SCS, BSCS).
 Escribe con mayúsculas normales en español. Mayúscula al inicio de cada oración y en nombres propios.
-Máximo 200 palabras en los 4 párrafos.
-Responde SOLO con los 4 párrafos.`;
+Máximo 150 palabras en los 3 párrafos.
+Responde SOLO con los 3 párrafos y la línea ESTA_SEMANA.`;
 
   try {
     const response = await fetch(
@@ -408,9 +411,25 @@ export default function Evaluacion() {
             {loadingReport && (
               <p style={{ fontFamily: theme.sans, fontSize: 12, color: theme.inkFaint }}>Analizando tu evaluación...</p>
             )}
-            {aiReport && aiReport.split("\n\n").map((para, i) => (
-              <p key={i} style={{ fontFamily: theme.sans, fontSize: 16, color: theme.ink, lineHeight: 1.6, margin: "0 0 16px" }}>{para}</p>
-            ))}
+            {aiReport && (() => {
+              const partes = aiReport.split("\n\n");
+              const estaSemanaIdx = partes.findIndex(p => p.startsWith("ESTA_SEMANA:"));
+              const parrafos = estaSemanaIdx > -1 ? partes.slice(0, estaSemanaIdx) : partes;
+              const estaSemana = estaSemanaIdx > -1 ? partes[estaSemanaIdx].replace("ESTA_SEMANA:", "").trim() : null;
+              return (
+                <>
+                  {parrafos.map((para, i) => (
+                    <p key={i} style={{ fontFamily: theme.sans, fontSize: 16, color: theme.ink, lineHeight: 1.6, margin: "0 0 16px" }}>{para}</p>
+                  ))}
+                  {estaSemana && (
+                    <div style={{ background: theme.bgSecondary, borderRadius: 12, padding: "16px 20px", marginTop: 8, marginBottom: 16 }}>
+                      <p style={{ fontFamily: theme.sans, fontSize: 12, fontWeight: 500, color: theme.inkFaint, letterSpacing: "0.06em", margin: "0 0 8px" }}>ESTA SEMANA</p>
+                      <p style={{ fontFamily: theme.sans, fontSize: 15, color: theme.ink, lineHeight: 1.6, margin: 0 }}>{estaSemana}</p>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
 
           {reporte && !cualGuardadas && (
