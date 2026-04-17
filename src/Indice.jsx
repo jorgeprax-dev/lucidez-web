@@ -83,7 +83,16 @@ Perfil psicométrico de ${nombre}:
 - Dimensión más baja: ${low.label} (${low.score}/100)
 
 PASO 1 — IDENTIFICAR EL PATRÓN DE CONFIGURACIÓN:
-Antes de escribir, identifica internamente cuál de estos patrones describe mejor esta combinación de scores:
+Primero aplica estas reglas de exclusión obligatorias basadas en los scores reales. Un patrón EXCLUIDO no puede ser seleccionado bajo ninguna circunstancia:
+
+- PILOTO AUTOMÁTICO FUNCIONAL: EXCLUIDO si Presencia ≥ 70
+- DESREGULACIÓN ENCUBIERTA: EXCLUIDO si Regulación Emocional ≥ 70
+- INTELECTUALIZACIÓN COMO DEFENSA: EXCLUIDO si Regulación Emocional ≥ 70 O Claridad Cognitiva < 60
+- VALORES SIN TRACCIÓN: EXCLUIDO si Alineación de Valores ≥ 70
+- AGENCIA DESANCLADA: EXCLUIDO si Agencia ≥ 70
+- COLAPSO DE IDENTIDAD: EXCLUIDO si Score general ≥ 55
+
+De los patrones NO excluidos, elige el que mejor describe esta configuración:
 
 - PILOTO AUTOMÁTICO FUNCIONAL: Presencia baja + todo lo demás medio. Vive en automático, el sistema no colapsa pero no crece.
 - DESREGULACIÓN ENCUBIERTA: Presencia baja + Regulación baja + Agencia media. Funciona pero con costo emocional alto invisible.

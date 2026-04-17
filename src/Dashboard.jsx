@@ -353,7 +353,16 @@ Perfil completo:
 - Agencia: ${scores.agencia}/100
 
 PASO 1 — IDENTIFICAR EL PATRÓN CENTRAL:
-Antes de escribir, identifica internamente:
+Primero aplica estas reglas de exclusión obligatorias. Un patrón EXCLUIDO no puede ser seleccionado bajo ninguna circunstancia:
+
+- PILOTO AUTOMÁTICO FUNCIONAL: EXCLUIDO si Presencia ≥ 70
+- DESREGULACIÓN ENCUBIERTA: EXCLUIDO si Regulación Emocional ≥ 70
+- INTELECTUALIZACIÓN COMO DEFENSA: EXCLUIDO si Regulación Emocional ≥ 70 O Claridad Cognitiva < 60
+- VALORES SIN TRACCIÓN: EXCLUIDO si Alineación de Valores ≥ 70
+- AGENCIA DESANCLADA: EXCLUIDO si Agencia ≥ 70
+- COLAPSO DE IDENTIDAD: EXCLUIDO si Score general ≥ 55
+
+De los patrones NO excluidos, identifica internamente:
 - ¿Cuál es la configuración dominante? (piloto automático funcional, desregulación encubierta, intelectualización como defensa, valores sin tracción, agencia desanclada, colapso de identidad — o nombra uno nuevo si no encaja)
 - ¿Cuál es la dimensión que más limita al sistema completo?
 - ¿Cuál es el recurso real disponible?

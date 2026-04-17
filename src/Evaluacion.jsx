@@ -101,7 +101,16 @@ Perfil completo de las 6 dimensiones:
 - Agencia: ${scores.agencia}/100
 
 PASO 1 — LEER LA CONFIGURACIÓN:
-Antes de escribir, identifica internamente cómo el score de ${escala.label} se explica por la combinación de las otras dimensiones. Busca:
+Primero aplica estas reglas de exclusión obligatorias. Un patrón EXCLUIDO no puede ser seleccionado bajo ninguna circunstancia:
+
+- PILOTO AUTOMÁTICO FUNCIONAL: EXCLUIDO si Presencia ≥ 70
+- DESREGULACIÓN ENCUBIERTA: EXCLUIDO si Regulación Emocional ≥ 70
+- INTELECTUALIZACIÓN COMO DEFENSA: EXCLUIDO si Regulación Emocional ≥ 70 O Claridad Cognitiva < 60
+- VALORES SIN TRACCIÓN: EXCLUIDO si Alineación de Valores ≥ 70
+- AGENCIA DESANCLADA: EXCLUIDO si Agencia ≥ 70
+- COLAPSO DE IDENTIDAD: EXCLUIDO si Score general ≥ 55
+
+De los patrones NO excluidos, identifica internamente cómo el score de ${escala.label} se explica por la combinación de las otras dimensiones. Busca:
 - ¿Qué dimensiones altas o bajas amplifican o amortiguan este score?
 - ¿Hay una dimensión que claramente lo causa o lo sostiene?
 - ¿El patrón tiene nombre? (piloto automático, desregulación encubierta, intelectualización, valores sin tracción, agencia desanclada, colapso de identidad)
