@@ -91,6 +91,7 @@ Tu trabajo: leer cómo la dimensión focal interactúa con las otras 5 dimension
 
 Dimensión focal: ${escala.label}
 Score focal: ${overall}/100 (zona ${zona})
+Interpretación clínica de este score: ${interpretacion}
 
 Perfil completo de las 6 dimensiones:
 - Presencia: ${scores.presencia}/100
