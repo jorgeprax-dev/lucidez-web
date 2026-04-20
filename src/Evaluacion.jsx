@@ -181,6 +181,7 @@ export default function Evaluacion() {
   const [slugReporte, setSlugReporte] = useState(null);
   const autoAdvanceTimeoutRef = useRef(null);
   const modoReporte = searchParams.get("modo") === "reporte";
+  const [indiceScores, setIndiceScores] = useState({});
 
   const escalaLabels = {
     presencia: "Escala de Atención Consciente · versión breve",
@@ -197,6 +198,20 @@ export default function Evaluacion() {
     if (!escala) return;
     document.title = `Evaluación ${escala.label} · Lucidez`;
   }, [escala]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return;
+      const { data } = await supabase
+        .from("indice_lucidez")
+        .select("scores")
+        .eq("user_id", session.user.id)
+        .order("fecha", { ascending: false })
+        .limit(1)
+        .single();
+      if (data?.scores) setIndiceScores(data.scores);
+    });
+  }, []);
 
   useEffect(() => {
     if (!modoReporte) return;
@@ -322,7 +337,7 @@ export default function Evaluacion() {
       setSaved(true);
       setSavedOverall(overall);
       setLoadingReport(true);
-      const report = await generateDeepReport(dimension, escala, formattedScores, overall);
+      const report = await generateDeepReport(dimension, escala, indiceScores, overall);
       setAiReport(report);
       setLoadingReport(false);
 
