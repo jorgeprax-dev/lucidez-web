@@ -12,14 +12,12 @@ export default function Practicioner() {
 
   useEffect(() => {
     async function init() {
-      // 1. Verificar sesión
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate('/login');
         return;
       }
 
-      // 2. Verificar si es practicioner
       const { data: practicionerData, error: pError } = await supabase
         .from('practicioners')
         .select('id, nombre, institucion')
@@ -34,7 +32,6 @@ export default function Practicioner() {
 
       setAuthorized(true);
 
-      // 3. Cargar lista de usuarios desde la vista
       const { data: usersData, error: uError } = await supabase
         .from('practicioner_users_view')
         .select('*')
@@ -66,32 +63,33 @@ export default function Practicioner() {
     navigate(`/dashboard?as_practicioner=${userId}`);
   }
 
-  // Estilos inline siguiendo paleta Apple del producto
   const s = {
     page: {
       maxWidth: '900px',
       margin: '0 auto',
       padding: '40px 24px 80px',
-      fontFamily: theme.typography.fontFamily,
+      fontFamily: theme.sans,
+      background: theme.bg,
+      minHeight: '100vh',
     },
     header: {
       marginBottom: '40px',
       paddingBottom: '20px',
-      borderBottom: `1px solid ${theme.colors.border || '#E5E5EA'}`,
+      borderBottom: `1px solid ${theme.border}`,
     },
     title: {
       fontSize: '28px',
       fontWeight: 600,
-      color: theme.colors.textPrimary || '#000000',
+      color: theme.ink,
       marginBottom: '8px',
     },
     subtitle: {
       fontSize: '15px',
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
     },
     counter: {
       fontSize: '13px',
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
       marginBottom: '20px',
     },
     table: {
@@ -102,23 +100,23 @@ export default function Practicioner() {
       textAlign: 'left',
       fontSize: '12px',
       fontWeight: 600,
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
       textTransform: 'uppercase',
       letterSpacing: '0.05em',
       padding: '12px 16px',
-      borderBottom: `1px solid ${theme.colors.border || '#E5E5EA'}`,
+      borderBottom: `1px solid ${theme.border}`,
     },
     td: {
       padding: '16px',
       fontSize: '14px',
-      color: theme.colors.textPrimary || '#000000',
-      borderBottom: `1px solid ${theme.colors.border || '#E5E5EA'}`,
+      color: theme.ink,
+      borderBottom: `1px solid ${theme.border}`,
     },
     nameCell: {
       fontWeight: 500,
     },
     emailCell: {
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
       fontSize: '13px',
     },
     statusBadge: {
@@ -129,15 +127,15 @@ export default function Practicioner() {
       fontWeight: 500,
     },
     statusComplete: {
-      background: '#E8F5E9',
-      color: '#2E7D32',
+      background: theme.greenLight,
+      color: '#1B7A33',
     },
     statusPending: {
-      background: '#F2F2F7',
-      color: '#6C6C70',
+      background: theme.bgSecondary,
+      color: theme.inkFaint,
     },
     button: {
-      background: theme.colors.primary || '#007AFF',
+      background: theme.purple,
       color: '#FFFFFF',
       border: 'none',
       borderRadius: '8px',
@@ -150,17 +148,19 @@ export default function Practicioner() {
     notAuthorized: {
       textAlign: 'center',
       padding: '80px 20px',
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
+      fontFamily: theme.sans,
     },
     loading: {
       textAlign: 'center',
       padding: '80px 20px',
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
+      fontFamily: theme.sans,
     },
     empty: {
       textAlign: 'center',
       padding: '60px 20px',
-      color: theme.colors.textSecondary || '#6C6C70',
+      color: theme.inkFaint,
     },
   };
 
