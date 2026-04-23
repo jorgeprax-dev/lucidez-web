@@ -428,6 +428,7 @@ export default function Dashboard() {
   const [feedbackEnviado, setFeedbackEnviado] = useState(false);
   const [slugIndice, setSlugIndice] = useState(null);
   const [generandoSlug, setGenerandoSlug] = useState(false);
+  const [isPracticioner, setIsPracticioner] = useState(false);
 
   function colorZona(z) {
     if (z === "verde") return theme.green;
@@ -446,6 +447,21 @@ export default function Dashboard() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
+  }, []);
+
+  // Verificar si es practicioner
+  useEffect(() => {
+    async function checkPracticioner() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const { data } = await supabase
+        .from('practicioners')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      setIsPracticioner(!!data);
+    }
+    checkPracticioner();
   }, []);
 
   // Cargar mediciones del usuario por email
@@ -532,6 +548,23 @@ export default function Dashboard() {
           <span onClick={() => navigate("/")} style={{ ...S.navLogo, cursor: "pointer" }}>LUCIDEZ</span>
           <div style={S.navRight}>
               <span style={S.navUser}>{nombre}</span>
+              {isPracticioner && (
+                <button
+                  onClick={() => navigate('/practicioner')}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid #007AFF',
+                    color: '#007AFF',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    marginLeft: '12px'
+                  }}
+                >
+                  Panel practicioner
+                </button>
+              )}
             <button style={S.signOut} onClick={handleSignOut}>Salir</button>
           </div>
         </nav>
@@ -596,6 +629,22 @@ export default function Dashboard() {
           <span style={{ background: theme.bgSecondary, fontFamily: theme.sans, fontSize: 13, borderRadius: 20, padding: "4px 12px", color: theme.inkMuted }}>
             {diasDesdeInicio > 0 ? `${nombre} · día ${diasDesdeInicio}` : nombre}
           </span>
+          {isPracticioner && (
+            <button
+              onClick={() => navigate('/practicioner')}
+              style={{
+                background: 'transparent',
+                border: '1px solid #007AFF',
+                color: '#007AFF',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                cursor: 'pointer'
+              }}
+            >
+              Panel practicioner
+            </button>
+          )}
           <button style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 400, color: theme.purple, background: "none", border: "none", cursor: "pointer" }} onClick={handleSignOut}>Salir</button>
         </div>
       </nav>
