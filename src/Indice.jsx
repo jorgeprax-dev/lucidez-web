@@ -4,13 +4,16 @@ import { generarReportePublico } from "./utils";
 import { theme } from "./theme";
 
 async function saveToSupabase(data) {
-  try {
-    const { error } = await supabase.from("indice_lucidez").insert([data]);
-    return !error;
-  } catch (e) {
-    console.error("Supabase error:", e);
-    return false;
+  const { data: inserted, error } = await supabase
+    .from("indice_lucidez")
+    .insert([data])
+    .select()
+    .single();
+  if (error) {
+    console.error("Error guardando índice en Supabase:", error);
+    return null;
   }
+  return inserted;
 }
 
 async function saveRespuestasCualitativas({ userId, momento, dimension, preguntas, respuestas }) {
@@ -544,17 +547,9 @@ function ResultsScreen({ scores, user, session }) {
      const { data: { session: currentSession } } = await supabase.auth.getSession();
      const resolvedUserId = currentSession?.user?.id || null;
 
-     if (!resolvedUserId) {
-       localStorage.setItem("indice_anonimo", JSON.stringify(payload));
-       const { error: otpError } = await supabase.auth.signInWithOtp({
-         email: resolvedEmailFinal,
-         options: { emailRedirectTo: window.location.origin + '/dashboard' }
-       });
-       if (otpError) console.error("OTP error:", otpError);
-     } else {
-       payload.user_id = resolvedUserId;
-       await saveToSupabase(payload);
-     }
+     payload.user_id = resolvedUserId; // null si no hay sesión, válido si la hay
+     const insertedRow = await saveToSupabase(payload);
+     const insertedRowId = insertedRow?.id || null;
 
     await supabase.functions.invoke("send-welcome-email", {
       body: {
@@ -569,19 +564,12 @@ function ResultsScreen({ scores, user, session }) {
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
     setAiReport(ai);
-    if (ai && resolvedUserId) {
-      const { data: rows } = await supabase
+    if (ai && insertedRowId) {
+      const { error: updateError } = await supabase
         .from("indice_lucidez")
-        .select("id")
-        .eq("user_id", resolvedUserId)
-        .order("created_at", { ascending: false })
-        .limit(1);
-      if (rows && rows.length > 0) {
-        await supabase
-          .from("indice_lucidez")
-          .update({ reporte: ai })
-          .eq("id", rows[0].id);
-      }
+        .update({ reporte: ai })
+        .eq("id", insertedRowId);
+      if (updateError) console.error("Error actualizando reporte AI:", updateError);
     }
     if (ai) {
       const match = ai.match(/PREGUNTA_DINAMICA:\s*(.+)/);
