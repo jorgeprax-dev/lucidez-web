@@ -564,6 +564,12 @@ function ResultsScreen({ scores, user, session }) {
     // Llamar a Claude API
     const ai = await generateAIReport(scores, user.nombre);
     setAiReport(ai);
+    // Disparar conversión de Google Ads solo si el reporte AI se generó con éxito
+    if (ai && typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", "conversion", {
+        send_to: "AW-1011896542/xEz0CMHHk6McEN6hweID",
+      });
+    }
     if (ai && insertedRowId) {
       const { error: updateError } = await supabase
         .from("indice_lucidez")
