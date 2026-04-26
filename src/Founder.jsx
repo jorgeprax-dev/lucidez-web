@@ -36,22 +36,25 @@ export default function Founder() {
         return;
       }
 
-      // Obtener emails de los user_ids únicos
+      // Obtener emails y nombres de los user_ids únicos vía RPC
       const userIds = [...new Set(feedbackData.map(f => f.user_id).filter(Boolean))];
       const userMap = {};
       
       if (userIds.length > 0) {
-        // No podemos consultar auth.users directamente, pero podemos usar indice_lucidez como bridge
-        const { data: usersData } = await supabase
-          .from("indice_lucidez")
-          .select("user_id, email, nombre")
-          .in("user_id", userIds);
+        const { data: usersData, error: usersError } = await supabase.rpc("get_users_for_founder", {
+          user_ids: userIds
+        });
         
-        if (usersData) {
+        if (usersError) {
+          console.error("Error obteniendo info de usuarios:", usersError);
+        } else if (usersData) {
           usersData.forEach(u => {
-            if (!userMap[u.user_id]) {
-              userMap[u.user_id] = { email: u.email, nombre: u.nombre };
-            }
+            const meta = u.raw_user_meta_data || {};
+            const nombre = meta.full_name || meta.name || null;
+            userMap[u.user_id] = { 
+              email: u.email, 
+              nombre: nombre
+            };
           });
         }
       }
