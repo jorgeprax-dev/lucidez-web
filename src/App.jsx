@@ -13,7 +13,6 @@ import ReporteIndice from "./ReporteIndice.jsx";
 import Curso from "./Curso.jsx";
 import Leccion from "./Leccion.jsx";
 import ReportePublico from "./ReportePublico.jsx";
-import Practicioner from "./Practicioner.jsx";
 
 // Maneja el callback de magic link — procesa el token y redirige al dashboard
 function AuthCallback() {
@@ -77,14 +76,6 @@ export default function App() {
           element={
             <PrivateRoute>
               <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/practicioner"
-          element={
-            <PrivateRoute>
-              <Practicioner />
             </PrivateRoute>
           }
         />

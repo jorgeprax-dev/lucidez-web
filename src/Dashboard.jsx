@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import { ESCALAS } from "./escalas";
 import { generarReportePublico } from "./utils";
@@ -414,9 +414,6 @@ Responde SOLO con las 4 secciones.`;
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const asPracticionerUserId = searchParams.get('as_practicioner');
-  const [pacienteInfo, setPacienteInfo] = useState(null);
   const [isMobile, setIsMobile]   = useState(window.innerWidth < 768);
   const [session, setSession]     = useState(null);
   const [mediciones, setMediciones] = useState([]);
@@ -431,7 +428,6 @@ export default function Dashboard() {
   const [feedbackEnviado, setFeedbackEnviado] = useState(false);
   const [slugIndice, setSlugIndice] = useState(null);
   const [generandoSlug, setGenerandoSlug] = useState(false);
-  const [isPracticioner, setIsPracticioner] = useState(false);
 
   function colorZona(z) {
     if (z === "verde") return theme.green;
@@ -452,48 +448,15 @@ export default function Dashboard() {
     });
   }, []);
 
-  // Verificar si es practicioner
-  useEffect(() => {
-    async function checkPracticioner() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      const { data } = await supabase
-        .from('practicioners')
-        .select('id')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-      setIsPracticioner(!!data);
-    }
-    checkPracticioner();
-  }, []);
-  // Cargar info del paciente cuando se está viendo como practicioner
-  useEffect(() => {
-    async function loadPacienteInfo() {
-      if (!asPracticionerUserId || !isPracticioner) {
-        setPacienteInfo(null);
-        return;
-      }
-      const { data } = await supabase
-        .from('practicioner_users_view')
-        .select('email, nombre')
-        .eq('user_id', asPracticionerUserId)
-        .maybeSingle();
-      if (data) setPacienteInfo(data);
-    }
-    loadPacienteInfo();
-  }, [asPracticionerUserId, isPracticioner]);
-
   // Cargar mediciones del usuario por email
   const cargarMediciones = useCallback(async () => {
     if (!session?.user?.email) return;
     setLoading(true);
 
-    const targetUserId = (asPracticionerUserId && isPracticioner) ? asPracticionerUserId : session.user.id;
-
     const { data, error } = await supabase
       .from("indice_lucidez")
       .select("id, fecha, scores, overall, nivel, reporte, nombre, mapa_completo")
-      .eq("user_id", targetUserId)
+      .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
     if (!error && data) {
@@ -506,7 +469,7 @@ export default function Dashboard() {
     const { data: deepData, error: deepError } = await supabase
       .from("evaluacion_profunda")
       .select("dimension, overall, fecha")
-      .eq("user_id", targetUserId)
+      .eq("user_id", session.user.id)
       .order("fecha", { ascending: true });
 
     if (!deepError && deepData) {
@@ -525,7 +488,7 @@ export default function Dashboard() {
     }
 
     setLoading(false);
-  }, [session, asPracticionerUserId, isPracticioner]);
+  }, [session]);
 
   useEffect(() => {
     cargarMediciones();
@@ -541,37 +504,6 @@ export default function Dashboard() {
   const indexScores  = ultima?.scores ?? {};
   const scores       = indexScores;
 
-  const bannerPracticioner = (asPracticionerUserId && isPracticioner && pacienteInfo) ? (
-    <div style={{
-      background: '#F2F2F7',
-      borderBottom: '1px solid rgba(60,60,67,0.18)',
-      padding: '12px 20px',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-      fontSize: 13,
-      color: '#6C6C70',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    }}>
-      <span>Viendo como practicioner: <strong style={{ color: '#000000' }}>{pacienteInfo.nombre || pacienteInfo.email}</strong></span>
-      <button
-        onClick={() => navigate('/practicioner')}
-        style={{
-          background: 'transparent',
-          border: '1px solid #007AFF',
-          color: '#007AFF',
-          padding: '4px 10px',
-          borderRadius: 6,
-          fontSize: 12,
-          fontWeight: 500,
-          cursor: 'pointer',
-        }}
-      >
-        Volver al panel
-      </button>
-    </div>
-  ) : null;
-
   const overall      = ultima?.overall ?? 0;
   const nombre       = ultima?.nombre?.split(" ")[0] ?? session?.user?.email?.split("@")[0] ?? "tú";
   const diasDesdeInicio = mediciones.length > 0
@@ -586,7 +518,6 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div style={S.page}>
-        {bannerPracticioner}
         <div style={{ maxWidth: "600px", margin: "0 auto" }}>
           <div style={S.loading}>Cargando tu perfil…</div>
         </div>
@@ -598,28 +529,10 @@ export default function Dashboard() {
   if (mediciones.length === 0) {
     return (
       <div style={S.page}>
-        {bannerPracticioner}
         <nav style={S.nav}>
           <span onClick={() => navigate("/")} style={{ ...S.navLogo, cursor: "pointer" }}>LUCIDEZ</span>
           <div style={S.navRight}>
               <span style={S.navUser}>{nombre}</span>
-              {isPracticioner && (
-                <button
-                  onClick={() => navigate('/practicioner')}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid #007AFF',
-                    color: '#007AFF',
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    marginLeft: '12px'
-                  }}
-                >
-                  Panel practicioner
-                </button>
-              )}
             <button style={S.signOut} onClick={handleSignOut}>Salir</button>
           </div>
         </nav>
@@ -677,7 +590,6 @@ export default function Dashboard() {
 
   return (
     <div style={S.page}>
-      {bannerPracticioner}
       {/* 1 — Nav */}
       <nav style={{ background: theme.bg, padding: navPad, borderBottom: `1px solid ${theme.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span onClick={() => navigate("/")} style={{ cursor: "pointer", fontFamily: theme.sans, fontWeight: 700, fontSize: 17, color: theme.ink }}>lucidez</span>
@@ -685,22 +597,6 @@ export default function Dashboard() {
           <span style={{ background: theme.bgSecondary, fontFamily: theme.sans, fontSize: 13, borderRadius: 20, padding: "4px 12px", color: theme.inkMuted }}>
             {diasDesdeInicio > 0 ? `${nombre} · día ${diasDesdeInicio}` : nombre}
           </span>
-          {isPracticioner && (
-            <button
-              onClick={() => navigate('/practicioner')}
-              style={{
-                background: 'transparent',
-                border: '1px solid #007AFF',
-                color: '#007AFF',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                cursor: 'pointer'
-              }}
-            >
-              Panel practicioner
-            </button>
-          )}
           <button style={{ fontFamily: theme.sans, fontSize: 15, fontWeight: 400, color: theme.purple, background: "none", border: "none", cursor: "pointer" }} onClick={handleSignOut}>Salir</button>
         </div>
       </nav>
