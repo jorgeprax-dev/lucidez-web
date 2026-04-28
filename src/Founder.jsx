@@ -10,6 +10,8 @@ export default function Founder() {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [metrics, setMetrics] = useState({ total: 0, conIndice: 0, feedback: 0, conEvalProfunda: 0 });
 
   useEffect(() => {
     async function init() {
@@ -67,6 +69,24 @@ export default function Founder() {
       }));
 
       setFeedbacks(enrichedFeedback);
+
+      // Cargar todos los usuarios vía RPC
+      const { data: usersData, error: usersError } = await supabase.rpc("get_all_users_for_founder");
+      
+      if (usersError) {
+        console.error("Error cargando usuarios:", usersError);
+      } else if (usersData) {
+        setUsers(usersData);
+        
+        // Calcular métricas
+        const total = usersData.length;
+        const conIndice = usersData.filter(u => u.tiene_indice).length;
+        const conEvalProfunda = usersData.filter(u => u.evaluaciones_profundas_count > 0).length;
+        const feedbackCount = feedbackData ? feedbackData.length : 0;
+        
+        setMetrics({ total, conIndice, feedback: feedbackCount, conEvalProfunda });
+      }
+
       setLoading(false);
     }
     init();
@@ -82,13 +102,108 @@ export default function Founder() {
 
   if (!authorized) return null;
 
+  function getUtilityBadgeStyle(utilidad) {
+    let bg, color;
+    if (utilidad >= 8) {
+      bg = '#EAF3DE'; color = '#27500A'; // verde
+    } else if (utilidad >= 5) {
+      bg = '#FAEEDA'; color = '#633806'; // ámbar
+    } else {
+      bg = '#FCEBEB'; color = '#791F1F'; // rojo
+    }
+    return {
+      background: bg,
+      color: color,
+      fontSize: 14,
+      fontWeight: 500,
+      padding: '6px 10px',
+      borderRadius: 8,
+      minWidth: 38,
+      textAlign: 'center',
+    };
+  }
+
   return (
     <div style={s.page}>
       <div style={s.container}>
         <div style={s.header}>
           <h1 style={s.title}>Panel de fundador</h1>
-          <p style={s.subtitle}>Lectura cualitativa del producto · {feedbacks.length} entradas de feedback</p>
+          <p style={s.subtitle}>Lectura del producto Lucidez</p>
         </div>
+
+        <div style={s.metricsGrid}>
+          <div style={s.metricCard}>
+            <div style={s.metricLabel}>Usuarios</div>
+            <div style={s.metricValue}>{metrics.total}</div>
+          </div>
+          <div style={s.metricCard}>
+            <div style={s.metricLabel}>Con Índice</div>
+            <div style={s.metricValue}>{metrics.conIndice}</div>
+          </div>
+          <div style={s.metricCard}>
+            <div style={s.metricLabel}>Feedback</div>
+            <div style={s.metricValue}>{metrics.feedback}</div>
+          </div>
+          <div style={s.metricCard}>
+            <div style={s.metricLabel}>Eval. profunda</div>
+            <div style={s.metricValue}>{metrics.conEvalProfunda}</div>
+          </div>
+        </div>
+
+        <section style={s.section}>
+          <h2 style={s.sectionTitle}>Usuarios</h2>
+          {users.length === 0 ? (
+            <p style={s.empty}>Sin usuarios registrados.</p>
+          ) : (
+            <div style={s.tableWrapper}>
+              <table style={s.table}>
+                <thead>
+                  <tr style={s.tableHeaderRow}>
+                    <th style={s.th}>Usuario</th>
+                    <th style={s.th}>Registro</th>
+                    <th style={s.th}>Estado</th>
+                    <th style={{...s.th, textAlign: 'right'}}>Índice</th>
+                    <th style={{...s.th, textAlign: 'right'}}>Utilidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map(u => {
+                    const displayName = u.nombre || u.email;
+                    const showEmail = u.nombre && u.nombre !== u.email;
+                    let estadoLabel = "Sin Índice";
+                    let estadoStyle = s.statusPending;
+                    if (u.tiene_indice) {
+                      estadoLabel = u.evaluaciones_profundas_count > 0 
+                        ? `Índice + ${u.evaluaciones_profundas_count} eval`
+                        : "Índice completo";
+                      estadoStyle = s.statusComplete;
+                    }
+                    return (
+                      <tr key={u.user_id} style={s.tableRow}>
+                        <td style={s.td}>
+                          <div style={s.tdName}>{displayName}</div>
+                          {showEmail && <div style={s.tdEmail}>{u.email}</div>}
+                        </td>
+                        <td style={{...s.td, color: '#6C6C70'}}>
+                          {new Date(u.registered_at).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                        </td>
+                        <td style={s.td}>
+                          <span style={{...s.statusBadge, ...estadoStyle}}>{estadoLabel}</span>
+                        </td>
+                        <td style={{...s.td, textAlign: 'right', fontWeight: u.overall ? 500 : 400, color: u.overall ? '#000000' : '#C7C7CC'}}>
+                          {u.overall ?? "—"}
+                        </td>
+                        <td style={{...s.td, textAlign: 'right', fontWeight: u.ultima_utilidad ? 500 : 400, color: u.ultima_utilidad ? '#000000' : '#C7C7CC'}}>
+                          {u.ultima_utilidad ?? "—"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
 
         <section style={s.section}>
           <h2 style={s.sectionTitle}>Feedback</h2>
@@ -99,16 +214,20 @@ export default function Founder() {
               {feedbacks.map(f => (
                 <article key={f.id} style={s.card}>
                   <div style={s.cardHeader}>
-                    <div>
-                      <span style={s.userName}>{f.userNombre || f.userEmail}</span>
-                      {f.userNombre && <span style={s.userEmail}> · {f.userEmail}</span>}
+                    <div style={{flex: 1}}>
+                      <div style={s.userName}>{f.userNombre || f.userEmail}</div>
+                      {f.userNombre && <div style={s.userEmailInline}>{f.userEmail}</div>}
+                      <div style={s.cardMeta}>
+                        {new Date(f.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                        {" · "}
+                        {f.momento}
+                      </div>
                     </div>
-                    <span style={s.cardMeta}>
-                      {new Date(f.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
-                      {" · "}
-                      {f.momento}
-                      {f.utilidad !== null && ` · utilidad ${f.utilidad}`}
-                    </span>
+                    {f.utilidad !== null && (
+                      <div style={getUtilityBadgeStyle(f.utilidad)}>
+                        {f.utilidad}
+                      </div>
+                    )}
                   </div>
                   {f.valioso && (
                     <div style={s.field}>
@@ -195,6 +314,84 @@ const s = {
     fontSize: 13,
     color: theme.inkFaint || "#6C6C70",
     fontWeight: 400,
+  },
+  userEmailInline: {
+    fontSize: 12,
+    color: '#6C6C70',
+    fontWeight: 400,
+    marginTop: 2,
+  },
+  metricsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: 12,
+    marginBottom: 32,
+  },
+  metricCard: {
+    background: '#F2F2F7',
+    borderRadius: 8,
+    padding: 16,
+  },
+  metricLabel: {
+    fontSize: 13,
+    color: '#6C6C70',
+    marginBottom: 4,
+  },
+  metricValue: {
+    fontSize: 24,
+    fontWeight: 500,
+    color: '#000000',
+  },
+  tableWrapper: {
+    border: '0.5px solid rgba(60,60,67,0.18)',
+    borderRadius: 8,
+    overflow: 'hidden',
+    background: '#FFFFFF',
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: 13,
+  },
+  tableHeaderRow: {
+    background: '#F2F2F7',
+  },
+  th: {
+    textAlign: 'left',
+    padding: '10px 12px',
+    fontWeight: 500,
+    color: '#6C6C70',
+    fontSize: 12,
+  },
+  tableRow: {
+    borderTop: '0.5px solid rgba(60,60,67,0.12)',
+  },
+  td: {
+    padding: '10px 12px',
+    color: '#000000',
+  },
+  tdName: {
+    fontSize: 13,
+    color: '#000000',
+  },
+  tdEmail: {
+    fontSize: 11,
+    color: '#6C6C70',
+    marginTop: 2,
+  },
+  statusBadge: {
+    display: 'inline-block',
+    fontSize: 11,
+    padding: '2px 8px',
+    borderRadius: 6,
+  },
+  statusPending: {
+    background: '#F2F2F7',
+    color: '#6C6C70',
+  },
+  statusComplete: {
+    background: '#EAF3DE',
+    color: '#27500A',
   },
   cardMeta: {
     fontSize: 12,
