@@ -35,7 +35,7 @@ export default function Home() {
           Conoce cómo funciona tu mente
         </h1>
         <p style={{ fontSize: 15, color: theme.inkFaint, lineHeight: 1.5, marginBottom: 28, maxWidth: 500, margin: "0 auto 28px" }}>
-          6 escalas clínicas · análisis con IA · en español
+          Un mapa de tu funcionamiento mental en 6 dimensiones
         </p>
         <button
           onClick={() => navigate("/indice")}
