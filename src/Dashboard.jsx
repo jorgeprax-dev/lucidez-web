@@ -661,9 +661,6 @@ export default function Dashboard() {
                   <span style={{ fontFamily: theme.sans, fontWeight: 700, fontSize: 28, color: hasDeepEval ? cDeep : colorZona(zona(s)) }}>
                     {hasDeepEval ? deepScore : s}
                   </span>
-                  <span style={{ fontFamily: theme.sans, fontSize: 13, color: theme.inkFaint, marginLeft: 6 }}>
-                    {hasDeepEval ? `índice: ${s}` : "solo Índice"}
-                  </span>
                 </div>
                 {hasDeepEval ? (
                   <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
