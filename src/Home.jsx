@@ -97,6 +97,10 @@ export default function Home() {
         ))}
       </div>
 
+      <div style={{ textAlign: "center", color: "#6C6C70", fontSize: 14, lineHeight: 1.6, marginTop: 32, marginBottom: 24, padding: "0 16px" }}>
+        Lucidez es una herramienta de autoconocimiento. No reemplaza atención psicológica profesional. Si estás en crisis, llama a SAPTEL al 55 5259 8121.
+      </div>
+
       {/* CTA final */}
       <div style={{ background: theme.bg, padding: "24px 20px 40px", textAlign: "center", borderTop: `0.5px solid ${theme.border}` }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: theme.ink, marginBottom: 6, letterSpacing: "-0.3px" }}>¿Cuánto te conoces?</div>
