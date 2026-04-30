@@ -100,7 +100,7 @@ export default function Home() {
       {/* CTA final */}
       <div style={{ background: theme.bg, padding: "24px 20px 40px", textAlign: "center", borderTop: `0.5px solid ${theme.border}` }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: theme.ink, marginBottom: 6, letterSpacing: "-0.3px" }}>¿Cuánto te conoces?</div>
-        <div style={{ fontSize: 14, color: theme.inkFaint, marginBottom: 20 }}>8 minutos para saberlo</div>
+        <div style={{ fontSize: 14, color: theme.inkFaint, marginBottom: 20 }}>Empieza ahora, sin tarjeta.</div>
         <button
           onClick={() => navigate("/indice")}
           style={{ background: theme.ink, color: "#FFFFFF", border: "none", borderRadius: 14, padding: "16px 32px", fontSize: 17, fontWeight: 600, width: "100%", cursor: "pointer", fontFamily: theme.sans }}
