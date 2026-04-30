@@ -81,7 +81,7 @@ export default function Home() {
         <div style={{ fontSize: 20, fontWeight: 700, color: theme.ink, letterSpacing: "-0.3px", marginBottom: 4 }}>Por qué Lucidez</div>
         <div style={{ fontSize: 14, color: theme.inkFaint, marginBottom: 16 }}>No es otro test de personalidad</div>
         {[
-          { icon: "🔬", bg: theme.purpleLight, title: "Tests validados clínicamente", desc: "MAAS, ATQ, DERS, VQ, SCS, BSCS — usados por psicólogos", iconColor: theme.purple },
+          { icon: "🔬", bg: theme.purpleLight, title: "Tests validados clínicamente", desc: "Los mismos instrumentos que usan psicólogos clínicos en investigación.", iconColor: theme.purple },
           { icon: "✦", bg: "#F0E8FF", title: "Análisis con IA en español", desc: "Reporte personalizado, no genérico", iconColor: "#AF52DE" },
           { icon: "★", bg: theme.greenLight, title: "Gratis para empezar", desc: "El Índice completo sin costo", iconColor: theme.green },
         ].map((c) => (
